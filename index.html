@@ -471,6 +471,7 @@ function home(){
   <div class="cta">
     <button class="btn${doneToday?" ghost":""}" id="go">${doneToday?"Practise again":"Start today’s lesson"}</button>
     <div class="sub">${LEN} questions · about 3 minutes${S.best>1?` · Best streak ${S.best} days`:""}</div>
+    ${!isStandalone()&&installEvt?`<button class="btn ghost" id="install">Install Nadya on this phone</button>`:""}
   </div>
   <div class="progress">
     <h2>Your progress</h2>
@@ -483,6 +484,7 @@ function home(){
   $("#browse").onclick=()=>browse(S.unit==="b"?"b":"a");
   app.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{S.unit=b.dataset.u;save();home()});
   $("#reset").onclick=confirmReset;
+  const ib=$("#install");if(ib)ib.onclick=()=>{installEvt.prompt();installEvt.userChoice.finally(()=>{installEvt=null;home()})};
   window.scrollTo(0,0);
 }
 function confirmReset(){
@@ -650,6 +652,10 @@ function confetti(){
 }
 
 /* ---------- boot ---------- */
+let installEvt=null;
+const isStandalone=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installEvt=e;if(!L&&app.querySelector(".week"))home()});
+window.addEventListener("appinstalled",()=>{installEvt=null;if(!L&&app.querySelector(".week"))home()});
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!L&&app.querySelector(".week"))home()});
 home();
 if("serviceWorker" in navigator&&location.protocol==="https:"&&!/claude\.ai|claudeusercontent/.test(location.host)){
