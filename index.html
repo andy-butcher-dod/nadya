@@ -347,7 +347,7 @@ b:[
 [1953,"5 Mar 1953",5,"Stalin dies","Stalin died after a stroke at his dacha near Moscow.","His legacy: a nuclear superpower controlling eastern Europe, with strong heavy industry. But farming was weak, living standards low and millions were in the gulags."]
 ]};
 EV.b.sort((x,y)=>x[0]-y[0]);
-const APP_VERSION="1.6";
+const APP_VERSION="1.7";
 const UNIT_NAME={a:"Russia 1905–24",b:"USSR 1924–53"};
 const LEN=8, INTERVALS=[0,1,2,4,7,14], MAX_NEW=5;
 const MONTH={Jan:1,Feb:2,Mar:3,Apr:4,May:5,Jun:6,June:6,Jul:7,Aug:8,Sep:9,Oct:10,Nov:11,Dec:12,Winter:12};
@@ -439,7 +439,7 @@ function mascot(mood,cls=""){return `<svg class="mascot ${cls}" data-mood="${moo
 function moodWord(m){return{hello:"friendly",happy:"happy",celebrate:"delighted",waiting:"hopeful",worried:"worried",sad:"sad",miserable:"very sad",right:"pleased",wrong:"disappointed"}[m]||"friendly"}
 
 function homeMood(){
-  if(!S.last)return["hello","Privet! I’m Nadya. A few minutes of history every day and we’ll learn it all together. Shall we start?"];
+  if(!S.last)return["hello","Privet! I’m Nadya. A few minutes of Russian history every day and you’ll be an expert. Shall we start?"];
   const g=gap(S.last,dayStr()),st=liveStreak();
   if(g===0)return["happy",rnd([`Done for today! Your streak is ${st} day${st>1?"s":""}.`,"Great work today. See you tomorrow!",`${st}-day streak! Lenin would be impressed. Stalin would be suspicious.`])];
   if(g===1){if(new Date().getHours()>=18)return["worried",`Your ${st}-day streak ends at midnight! Quick lesson?`];return["waiting",`Ready for today’s lesson? Keep your ${st}-day streak going!`]}
