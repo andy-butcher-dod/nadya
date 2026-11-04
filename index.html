@@ -122,6 +122,7 @@ button:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
 .qtype{font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:var(--blue);font-weight:900;margin-top:14px}
 .qtitle{font-size:23px;font-weight:900;line-height:1.2;margin:6px 0 12px;text-wrap:balance}
 .clue{background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:14px 16px;font-size:17px;line-height:1.5;font-weight:600}
+.clue .when{display:block;width:fit-content;background:var(--gold);color:#3A2A08;font-weight:900;font-size:14px;border-radius:99px;padding:2px 10px;margin-bottom:8px;font-variant-numeric:tabular-nums}
 .clue .tag{display:block;font-size:12.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:900;margin-bottom:4px}
 .opts{display:grid;gap:10px;margin-top:16px}
 .opts.years{grid-template-columns:1fr 1fr}
@@ -538,8 +539,8 @@ function nextQ(){
 function header(){return `<div class="lhead"><button class="iconbtn" id="quit" aria-label="Quit lesson">${CLOSE}</button><div class="lbar" role="progressbar" aria-valuemin="0" aria-valuemax="${L.total}" aria-valuenow="${L.done}"><i style="width:${Math.max(4,L.done/L.total*100)}%"></i></div></div>`}
 function renderQ(){
   const q=L.q,e=q.e;let body="";
-  if(q.t==="what")body=`<div class="qtype">Which event?</div><div class="qtitle">Which event does this describe?</div><div class="clue"><span class="tag">${UNIT_NAME[e.u]}</span>${esc(e.w)}</div>`;
-  if(q.t==="why")body=`<div class="qtype">Why it matters</div><div class="qtitle">Which event is this about?</div><div class="clue"><span class="tag">Why it mattered</span>${esc(e.s)}</div>`;
+  if(q.t==="what")body=`<div class="qtype">Which event?</div><div class="qtitle">Which event does this describe?</div><div class="clue"><span class="tag">${UNIT_NAME[e.u]}</span><span class="when">${esc(e.d)}</span>${esc(e.w)}</div>`;
+  if(q.t==="why")body=`<div class="qtype">Why it matters</div><div class="qtitle">Which event is this about?</div><div class="clue"><span class="tag">Why it mattered</span><span class="when">${esc(e.d)}</span>${esc(e.s)}</div>`;
   if(q.t==="when")body=`<div class="qtype">When?</div><div class="qtitle">In which year did this happen?</div><div class="clue"><span class="tag">${UNIT_NAME[e.u]}</span><strong>${esc(e.h)}</strong></div>`;
   if(q.t==="order")body=`<div class="qtype">Timeline</div><div class="qtitle">Put these in order, earliest first</div>
     <div class="slots">${[0,1,2].map(i=>`<div class="slot" data-i="${i}"><b>${i+1}</b><span>Tap an event below</span></div>`).join("")}</div>`;
