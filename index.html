@@ -39,7 +39,7 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{min-height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.45;font-weight:600}
-#app{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 24px}
+#app{max-width:480px;margin:0 auto;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 24px}
 button{font:inherit;color:inherit}
 button:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
 
@@ -347,6 +347,7 @@ b:[
 [1953,"5 Mar 1953",5,"Stalin dies","Stalin died after a stroke at his dacha near Moscow.","His legacy: a nuclear superpower controlling eastern Europe, with strong heavy industry. But farming was weak, living standards low and millions were in the gulags."]
 ]};
 EV.b.sort((x,y)=>x[0]-y[0]);
+const APP_VERSION="1.5";
 const UNIT_NAME={a:"Russia 1905–24",b:"USSR 1924–53"};
 const LEN=8, INTERVALS=[0,1,2,4,7,14], MAX_NEW=5;
 const MONTH={Jan:1,Feb:2,Mar:3,Apr:4,May:5,Jun:6,June:6,Jul:7,Aug:8,Sep:9,Oct:10,Nov:11,Dec:12,Winter:12};
@@ -487,7 +488,7 @@ function home(){
     ${[["a",pa],["b",pb]].map(([u,p])=>`<div class="unitrow"><div class="lbl"><span>${UNIT_NAME[u]}</span><span>${p.m} / ${p.n} learned</span></div><div class="bar"><i style="width:${Math.round(p.m/p.n*100)}%"></i></div></div>`).join("")}
     <div class="legend">An event counts as learned once you’ve got it right three times on different days.</div>
   </div>
-  <button class="reset" id="reset">Reset progress</button>`;
+  <button class="reset" id="reset">Reset progress</button><div class="sub" style="margin-top:10px;font-size:12px">Version ${APP_VERSION}</div>`;
   $("#go").onclick=()=>{SND.tap();startLesson()};
   $("#mute").onclick=()=>{S.muted=!S.muted;save();home()};
   $("#browse").onclick=()=>browse(S.unit==="b"?"b":"a");
