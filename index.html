@@ -1,0 +1,657 @@
+<title>Nadya History Practice</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#2D5BD7">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap">
+<style>
+/* Layout: one-column phone app (max 480px). Gzhel blue for actions, matryoshka red/gold for the mascot, green/orange for right/wrong */
+:root{
+  --bg:#F5F7FC; --surface:#FFFFFF; --ink:#1E2433; --muted:#687087; --line:#DCE1EB;
+  --blue:#2D5BD7; --blue-d:#1E42A3; --blue-soft:#E7EDFF;
+  --green:#36A256; --green-d:#267A40; --green-soft:#E2F5E7;
+  --orange:#E35D38; --orange-d:#B04426; --orange-soft:#FDE8E1;
+  --flame:#FF8A1E; --gold:#F4B740;
+  --doll:#D9383A; --doll-d:#A9252B; --cream:#FFF4E0; --hair:#5A3A26; --cheek:#F48C8C; --tear:#5DB7F0;
+  --font:"Nunito",ui-rounded,"SF Pro Rounded","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121521; --surface:#1C2030; --ink:#ECEEF4; --muted:#9BA2B6; --line:#2F3549;
+  --blue:#5B83F0; --blue-d:#3758BC; --blue-soft:#1F2A4A;
+  --green:#4CC173; --green-d:#2E8A4F; --green-soft:#17301F;
+  --orange:#F27D58; --orange-d:#B5532F; --orange-soft:#3A2119; --flame:#FF9A3C; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121521; --surface:#1C2030; --ink:#ECEEF4; --muted:#9BA2B6; --line:#2F3549;
+  --blue:#5B83F0; --blue-d:#3758BC; --blue-soft:#1F2A4A;
+  --green:#4CC173; --green-d:#2E8A4F; --green-soft:#17301F;
+  --orange:#F27D58; --orange-d:#B5532F; --orange-soft:#3A2119; --flame:#FF9A3C; color-scheme:dark}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.45;font-weight:600}
+#app{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 24px}
+button{font:inherit;color:inherit}
+button:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+
+/* Top bar */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:6px 4px}
+.stat{display:inline-flex;align-items:center;gap:6px;font-weight:900;font-size:18px;font-variant-numeric:tabular-nums}
+.stat svg{width:24px;height:24px}
+.stat.off{color:var(--muted)}
+.iconbtn{appearance:none;border:0;background:none;padding:6px;border-radius:10px;cursor:pointer;color:var(--muted);display:inline-flex}
+.iconbtn svg{width:24px;height:24px}
+
+/* Mascot */
+.stage{display:grid;justify-items:center;gap:6px;margin-top:6px}
+.bubble{position:relative;background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:12px 16px;font-weight:800;font-size:17px;text-align:center;max-width:320px;text-wrap:balance}
+.bubble::after{content:"";position:absolute;left:50%;bottom:-9px;width:16px;height:16px;background:var(--surface);border-right:2px solid var(--line);border-bottom:2px solid var(--line);transform:translateX(-50%) rotate(45deg)}
+.mascot{width:min(200px,52vw);height:auto;overflow:visible}
+.mascot .doll{transform-origin:100px 232px;transform-box:view-box}
+.mascot .eyes{transform-origin:100px 76px;transform-box:view-box}
+.mascot .arm{transform-origin:150px 128px;transform-box:view-box}
+.mascot [data-show]{display:none}
+.mascot[data-mood="hello"] [data-show~="hello"],
+.mascot[data-mood="happy"] [data-show~="happy"],
+.mascot[data-mood="celebrate"] [data-show~="celebrate"],
+.mascot[data-mood="waiting"] [data-show~="waiting"],
+.mascot[data-mood="worried"] [data-show~="worried"],
+.mascot[data-mood="sad"] [data-show~="sad"],
+.mascot[data-mood="miserable"] [data-show~="miserable"],
+.mascot[data-mood="right"] [data-show~="right"],
+.mascot[data-mood="wrong"] [data-show~="wrong"]{display:inline}
+.mascot[data-mood="miserable"]{filter:saturate(.35)}
+.mascot[data-mood="sad"]{filter:saturate(.75)}
+@media (prefers-reduced-motion:no-preference){
+  .mascot .doll{animation:bob 2.4s ease-in-out infinite}
+  .mascot[data-mood="happy"] .doll,.mascot[data-mood="hello"] .doll,.mascot[data-mood="right"] .doll{animation:rock 1.6s ease-in-out infinite}
+  .mascot[data-mood="celebrate"] .doll{animation:jump .9s ease-in-out infinite}
+  .mascot[data-mood="worried"] .doll{animation:fidget .5s ease-in-out infinite}
+  .mascot[data-mood="sad"] .doll{animation:droop 4s ease-in-out infinite}
+  .mascot[data-mood="miserable"] .doll{animation:droop 6s ease-in-out infinite}
+  .mascot[data-mood="wrong"] .doll{animation:shake .5s ease-in-out 1}
+  .mascot .eyes{animation:blink 4.5s infinite}
+  .mascot .arm{animation:wave 1s ease-in-out infinite}
+  .mascot .tear{animation:tear 2.2s ease-in infinite}
+  .mascot .tear.t2{animation-delay:1.1s}
+}
+@keyframes bob{50%{transform:translateY(-6px)}}
+@keyframes rock{25%{transform:rotate(-5deg)}75%{transform:rotate(5deg)}}
+@keyframes jump{0%,100%{transform:translateY(0) scale(1,1)}20%{transform:translateY(0) scale(1.06,.92)}50%{transform:translateY(-22px) scale(.96,1.05)}80%{transform:translateY(0) scale(1.04,.95)}}
+@keyframes fidget{50%{transform:translateX(2px) rotate(1deg)}}
+@keyframes droop{0%,100%{transform:rotate(-4deg) translateY(3px)}50%{transform:rotate(-2deg) translateY(6px)}}
+@keyframes shake{20%{transform:rotate(-6deg)}40%{transform:rotate(6deg)}60%{transform:rotate(-4deg)}80%{transform:rotate(3deg)}}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+@keyframes wave{50%{transform:rotate(-28deg)}}
+@keyframes tear{0%{transform:translateY(0);opacity:0}15%{opacity:1}100%{transform:translateY(34px);opacity:0}}
+
+/* Home */
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:12px 10px;margin-top:16px}
+.day{display:grid;justify-items:center;gap:4px;font-size:12.5px;color:var(--muted);font-weight:800}
+.dot{width:30px;height:30px;border-radius:50%;background:var(--line);display:grid;place-items:center}
+.dot.done{background:var(--flame)}
+.dot.done svg{width:16px;height:16px}
+.dot.today{box-shadow:0 0 0 3px var(--blue-soft),0 0 0 5px var(--blue)}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:16px}
+.seg button{appearance:none;border:2px solid var(--line);background:var(--surface);border-radius:14px;padding:10px 6px;font-weight:800;font-size:14.5px;cursor:pointer;box-shadow:0 3px 0 var(--line);line-height:1.2}
+.seg button small{display:block;font-weight:700;font-size:12px;color:var(--muted)}
+.seg button[aria-pressed="true"]{border-color:var(--blue);background:var(--blue-soft);box-shadow:0 3px 0 var(--blue)}
+.btn{appearance:none;border:0;width:100%;background:var(--blue);color:#fff;border-radius:16px;padding:15px 18px;font-weight:900;font-size:17px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;box-shadow:0 5px 0 var(--blue-d);transition:transform .05s}
+.btn:active{transform:translateY(5px);box-shadow:none}
+.btn:disabled,.btn.green:disabled{background:var(--line);color:var(--muted);box-shadow:0 5px 0 var(--line);cursor:default}
+.btn.green{background:var(--green);box-shadow:0 5px 0 var(--green-d)}
+.btn.orange{background:var(--orange);box-shadow:0 5px 0 var(--orange-d)}
+.btn.ghost{background:transparent;color:var(--blue);box-shadow:none;border:2px solid var(--line)}
+.cta{margin-top:18px;display:grid;gap:10px}
+.sub{font-size:14px;color:var(--muted);text-align:center}
+.progress{margin-top:22px;display:grid;gap:12px}
+.progress h2{font-size:15px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0;font-weight:900}
+.unitrow{display:grid;gap:6px;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:12px 14px}
+.unitrow .lbl{display:flex;justify-content:space-between;gap:8px;font-weight:800;font-size:15px}
+.unitrow .lbl span:last-child{color:var(--muted);font-variant-numeric:tabular-nums}
+.bar{height:12px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--gold);border-radius:99px;transition:width .4s}
+.legend{font-size:13px;color:var(--muted)}
+
+/* Lesson */
+.lhead{display:flex;align-items:center;gap:12px;padding-block:8px}
+.lbar{flex:1;height:16px;border-radius:99px;background:var(--line);overflow:hidden}
+.lbar i{display:block;height:100%;background:var(--green);border-radius:99px;transition:width .35s;box-shadow:inset 0 4px 0 rgba(255,255,255,.25)}
+.qtype{font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:var(--blue);font-weight:900;margin-top:14px}
+.qtitle{font-size:23px;font-weight:900;line-height:1.2;margin:6px 0 12px;text-wrap:balance}
+.clue{background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:14px 16px;font-size:17px;line-height:1.5;font-weight:600}
+.clue .tag{display:block;font-size:12.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:900;margin-bottom:4px}
+.opts{display:grid;gap:10px;margin-top:16px}
+.opts.years{grid-template-columns:1fr 1fr}
+.opt{appearance:none;text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:13px 15px;font-weight:800;font-size:16.5px;cursor:pointer;box-shadow:0 3px 0 var(--line);line-height:1.3}
+.years .opt{text-align:center;font-size:22px;font-variant-numeric:tabular-nums}
+.opt[aria-pressed="true"]{border-color:var(--blue);background:var(--blue-soft);box-shadow:0 3px 0 var(--blue)}
+.opt.right{border-color:var(--green);background:var(--green-soft);box-shadow:0 3px 0 var(--green)}
+.opt.wrong{border-color:var(--orange);background:var(--orange-soft);box-shadow:0 3px 0 var(--orange)}
+.opt:disabled{cursor:default}
+.slots{display:grid;gap:8px;margin-top:14px}
+.slot{min-height:54px;border:2px dashed var(--line);border-radius:14px;display:flex;align-items:center;gap:10px;padding:8px 12px;color:var(--muted);font-weight:800}
+.slot b{font-size:14px;width:24px;height:24px;border-radius:50%;background:var(--line);color:var(--ink);display:grid;place-items:center;flex:none}
+.slot.filled{border-style:solid;color:var(--ink);background:var(--surface);cursor:pointer}
+.slot.filled b{background:var(--blue);color:#fff}
+.slot.right{border-color:var(--green);background:var(--green-soft)}
+.slot.wrong{border-color:var(--orange);background:var(--orange-soft)}
+.spacer{flex:1;min-height:20px}
+.foot{position:sticky;bottom:0;padding-block:14px calc(14px + env(safe-area-inset-bottom,0px));background:var(--bg)}
+
+/* Feedback sheet */
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:20;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px calc(18px + env(safe-area-inset-bottom,0px))}
+.sheet.ok{background:var(--green-soft)}
+.sheet.no{background:var(--orange-soft)}
+.sheet .in{max-width:448px;margin:0 auto;display:grid;gap:10px}
+.sheet .hd{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:900}
+.sheet.ok .hd{color:var(--green)}
+.sheet.no .hd{color:var(--orange)}
+.sheet .hd .mascot{width:56px}
+.fact{font-size:15.5px;line-height:1.45;font-weight:600}
+.fact strong{font-weight:900}
+.fact .d{color:var(--muted);font-weight:800}
+@media (prefers-reduced-motion:no-preference){.sheet{animation:up .22s ease-out}}
+@keyframes up{from{transform:translateY(100%)}}
+
+/* Complete */
+.done-wrap{flex:1;display:grid;align-content:center;justify-items:center;gap:14px;text-align:center}
+.done-wrap h1{font-size:30px;font-weight:900;margin:0;color:var(--gold);text-wrap:balance}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%}
+.tile{border:2px solid var(--c);border-radius:16px;overflow:hidden;background:var(--surface)}
+.tile .t{background:var(--c);color:#fff;font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;padding:4px}
+.tile .v{font-size:24px;font-weight:900;padding:8px 4px;font-variant-numeric:tabular-nums}
+
+/* Browse */
+.blist{display:grid;gap:8px;margin-top:12px}
+.bitem{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:10px 14px}
+.bitem summary{cursor:pointer;list-style:none;display:grid;gap:2px}
+.bitem summary::-webkit-details-marker{display:none}
+.bitem .d{font-size:13px;color:var(--orange);font-weight:900;letter-spacing:.02em}
+.bitem .h{font-weight:800}
+.bitem p{margin:8px 0 0;font-size:15.5px;font-weight:600}
+.bitem p.w{color:var(--muted)}
+.mini{display:inline-block;font-size:11.5px;font-weight:900;padding:1px 7px;border-radius:99px;background:var(--gold);color:#3A2A08;margin-left:6px;vertical-align:middle}
+h1.page{font-size:24px;font-weight:900;margin:8px 0 0}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:30;width:100%;height:100%}
+.reset{appearance:none;border:0;background:none;color:var(--muted);font-size:13px;text-decoration:underline;cursor:pointer;margin-top:28px;justify-self:center}
+</style>
+
+<div id="app"></div>
+<canvas id="fx" hidden></canvas>
+
+<script>
+const TOPICS={
+ a:["Tsarist rule in Russia, 1905–14","Impact of war & the February Revolution, 1914–17","Provisional Government & the Bolshevik Revolution","Bolshevik consolidation of power & the Civil War","War Communism & the NEP"],
+ b:["The leadership struggle, 1924–29","Five-Year Plans & collectivisation","Purges, show trials, the cult of Stalin & the revision of history","Life in the Soviet Union, 1924–41","The Second World War & after, 1941–53"]
+};
+// [year, date, key topic, title, what happened, why it matters]
+const EV={a:[
+[1903,"1903",1,"Social Democrats split: Bolsheviks and Mensheviks","At the party congress, Lenin’s Bolsheviks wanted a small, disciplined party of full-time revolutionaries. Martov’s Mensheviks wanted a broad party open to all workers.","Background to the growth of opposition groups. Other groups: the Socialist Revolutionaries (SRs), who appealed to peasants, and the liberals, who became the Kadets and Octobrists in 1905."],
+[1904,"Feb 1904 – Sep 1905",1,"Russo-Japanese War","Russia was beaten by Japan. Port Arthur fell and the Baltic Fleet was destroyed at Tsushima (May 1905).","A humiliating defeat that damaged the Tsar’s prestige and caused shortages and rising prices: a key reason for discontent in 1905."],
+[1905,"9 Jan 1905",1,"Bloody Sunday","Father Gapon led a peaceful march of workers to the Winter Palace in St Petersburg with a petition to the Tsar. Troops opened fire, killing around 200 people (estimates vary).","Destroyed the image of the Tsar as the ‘Little Father’ who cared for his people. Strikes and protests spread across Russia."],
+[1905,"June 1905",1,"Potemkin Mutiny","Sailors on the battleship Potemkin in the Black Sea mutinied over rotten meat and sailed to Odessa.","Showed that even the armed forces could turn against the Tsar. But most of the army stayed loyal in 1905."],
+[1905,"Oct 1905",1,"General strike and the St Petersburg Soviet","A general strike shut down railways, factories and cities. Workers set up the St Petersburg Soviet (council); Trotsky became one of its leaders.","The first soviet. It became the model for the Petrograd Soviet in 1917."],
+[1905,"17 Oct 1905",1,"The October Manifesto","Advised by Sergei Witte, Nicholas promised civil rights (free speech, freedom of assembly) and an elected parliament called the Duma.","It split the opposition. Liberals were mostly satisfied, so the Tsar could turn on the workers and peasants. A main reason Nicholas survived 1905."],
+[1905,"Dec 1905",1,"The 1905 Revolution crushed","The leaders of the St Petersburg Soviet were arrested and an armed rising in Moscow was crushed. Punitive expeditions restored order in the countryside.","The army stayed loyal, and troops returning from the Far East helped. Together with the October Manifesto, this explains why Nicholas survived."],
+[1906,"Apr 1906",1,"The Fundamental Laws","Days before the First Duma met, Nicholas declared that ‘supreme autocratic power’ belonged to the Tsar. He could dissolve the Duma and make laws when it was not sitting (Article 87).","Showed that Nicholas never meant to share real power. It undermined the promises of the October Manifesto."],
+[1906,"Apr – Jul 1906",1,"The First Duma","Dominated by the liberal Kadets, it demanded land reform and more power. Nicholas dissolved it after about 72 days.","Key evidence for Nicholas’s attitude to the dumas: he closed any duma that challenged him."],
+[1906,"Jul 1906",1,"Stolypin becomes Prime Minister","Pyotr Stolypin combined harsh repression with reform: order first, then change.","His policies are a named part of the specification: repression and land reform."],
+[1906,"1906 – 1909",1,"Stolypin’s repression","Field courts martial tried suspected revolutionaries quickly and hanged thousands. The noose became known as ‘Stolypin’s necktie’. Newspapers were censored and trade unions shut down.","Restored order and weakened the revolutionaries, but increased hatred of the regime."],
+[1906,"Nov 1906",1,"Stolypin’s land reform","Peasants could leave the mir (village commune), buy land with loans from the Peasants’ Land Bank and join their strips into one farm. Some were encouraged to resettle in Siberia.","Aimed to create a class of prosperous, loyal peasants (kulaks). Grain output rose, but by 1914 most peasants still farmed in the old way."],
+[1907,"Feb – Jun 1907",1,"The Second Duma","Even more radical than the first, with many socialists. Dissolved after about three months.","More evidence that Nicholas would not work with a critical duma."],
+[1907,"Jun 1907",1,"Voting rules changed","Nicholas changed the electoral law so that landowners and the wealthy dominated. Workers, peasants and national minorities lost most of their seats.","Produced a much more loyal Third Duma."],
+[1907,"1907 – 1912",1,"The Third Duma","Conservative and cooperative; it served its full five-year term and passed some reforms, such as workers’ insurance and more primary schools.","Showed that a duma could survive if it did not challenge the Tsar."],
+[1911,"Sep 1911",1,"Stolypin assassinated","Shot at the Kiev opera house, in front of the Tsar, by Dmitri Bogrov, a revolutionary who was also a police informer.","Nicholas had already lost confidence in him. Reform lost its driving force."],
+[1912,"Apr 1912",1,"Lena Goldfields Massacre","Troops fired on striking gold miners in Siberia who were protesting about pay and conditions. Hundreds were killed or wounded.","Set off a wave of strikes across Russia that kept growing until 1914. Showed that the regime still relied on force."],
+[1912,"1912 – 1917",1,"The Fourth Duma","Conservative, but it became more and more critical of the government once war began.","Its members later formed the Progressive Bloc (1915) and the Provisional Committee (1917)."],
+
+[1914,"Aug 1914",2,"Russia enters the First World War","Russia went to war against Germany and Austria-Hungary. There was a wave of patriotism, and St Petersburg was renamed Petrograd to sound less German.","The war’s economic, social and political effects are the core of this key topic."],
+[1914,"Aug 1914",2,"Battle of Tannenberg","A Russian army was surrounded and destroyed in East Prussia. Over 90,000 Russian soldiers were captured.","Exposed poor leadership, communications and supplies in the Russian army."],
+[1915,"1915",2,"The Great Retreat and shortages","Russia lost Poland and large areas in the west. Soldiers lacked rifles, shells and boots. At home, the railways could not move enough food and fuel to the cities, and prices rose.","Military effects: huge losses and falling morale. Economic and social effects: shortages, inflation and hunger in the cities."],
+[1915,"Aug 1915",2,"The Progressive Bloc","A majority of Duma deputies joined together to demand a ‘government of public confidence’. Nicholas refused and suspended the Duma.","A political effect of the war: even moderate supporters of the monarchy turned against the Tsar’s government."],
+[1915,"Sep 1915",2,"Nicholas takes command of the army","The Tsar went to army headquarters at Mogilev to lead the war personally.","He was now blamed personally for every defeat, and he left the German-born Tsarina Alexandra in charge in Petrograd."],
+[1915,"1915 – 1916",2,"Rasputin’s influence","Alexandra relied on Rasputin, who seemed able to help her son Alexei’s haemophilia. Ministers were appointed and sacked at a rapid rate (‘ministerial leapfrog’).","Rumours about Rasputin and the ‘German woman’ badly damaged the royal family’s reputation."],
+[1916,"Jun – Sep 1916",2,"Brusilov Offensive","Russia’s most successful attack of the war, but it cost around a million casualties.","Afterwards army morale collapsed and desertions rose."],
+[1916,"Dec 1916",2,"Rasputin murdered","Killed by nobles led by Prince Yusupov, who hoped to save the monarchy.","Too late to repair the damage. Showed that even the aristocracy had lost faith in the Tsar."],
+[1917,"Winter 1916–17",2,"Food and fuel crisis in Petrograd","A very harsh winter. Bread queues grew, fuel ran short and prices rose much faster than wages.","The immediate economic cause of the February Revolution."],
+[1917,"18 – 23 Feb 1917",2,"Strikes and International Women’s Day","Workers at the giant Putilov works went on strike and were locked out. On 23 February, women marched for bread and were joined by striking workers.","The start of the February Revolution in Petrograd."],
+[1917,"25 Feb 1917",2,"General strike in Petrograd","The city came to a standstill. Nicholas, at the front, ordered the protests to be put down by force.","His order led directly to the army mutiny."],
+[1917,"26 – 27 Feb 1917",2,"The army mutiny","On 26 February troops fired on crowds. On 27 February whole regiments, starting with the Volinsky Regiment, mutinied and joined the protesters.","The decisive moment: the Tsar had lost control of the army in the capital."],
+[1917,"27 Feb 1917",2,"Petrograd Soviet and the Duma Committee set up","Workers and soldiers formed the Petrograd Soviet. Duma members formed a Provisional Committee to take charge.","The beginning of ‘Dual Power’."],
+[1917,"1 Mar 1917",3,"Order No. 1","The Petrograd Soviet told soldiers to obey the Provisional Government only if the Soviet agreed with its orders.","Gave the Soviet control of the army: a major weakness of the Provisional Government from the start."],
+[1917,"2 Mar 1917",2,"Nicholas II abdicates","Army generals and Duma leaders told Nicholas he had to go. He abdicated for himself and his son; his brother Michael refused the throne next day.","Ended over 300 years of Romanov rule."],
+[1917,"2 Mar 1917",2,"Provisional Government formed","Led by Prince Lvov, made up mainly of liberal Duma members, with Kerensky as the only socialist. It was meant to govern until a Constituent Assembly was elected.","It was not elected, so it lacked authority and had to share power with the Petrograd Soviet."],
+
+[1917,"3 – 4 Apr 1917",3,"Lenin returns: the April Theses","The Germans let Lenin travel from Switzerland in a ‘sealed train’. In the April Theses he demanded no support for the Provisional Government and ‘All power to the Soviets’, with the slogan ‘Peace, Bread and Land’.","Gave the Bolsheviks clear, popular aims that set them apart from every other party."],
+[1917,"Jun 1917",3,"The June Offensive fails","Kerensky, now War Minister, launched an offensive against Austria-Hungary. It collapsed with heavy losses and mass desertion.","A major mistake: continuing the war made the Provisional Government deeply unpopular."],
+[1917,"3 – 4 Jul 1917",3,"The July Days","Soldiers, sailors and workers rose up in Petrograd demanding Soviet power. The Bolsheviks were half-involved. The rising was crushed and the government claimed Lenin was a German agent.","A setback: Lenin fled to Finland, Trotsky and other leaders were arrested."],
+[1917,"Jul 1917",3,"Kerensky becomes Prime Minister","Alexander Kerensky replaced Prince Lvov as head of the Provisional Government.","He kept Russia in the war and delayed land reform and elections."],
+[1917,"Aug 1917",3,"The Kornilov Revolt","The army commander, General Kornilov, sent troops towards Petrograd. Kerensky panicked, released Bolshevik prisoners and gave weapons to the Red Guards. Railway workers stopped the trains and Kornilov’s troops deserted.","A turning point: the Bolsheviks looked like the defenders of the revolution, they were now armed, and Kerensky lost the army’s trust."],
+[1917,"Sep 1917",3,"Bolsheviks win the soviets","The Bolsheviks won majorities in the Petrograd and Moscow soviets. Trotsky became chairman of the Petrograd Soviet.","Gave them a power base and a claim to act in the soviets’ name."],
+[1917,"10 Oct 1917",3,"The decision to seize power","Lenin returned to Petrograd in disguise and persuaded the Bolshevik Central Committee to vote 10–2 for an armed rising. Kamenev and Zinoviev voted against.","Shows Lenin’s role: he pushed the party into acting."],
+[1917,"Oct 1917",3,"Military Revolutionary Committee","Trotsky ran the Petrograd Soviet’s Military Revolutionary Committee, which won over the city’s garrison and planned the takeover.","Shows Trotsky’s role in the success of the revolution."],
+[1917,"24 – 25 Oct 1917",3,"The Bolshevik takeover","Red Guards and soldiers seized bridges, railway stations, the telephone exchange and government buildings. The Winter Palace was taken on the night of 25–26 October. Kerensky fled.","A well-planned operation with very little bloodshed: few defended the Provisional Government."],
+[1917,"26 Oct 1917",3,"Sovnarkom and the first decrees","The Congress of Soviets approved a new government, Sovnarkom, led by Lenin. It passed the Decree on Peace and the Decree on Land, which gave land to the peasants.","Delivered on ‘Peace, Bread and Land’ and won popular support."],
+
+[1917,"Oct – Dec 1917",4,"The 1917 Decrees","Decrees banned opposition newspapers, gave workers control of factories, set an 8-hour working day, nationalised the banks and promised rights to the national minorities.","Won support from workers and peasants while giving the Bolsheviks more control."],
+[1917,"Nov 1917",4,"Constituent Assembly elections","Russia’s first free national election. The SRs won the most seats; the Bolsheviks won only about a quarter.","Showed that the Bolsheviks did not have majority support across the country."],
+[1917,"Dec 1917",4,"The Cheka is set up","A secret police force led by Felix Dzerzhinsky, set up to fight ‘counter-revolution’.","Terror became a key tool for keeping the Bolsheviks in power."],
+[1918,"5 – 6 Jan 1918",4,"Constituent Assembly closed","The Assembly met once. The next day Red Guards stopped it meeting again.","Ended hopes of democracy in Russia and began one-party rule."],
+[1918,"Feb 1918",4,"Russia switches calendar","Russia adopted the Western calendar: 31 January was followed by 14 February.","From now on, Russian dates match Western dates."],
+[1918,"3 Mar 1918",4,"Treaty of Brest-Litovsk","Peace with Germany. Russia gave up Poland, the Baltic states, Finland and Ukraine: around a quarter of its population and farmland, and roughly three-quarters of its coal and iron.","Lenin kept his promise of peace, but the harsh terms outraged opponents, including the Left SRs. A cause of the Civil War."],
+[1918,"Mar 1918",4,"Capital moves to Moscow; the Red Army","The Bolsheviks renamed themselves the Communist Party. Trotsky became Commissar for War and built the Red Army using conscription and ex-tsarist officers watched by political commissars.","Trotsky’s leadership is a key reason for Bolshevik victory in the Civil War."],
+[1918,"May 1918",4,"Czech Legion revolt: Civil War spreads","About 40,000 Czechoslovak soldiers revolted along the Trans-Siberian Railway. Anti-Bolshevik governments sprang up behind them.","The two sides: the Reds against the Whites (tsarists, liberals, SRs), helped by foreign troops from Britain, France, the USA and Japan."],
+[1918,"Jun 1918",5,"War Communism introduced","Large industry was nationalised, grain was taken from peasants by force, private trade was banned and food was rationed.","Kept the Red Army fed and supplied, but caused famine, falling production and hatred among peasants."],
+[1918,"16 – 17 Jul 1918",4,"The Tsar and his family executed","Nicholas, Alexandra and their five children were shot in Ekaterinburg as White forces approached.","The Whites lost a possible figurehead."],
+[1918,"Aug – Sep 1918",4,"The Red Terror","After Fanya Kaplan shot and wounded Lenin on 30 August, the Cheka launched the Red Terror. Thousands of hostages and ‘class enemies’ were executed.","Terror crushed opposition behind Red lines during the war."],
+[1918,"Nov 1918",4,"Kolchak becomes ‘Supreme Ruler’","Admiral Kolchak took control of the White government in Siberia.","The main White leaders: Kolchak (east), Denikin (south) and Yudenich (north-west)."],
+[1919,"1919",4,"The White offensives fail","Kolchak advanced from the east in spring. In October, Denikin got within about 250 miles of Moscow and Yudenich reached the outskirts of Petrograd. All were driven back.","Reasons for Red victory: they held the central area with its railways, factories and population; they had one command (Trotsky’s armoured train); the Whites were divided, far apart and unpopular with peasants."],
+[1920,"Feb 1920",4,"Kolchak executed","Kolchak was handed over to the Bolsheviks and shot in Irkutsk.","The White threat in the east was over."],
+[1920,"Apr 1920 – Mar 1921",4,"War with Poland","Poland invaded Ukraine. The Red Army pushed back to Warsaw but was defeated there. The Treaty of Riga (1921) ended the war.","Showed the limits of spreading revolution by force."],
+[1920,"Nov 1920",4,"Last Whites leave the Crimea","General Wrangel’s army was evacuated from the Crimea.","The end of the main fighting in the Civil War."],
+[1921,"1921 – 1922",5,"Famine","Drought and grain requisitioning caused a terrible famine, mainly in the Volga region. Around 5 million people died.","One of the effects of War Communism."],
+[1921,"Feb – Mar 1921",5,"Kronstadt Naval Mutiny","Sailors at the Kronstadt naval base, once heroes of the revolution, demanded free elections to the soviets, free speech and an end to grain requisitioning. Trotsky’s Red Army crushed them.","Lenin called it ‘the flash that lit up reality’. It persuaded him that War Communism had to end."],
+[1921,"Mar 1921",5,"NEP announced at the 10th Party Congress","Requisitioning was replaced by a tax in kind. Peasants could sell their surplus, and small businesses and private trade were allowed. The state kept the ‘commanding heights’: heavy industry, banks and foreign trade. Factions inside the party were banned.","Production recovered. But many communists saw NEP as a step back from socialism and resented the new ‘Nepmen’ traders."],
+[1922,"Apr 1922",5,"Stalin becomes General Secretary","Stalin was put in charge of the party’s organisation and appointments.","Seen as a dull job, it gave him enormous power over party membership."],
+[1922,"May 1922",5,"Lenin’s first stroke","Lenin suffered the first of a series of strokes.","He was increasingly unable to rule, and his colleagues began competing to succeed him."],
+[1922,"30 Dec 1922",5,"The USSR is created","Russia, Ukraine, Belorussia and the Transcaucasian republic formed the Union of Soviet Socialist Republics.","One of Lenin’s achievements: a new state run by a single party."],
+[1923,"Dec 1922 – Jan 1923",5,"Lenin’s Testament","Lenin criticised all the leading Bolsheviks. In a postscript he called Stalin ‘too rude’ and said he should be removed as General Secretary.","If published, it could have ended Stalin’s career (see 1924)."],
+[1923,"1923",5,"The ‘Scissors Crisis’","Prices of factory goods rose while food prices fell, so peasants held back grain from the market.","Part of the opposition to NEP within the party."],
+[1924,"21 Jan 1924",5,"Lenin dies","Lenin died after his fourth stroke.","His achievements: led the Bolshevik takeover, won the Civil War, created a one-party state and the USSR, and brought in NEP to save the economy."]
+],
+b:[
+[1924,"21 Jan 1924",1,"Lenin dies; Stalin is chief mourner","Stalin gave the main funeral speech, presenting himself as Lenin’s loyal follower. Trotsky, recovering in the south, missed the funeral; he said Stalin gave him the wrong date.","Rivals for the leadership: Stalin, Trotsky, Kamenev, Zinoviev and Bukharin."],
+[1924,"1924",1,"The Lenin Enrolment","The party recruited hundreds of thousands of new members, mostly young, less educated workers.","As General Secretary, Stalin controlled membership and appointments. Many new members owed their place to him."],
+[1924,"May 1924",1,"Lenin’s Testament kept secret","The Testament was read to the Central Committee. Zinoviev and Kamenev persuaded it not to publish the document.","Saved Stalin’s career. Zinoviev and Kamenev saw Trotsky as the bigger threat."],
+[1924,"Dec 1924",1,"‘Socialism in One Country’","Stalin argued the USSR could build socialism on its own, against Trotsky’s idea of ‘Permanent Revolution’ spreading worldwide.","Patriotic and popular with party members who were tired of war and upheaval."],
+[1925,"Jan 1925",1,"Trotsky loses control of the army","Trotsky was removed as Commissar for War.","Took away his strongest power base."],
+[1925,"Dec 1925",1,"The 14th Party Congress","Zinoviev and Kamenev attacked Stalin and NEP. Stalin, now allied with Bukharin and the Right, defeated them easily.","Stalin played his rivals off against each other."],
+[1926,"1926",1,"The United Opposition","Trotsky, Zinoviev and Kamenev joined forces against Stalin. During 1926 they were all removed from the Politburo.","Their earlier attacks on each other made the alliance look unprincipled."],
+[1927,"Nov – Dec 1927",1,"Opposition expelled from the party","Trotsky and Zinoviev were expelled in November. The 15th Party Congress expelled the United Opposition in December.","The Left was defeated."],
+[1928,"Jan 1928",1,"Trotsky exiled to Kazakhstan","Trotsky was sent to Alma-Ata, far from Moscow.","Removed from political life inside the USSR."],
+[1928,"1928",1,"Grain crisis: Stalin turns on the Right","Grain deliveries to the state fell. Stalin used forced requisitioning in the Urals and Siberia. Bukharin, Rykov and Tomsky defended NEP.","Stalin now attacked the Right as he moved towards rapid industrialisation."],
+[1928,"Oct 1928",2,"First Five-Year Plan begins","Gosplan, the state planning agency, set targets for heavy industry: coal, iron, steel, oil and electricity. New industrial cities such as Magnitogorsk were built. The plan was declared complete in four years, in December 1932.","Huge growth: coal output roughly doubled, from about 35 to 64 million tonnes. But quality was often poor and consumer goods were neglected."],
+[1929,"Feb 1929",1,"Trotsky deported","Trotsky was expelled from the USSR to Turkey.","Stalin’s main rival was gone for good."],
+[1929,"Nov 1929",1,"Bukharin removed from the Politburo","The leader of the Right was defeated. Stalin was now undisputed leader.","Reasons for his success: control of appointments as General Secretary, rivals underestimating him, playing them off against each other, and Trotsky’s arrogance and unpopularity."],
+[1929,"Dec 1929",3,"Stalin’s 50th birthday","His birthday was marked with huge public celebrations, portraits and tributes.","The start of the cult of personality."],
+[1929,"Dec 1929",2,"Forced collectivisation; ‘liquidate the kulaks’","Peasants were forced into collective farms (kolkhozy). Motor Tractor Stations supplied machinery and kept an eye on the farms. Stalin called for the ‘liquidation of the kulaks as a class’: millions were deported, sent to labour camps or shot.","Peasants resisted by slaughtering their animals; livestock numbers roughly halved by 1933."],
+[1930,"Jan 1930",4,"Zhenotdel closed","The party’s women’s department was shut down. Stalin claimed that equality for women had been achieved.","Women’s political position: few women held real power."],
+[1930,"Mar 1930",2,"‘Dizzy with Success’","Stalin blamed local officials for going too fast. Peasants were allowed to leave, and the share of households in collective farms fell from over half to about a quarter in months.","Only a pause: pressure was soon restored."],
+[1931,"1931",4,"Return to traditional schooling","Stalin’s education reforms brought back strict discipline, exams, set textbooks and teachers’ authority.","Education was used to train skilled workers and loyal citizens. Literacy rose sharply in the 1930s."],
+[1931,"1931 – 1933",2,"White Sea Canal","A canal built almost entirely by gulag prisoners using hand tools. Thousands died during construction.","Shows the use of forced labour in industrialisation. It was too shallow for most ships."],
+[1932,"1932 – 1933",2,"The Great Famine","Grain was taken from the countryside even as people starved, especially in Ukraine and Kazakhstan. Historians estimate 5–8 million deaths. The government denied there was a famine and kept exporting grain.","The greatest failure of collectivisation. In Ukraine it is known as the Holodomor."],
+[1932,"Aug 1932",2,"The ‘Law of Spikelets’","Stealing collective farm property, even a few ears of grain, could be punished by death or ten years in a labour camp.","Shows how brutally the regime enforced collectivisation."],
+[1932,"Dec 1932",4,"Internal passports","Townspeople needed internal passports, and peasants could not move to the towns without permission.","Tied peasants to the collective farms."],
+[1933,"1933 – 1937",2,"Second Five-Year Plan","Continued heavy industry, plus transport, mining and some consumer goods. The Moscow Metro opened in 1935.","Often seen as the most successful plan."],
+[1934,"Jan – Feb 1934",3,"The ‘Congress of Victors’","At the 17th Party Congress, it was rumoured that Kirov had received fewer votes against him than Stalin. Over half of the delegates were later arrested.","Suggests Stalin feared rivals inside the party."],
+[1934,"Jul 1934",3,"The NKVD","The secret police (OGPU) became part of the NKVD, which also ran the gulags.","The NKVD carried out the purges."],
+[1934,"Aug 1934",3,"Socialist realism made official","The first Congress of Soviet Writers made socialist realism the official style. Art, books and music had to be optimistic, easy to understand and celebrate workers, the party and Stalin.","Censorship: only members of official unions could publish or exhibit."],
+[1934,"1 Dec 1934",3,"Kirov murdered","Sergei Kirov, the popular Leningrad party leader, was shot by Leonid Nikolaev. Historians disagree about whether Stalin was involved.","Stalin used it as an excuse for the purges. New laws allowed quick trials and immediate executions."],
+[1935,"Jan 1935",4,"Bread rationing ends","Stalin announced: ‘Life has become better, comrades, life has become more cheerful.’","Propaganda claim. In towns housing was overcrowded and queues were common; living standards stayed low."],
+[1935,"31 Aug 1935",2,"Stakhanov’s record","Alexei Stakhanov mined 102 tonnes of coal in one shift, about 14 times his quota. Conditions were set up to help him.","Started the Stakhanovite movement, which was used to raise work targets for everyone."],
+[1936,"Jan 1936",3,"Shostakovich attacked","Pravda condemned Shostakovich’s opera Lady Macbeth of Mtsensk as ‘muddle instead of music’ after Stalin saw it.","Shows the control of culture: even famous artists had to obey."],
+[1936,"Jun 1936",4,"Family law tightened","Abortion was banned, divorce was made harder and more expensive, and mothers of large families were rewarded.","A return to traditional family values. Women faced a ‘double burden’ of paid work and housework."],
+[1936,"Aug 1936",3,"First Moscow Show Trial","Zinoviev, Kamenev and 14 others ‘confessed’ to plotting with Trotsky to kill Kirov and Stalin. All were shot.","Show trials were public trials with forced confessions, used to remove old Bolsheviks and frighten the public."],
+[1936,"Sep 1936",3,"Yezhov heads the NKVD","Nikolai Yezhov replaced Yagoda as head of the NKVD.","The worst years of terror, 1937–38, are known as the ‘Yezhovshchina’."],
+[1936,"Dec 1936",3,"The ‘Stalin Constitution’","Promised free speech, elections and equal rights for all citizens, including women.","Propaganda: the rights existed on paper but not in practice."],
+[1937,"Jan 1937",3,"Second Show Trial","Pyatakov, Radek and others were tried and most were shot.","The purges spread to industry and the economy."],
+[1937,"1937",4,"Deportation of Soviet Koreans","About 170,000 Koreans were deported from the Far East to Central Asia. Other ‘national operations’ targeted Poles, Germans and other minorities.","Persecution of ethnic minorities, who were suspected of disloyalty."],
+[1937,"Jun 1937",3,"Purge of the Red Army","Marshal Tukhachevsky and other top commanders were shot. Three of the five marshals and thousands of officers were removed.","Badly weakened the army before the Second World War."],
+[1937,"1937 – 1938",3,"The Great Terror","The NKVD was given quotas for arrests and executions in each region. About 680,000 people were executed and well over a million sent to gulags. Prisoners worked in freezing conditions on starvation rations.","Impact: fear everywhere, loss of skilled people and total obedience to Stalin."],
+[1937,"1937",2,"Collectivisation nearly complete","By 1937 over 90% of peasant households were in collective farms.","But grain production only recovered slowly, and peasants grew much of their food on small private plots."],
+[1938,"Mar 1938",3,"Third Show Trial","Bukharin, Rykov and Yagoda were tried and shot.","By now almost all of Lenin’s leading colleagues had been killed."],
+[1938,"1938",3,"The Short Course","The official History of the Communist Party (Short Course) rewrote history to exaggerate Stalin’s role and remove Trotsky. Photographs were doctored.","The Soviet version of history. It was compulsory reading."],
+[1938,"Nov 1938",3,"Yezhov replaced by Beria","Lavrenti Beria took over the NKVD and the purges were scaled back. Yezhov was shot in 1940.","Stalin let Yezhov take the blame for the ‘excesses’."],
+[1938,"1938 – 1941",2,"Third Five-Year Plan","Focused on weapons and defence industries as war came closer.","Cut short by the German invasion in June 1941."],
+[1939,"1928 – 1940",4,"Women at work","The number of women in industry rose from about 3 million to 13 million. Crèches and canteens were set up.","Changes in employment for women, but they were paid less and still did most of the housework."],
+[1939,"23 Aug 1939",5,"Nazi-Soviet Pact","Stalin and Hitler agreed not to attack each other and secretly divided Poland and eastern Europe.","Bought the USSR time to prepare for war."],
+[1939,"Nov 1939 – Mar 1940",5,"Winter War with Finland","The USSR invaded Finland and eventually won, but over 120,000 Soviet soldiers died.","Exposed how much the purges had weakened the Red Army."],
+[1940,"Jun 1940",4,"Strict labour laws","Being 20 minutes late for work became a criminal offence, and workers could not change jobs without permission.","Shows the harsh control of workers in the towns."],
+[1940,"Aug 1940",3,"Trotsky murdered","Trotsky was killed with an ice axe in Mexico by an NKVD agent, Ramón Mercader.","Stalin’s last great rival was gone."],
+[1941,"22 Jun 1941",5,"Operation Barbarossa","About 3 million Axis troops invaded the USSR. Stalin had ignored many warnings.","Reasons for early setbacks: surprise, the purged officer corps, outdated tactics and Stalin’s orders not to retreat."],
+[1941,"3 Jul 1941",5,"Stalin’s radio speech","Stalin addressed the people as ‘brothers and sisters’ and called for a scorched earth policy and a ‘Great Patriotic War’.","Rallied patriotism for the defence of the motherland."],
+[1941,"Aug – Sep 1941",4,"Volga Germans deported","The whole Volga German population was deported to Siberia and Kazakhstan, accused of possible disloyalty.","Persecution of ethnic minorities continued in wartime."],
+[1941,"Jul – Dec 1941",5,"Factories moved east","More than 1,500 large factories were taken apart and moved by rail to the Urals, Siberia and Central Asia.","A key reason the USSR survived: war production carried on out of German reach."],
+[1941,"Sep 1941",5,"Kiev falls; Siege of Leningrad begins","Over 600,000 Soviet soldiers were captured at Kiev. Leningrad was surrounded and besieged for 872 days; around a million civilians died, mostly from starvation.","The scale of the setbacks of 1941–42."],
+[1941,"Oct – Dec 1941",5,"Battle of Moscow","German troops got within about 20 miles of Moscow. Stalin stayed in the city. On 5 December Zhukov counter-attacked with fresh troops from Siberia.","The first major German defeat. Germany had failed to win quickly."],
+[1942,"1942",5,"War production overtakes Germany","In 1942 Soviet factories built about 24,000 tanks, far more than Germany. Lend-Lease supplies, especially trucks, also arrived from the USA and Britain.","A key reason the USSR drove back the invasion."],
+[1942,"28 Jul 1942",5,"Order No. 227: ‘Not one step back’","Soldiers who retreated without orders could be shot or sent to penal battalions.","Shows the harsh discipline used to stop the retreat."],
+[1942,"Aug 1942 – Feb 1943",5,"Battle of Stalingrad","German forces fought their way into the city. In November, Operation Uranus surrounded the German Sixth Army. Paulus surrendered on 2 February 1943, and about 91,000 Germans were taken prisoner.","The turning point of the war in the east. Germany was on the defensive from now on, and Stalin’s prestige soared."],
+[1943,"Jul 1943",5,"Battle of Kursk","The largest tank battle in history. Germany’s last major offensive in the east failed.","After Kursk the Red Army advanced almost without stopping."],
+[1944,"1943 – 1944",4,"The ‘punished peoples’","Chechens, Ingush, Crimean Tatars, Kalmyks and others were accused of helping the Germans and deported to Central Asia and Siberia. Many died on the journey or in exile.","Persecution of ethnic minorities."],
+[1944,"Jan 1944",5,"Siege of Leningrad lifted","The Red Army broke the siege after 872 days.","A huge symbol of Soviet endurance."],
+[1944,"Jun 1944",5,"Operation Bagration","A massive Soviet offensive destroyed the German Army Group Centre and pushed into Poland.","Opened the way to Germany."],
+[1945,"Apr – May 1945",5,"Fall of Berlin and victory","The Red Army captured Berlin. Germany surrendered, and 9 May became Victory Day in the USSR. Around 27 million Soviet citizens had died.","Stalin’s popularity was at its peak; he took the title ‘Generalissimo’."],
+[1945,"1945 – 1946",5,"Returning soldiers and POWs screened","Returning prisoners of war and forced labourers were checked by the NKVD. Many were sent to gulags as possible traitors.","Part of the post-war purges: anyone who had seen the West was suspect."],
+[1946,"1946",5,"Zhukov sidelined","Marshal Zhukov, the most famous Soviet general, was sent away to command the Odessa military district.","Stalin would not let anyone share the glory of victory."],
+[1946,"1946 – 1950",5,"Fourth Five-Year Plan","Rebuilt war-damaged industry, mines, railways and towns, using huge amounts of forced labour. Official figures claimed industry was well above pre-war levels by 1950.","Heavy industry recovered quickly, but farming, housing and consumer goods lagged behind."],
+[1946,"1946 – 1947",5,"Post-war famine","Drought and continued grain collection caused famine. Around a million or more people died.","Living standards stayed very low after the war."],
+[1946,"Aug 1946",5,"Zhdanov’s cultural purge","Andrei Zhdanov attacked writers such as Anna Akhmatova and Mikhail Zoshchenko, and any Western influence in culture.","Control of culture tightened again after the war."],
+[1949,"Aug 1949",5,"First Soviet atomic bomb","The USSR tested its first atomic bomb, years earlier than the West expected.","The USSR was now a nuclear superpower: part of its strength by 1953."],
+[1949,"1949 – 1950",5,"The Leningrad Affair","Leading Leningrad communists, including Kuznetsov and Voznesensky, were arrested and later shot.","Post-war purges reached the top of the party again."],
+[1948,"1948 – 1953",5,"Campaign against ‘rootless cosmopolitans’","An anti-Jewish campaign removed Jews from many jobs. Members of the Jewish Anti-Fascist Committee were shot in 1952.","Post-war persecution of a minority."],
+[1953,"Jan 1953",5,"The Doctors’ Plot","Kremlin doctors, mostly Jewish, were accused of plotting to murder Soviet leaders.","Many feared a new Great Terror. The case was dropped after Stalin died."],
+[1953,"5 Mar 1953",5,"Stalin dies","Stalin died after a stroke at his dacha near Moscow.","His legacy: a nuclear superpower controlling eastern Europe, with strong heavy industry. But farming was weak, living standards low and millions were in the gulags."]
+]};
+EV.b.sort((x,y)=>x[0]-y[0]);
+const UNIT_NAME={a:"Russia 1905–24",b:"USSR 1924–53"};
+const LEN=8, INTERVALS=[0,1,2,4,7,14], MAX_NEW=5;
+const MONTH={Jan:1,Feb:2,Mar:3,Apr:4,May:5,Jun:6,June:6,Jul:7,Aug:8,Sep:9,Oct:10,Nov:11,Dec:12,Winter:12};
+
+const ALL=[];
+["a","b"].forEach(u=>EV[u].forEach((e,i)=>{
+  const [y,d,k,h,w,s]=e;
+  const yrs=[...new Set(d.match(/\d{4}/g)||[])];
+  const single=yrs.length===1&&!/\d{4}\s*–\s*\d{2}(?!\d)/.test(d);
+  const mo=(d.match(/[A-Z][a-z]+/)||[""])[0];
+  ALL.push({id:u+i,u,i,y,d,k,h,w,s,single,fy:+yrs[0],key:+yrs[0]*100+(MONTH[mo]||6)});
+}));
+
+/* ---------- storage ---------- */
+const KEY="nadya-v1";
+let S=load();
+function load(){let d=null;try{d=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+  return Object.assign({streak:0,best:0,last:null,days:[],xp:0,cards:{},unit:"both",muted:false,lessons:0},d||{})}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+
+/* ---------- dates ---------- */
+const z=n=>String(n).padStart(2,"0");
+function dayStr(d=new Date()){return d.getFullYear()+"-"+z(d.getMonth()+1)+"-"+z(d.getDate())}
+function parse(s){const[y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)}
+function gap(a,b){return Math.round((Date.UTC(...ymd(b))-Date.UTC(...ymd(a)))/864e5)}
+function ymd(s){const[y,m,d]=s.split("-").map(Number);return[y,m-1,d]}
+function addDays(s,n){const t=parse(s);t.setDate(t.getDate()+n);return dayStr(t)}
+function liveStreak(){if(!S.last)return 0;return gap(S.last,dayStr())<=1?S.streak:0}
+
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s);
+const app=$("#app");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+const pool=()=>ALL.filter(e=>S.unit==="both"||e.u===S.unit);
+
+/* ---------- sound ---------- */
+let AC;
+function tone(seq){if(S.muted)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();let t=AC.currentTime+.01;
+  seq.forEach(([f,d,type])=>{const o=AC.createOscillator(),g=AC.createGain();o.type=type||"sine";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.18,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+  o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.03);t+=d*.75})}catch(e){}}
+const SND={right:()=>tone([[660,.12],[990,.22]]),wrong:()=>tone([[220,.18,"triangle"],[180,.25,"triangle"]]),done:()=>tone([[523,.14],[659,.14],[784,.14],[1047,.35]]),tap:()=>tone([[520,.05]])};
+
+/* ---------- mascot ---------- */
+function mascot(mood,cls=""){return `<svg class="mascot ${cls}" data-mood="${mood}" viewBox="0 0 200 250" role="img" aria-label="Nadya the matryoshka doll, looking ${moodWord(mood)}">
+ <ellipse cx="100" cy="240" rx="58" ry="7" fill="currentColor" opacity=".12"/>
+ <g class="doll">
+  <g class="arm" data-show="hello celebrate"><ellipse cx="160" cy="112" rx="11" ry="20" fill="var(--doll-d)" transform="rotate(30 160 112)"/><circle cx="168" cy="96" r="8" fill="var(--cream)"/></g>
+  <path d="M100 14C60 14 46 46 52 82C30 106 26 152 34 192C40 226 70 236 100 236C130 236 160 226 166 192C174 152 170 106 148 82C154 46 140 14 100 14Z" fill="var(--doll)"/>
+  <path d="M52 82C30 106 26 152 34 192" fill="none" stroke="var(--doll-d)" stroke-width="4" opacity=".5"/>
+  <ellipse cx="100" cy="176" rx="46" ry="44" fill="var(--cream)"/>
+  <g transform="translate(100 176)">
+   <circle r="13" fill="var(--doll)"/><circle r="6" fill="var(--gold)"/>
+   <g fill="var(--blue)"><ellipse cx="-24" cy="-6" rx="9" ry="5" transform="rotate(-30 -24 -6)"/><ellipse cx="24" cy="-6" rx="9" ry="5" transform="rotate(30 24 -6)"/><ellipse cx="-18" cy="20" rx="8" ry="4.5" transform="rotate(30 -18 20)"/><ellipse cx="18" cy="20" rx="8" ry="4.5" transform="rotate(-30 18 20)"/></g>
+   <g fill="var(--gold)"><circle cx="0" cy="-26" r="4"/><circle cx="-30" cy="12" r="3.5"/><circle cx="30" cy="12" r="3.5"/></g>
+  </g>
+  <circle cx="100" cy="74" r="38" fill="var(--gold)"/>
+  <circle cx="100" cy="76" r="32" fill="var(--cream)"/>
+  <path d="M68 70C70 50 84 42 100 42C116 42 130 50 132 70C124 60 112 56 100 60C88 56 76 60 68 70Z" fill="var(--hair)"/>
+  <circle cx="80" cy="88" r="7" fill="var(--cheek)" opacity=".7"/><circle cx="120" cy="88" r="7" fill="var(--cheek)" opacity=".7"/>
+  <!-- eyebrows -->
+  <g stroke="var(--hair)" stroke-width="3" stroke-linecap="round" fill="none">
+   <path data-show="sad miserable wrong" d="M80 66L91 70M120 66L109 70"/>
+   <path data-show="worried" d="M80 68L91 64M120 68L109 64"/>
+  </g>
+  <!-- eyes -->
+  <g class="eyes" data-show="hello happy waiting worried sad wrong">
+   <ellipse cx="88" cy="77" rx="4.6" ry="6" fill="#2A1D14"/><ellipse cx="112" cy="77" rx="4.6" ry="6" fill="#2A1D14"/>
+   <circle cx="89.5" cy="75" r="1.6" fill="#fff"/><circle cx="113.5" cy="75" r="1.6" fill="#fff"/>
+  </g>
+  <g data-show="celebrate right" stroke="#2A1D14" stroke-width="3.2" stroke-linecap="round" fill="none"><path d="M82 79Q88 71 94 79M106 79Q112 71 118 79"/></g>
+  <g data-show="miserable" stroke="#2A1D14" stroke-width="3.2" stroke-linecap="round" fill="none"><path d="M82 76Q88 82 94 76M106 76Q112 82 118 76"/></g>
+  <!-- mouths -->
+  <g stroke="#2A1D14" stroke-width="3" stroke-linecap="round" fill="none">
+   <path data-show="happy hello" d="M90 92Q100 101 110 92"/>
+   <path data-show="waiting" d="M92 94Q100 98 108 94"/>
+   <path data-show="worried" d="M92 96Q96 92 100 96Q104 100 108 96"/>
+   <path data-show="sad wrong" d="M91 98Q100 91 109 98"/>
+   <path data-show="miserable" d="M90 100Q100 90 110 100"/>
+  </g>
+  <path data-show="celebrate right" d="M88 91Q100 107 112 91Z" fill="#7A2420" stroke="#2A1D14" stroke-width="2.5" stroke-linejoin="round"/>
+  <g data-show="sad miserable" fill="var(--tear)"><path class="tear" d="M86 84q-3 5 0 7q3-2 0-7Z"/><path class="tear t2" data-show="miserable" d="M114 84q-3 5 0 7q3-2 0-7Z"/></g>
+  <g data-show="worried" fill="var(--tear)"><path d="M128 64q-3 6 0 8q3-2 0-8Z"/></g>
+  <g data-show="celebrate" fill="var(--gold)"><path d="M30 40l4 9 9 4-9 4-4 9-4-9-9-4 9-4z"/><path d="M168 30l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/></g>
+ </g></svg>`}
+function moodWord(m){return{hello:"friendly",happy:"happy",celebrate:"delighted",waiting:"hopeful",worried:"worried",sad:"sad",miserable:"very sad",right:"pleased",wrong:"disappointed"}[m]||"friendly"}
+
+function homeMood(){
+  if(!S.last)return["hello","Privet! I’m Nadya. Five minutes of history a day and you’ll ace your exam. Shall we start?"];
+  const g=gap(S.last,dayStr()),st=liveStreak();
+  if(g===0)return["happy",rnd([`Done for today! Your streak is ${st} day${st>1?"s":""}.`,"Great work today. See you tomorrow!",`${st}-day streak! Lenin would be impressed. Stalin would be suspicious.`])];
+  if(g===1){if(new Date().getHours()>=18)return["worried",`Your ${st}-day streak ends at midnight! Quick lesson?`];return["waiting",`Ready for today’s lesson? Keep your ${st}-day streak going!`]}
+  if(g===2)return["sad","I missed you yesterday… Just one quick lesson to start a new streak?"];
+  return["miserable",`It’s been ${g} days… I’ve been all alone with the Tsar. Please come back!`];
+}
+
+/* ---------- icons ---------- */
+const FLAME=`<svg viewBox="0 0 24 24"><path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-6 0 2 1 3 2 3 0-3-1-6 1-9z" fill="var(--flame)"/><path d="M12 13c1 1.5 3 2.5 3 5a3 3 0 0 1-6 0c0-1.5 1-2.5 1.5-3 .2 1 .8 1.5 1.5 1.5 0-1.2-.5-2.3 0-3.5z" fill="var(--gold)"/></svg>`;
+const FLAME_OFF=FLAME.replace(/var\(--flame\)|var\(--gold\)/g,"var(--line)");
+const STAR=`<svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z" fill="var(--gold)"/></svg>`;
+const SOUND_ON=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>`;
+const SOUND_OFF=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M22 9l-6 6M16 9l6 6"/></svg>`;
+const CLOSE=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>`;
+const BOOK=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h14v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M8 7h8"/></svg>`;
+
+/* ---------- home ---------- */
+function home(){
+  const [mood,msg]=homeMood(), st=liveStreak(), today=dayStr(), doneToday=S.last===today;
+  const days=new Set(S.days);
+  let week="";
+  for(let i=6;i>=0;i--){const ds=addDays(today,-i),d=parse(ds),done=days.has(ds);
+    week+=`<div class="day"><span>${"SMTWTFS"[d.getDay()]}</span><span class="dot${done?" done":""}${i===0?" today":""}">${done?FLAME.replace('<svg','<svg aria-hidden="true"'):""}</span></div>`}
+  const pr=u=>{const P=ALL.filter(e=>e.u===u),m=P.filter(e=>(S.cards[e.id]||{}).box>=3).length,s=P.filter(e=>S.cards[e.id]).length;return{m,s,n:P.length}};
+  const pa=pr("a"),pb=pr("b");
+  app.innerHTML=`
+  <div class="top">
+    <span class="stat${st?"":" off"}" title="Day streak">${st?FLAME:FLAME_OFF}${st}</span>
+    <span class="stat" title="Total XP">${STAR}${S.xp}</span>
+    <span><button class="iconbtn" id="browse" aria-label="Browse the timeline">${BOOK}</button><button class="iconbtn" id="mute" aria-label="${S.muted?"Turn sound on":"Turn sound off"}">${S.muted?SOUND_OFF:SOUND_ON}</button></span>
+  </div>
+  <div class="stage"><div class="bubble">${esc(msg)}</div>${mascot(mood)}</div>
+  <div class="week" aria-label="Practice this week">${week}</div>
+  <div class="seg" role="group" aria-label="Choose unit">
+    <button data-u="both" aria-pressed="${S.unit==="both"}">Both<small>1905–53</small></button>
+    <button data-u="a" aria-pressed="${S.unit==="a"}">Russia<small>1905–24</small></button>
+    <button data-u="b" aria-pressed="${S.unit==="b"}">USSR<small>1924–53</small></button>
+  </div>
+  <div class="cta">
+    <button class="btn${doneToday?" ghost":""}" id="go">${doneToday?"Practise again":"Start today’s lesson"}</button>
+    <div class="sub">${LEN} questions · about 3 minutes${S.best>1?` · Best streak ${S.best} days`:""}</div>
+  </div>
+  <div class="progress">
+    <h2>Your progress</h2>
+    ${[["a",pa],["b",pb]].map(([u,p])=>`<div class="unitrow"><div class="lbl"><span>${UNIT_NAME[u]}</span><span>${p.m} / ${p.n} learned</span></div><div class="bar"><i style="width:${Math.round(p.m/p.n*100)}%"></i></div></div>`).join("")}
+    <div class="legend">An event counts as learned once you’ve got it right three times on different days.</div>
+  </div>
+  <button class="reset" id="reset">Reset progress</button>`;
+  $("#go").onclick=()=>{SND.tap();startLesson()};
+  $("#mute").onclick=()=>{S.muted=!S.muted;save();home()};
+  $("#browse").onclick=()=>browse(S.unit==="b"?"b":"a");
+  app.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{S.unit=b.dataset.u;save();home()});
+  $("#reset").onclick=confirmReset;
+  window.scrollTo(0,0);
+}
+function confirmReset(){
+  const r=$("#reset");
+  if(r.dataset.armed){localStorage.removeItem(KEY);S=load();home();return}
+  r.dataset.armed="1";r.textContent="Tap again to delete all progress and streaks";r.style.color="var(--orange)";
+  setTimeout(()=>{if(r.isConnected){delete r.dataset.armed;r.textContent="Reset progress";r.style.color=""}},4000);
+}
+
+/* ---------- lesson building ---------- */
+function buildLesson(){
+  const P=pool(),today=dayStr(),c=S.cards;
+  const due=shuffle(P.filter(e=>c[e.id]&&c[e.id].due<=today)).sort((a,b)=>c[a.id].box-c[b.id].box);
+  let fresh=P.filter(e=>!c[e.id]);
+  if(S.unit==="both"){const fa=fresh.filter(e=>e.u==="a"),fb=fresh.filter(e=>e.u==="b");fresh=[];while(fa.length||fb.length){if(fa.length)fresh.push(fa.shift());if(fb.length)fresh.push(fb.shift())}}
+  let picks=due.slice(0,LEN-Math.min(3,fresh.length));
+  picks=picks.concat(fresh.slice(0,Math.min(MAX_NEW,LEN-picks.length)));
+  if(picks.length<LEN){const rest=shuffle(P.filter(e=>!picks.includes(e)&&c[e.id])).sort((a,b)=>c[a.id].box-c[b.id].box);picks=picks.concat(rest.slice(0,LEN-picks.length))}
+  if(picks.length<LEN)picks=picks.concat(fresh.filter(e=>!picks.includes(e)).slice(0,LEN-picks.length));
+  return shuffle(picks).map(e=>makeQ(e));
+}
+function makeQ(e,forceType){
+  const box=(S.cards[e.id]||{box:0}).box;
+  let t=forceType;
+  if(!t){
+    const opts=box===0?["what","what","when"]:box===1?["what","when","why"]:["when","why","order","why"];
+    t=rnd(opts);
+  }
+  if((t==="when"||t==="order")&&!e.single)t=rnd(["what","why"]);
+  const same=ALL.filter(x=>x.u===e.u&&x!==e);
+  if(t==="order"){
+    const cand=shuffle(same.filter(x=>x.single&&Math.abs(x.fy-e.fy)>=1));
+    const picked=[e];for(const x of cand){if(picked.every(p=>p.fy!==x.fy))picked.push(x);if(picked.length===3)break}
+    if(picked.length<3)return makeQ(e,"what");
+    return{t,e,items:shuffle(picked)};
+  }
+  if(t==="when"){
+    const lo=e.u==="a"?1900:1917,hi=e.u==="a"?1924:1955,ys=new Set([e.fy]);
+    const near=shuffle([-4,-3,-2,-1,1,2,3,4].map(n=>e.fy+n).filter(y=>y>=lo&&y<=hi));
+    for(const y of near){if(ys.size>=4)break;ys.add(y)}
+    return{t,e,options:shuffle([...ys]).map(y=>({label:String(y),ok:y===e.fy}))};
+  }
+  const dis=shuffle(same.filter(x=>x.h!==e.h)).slice(0,3);
+  return{t,e,options:shuffle([e,...dis]).map(x=>({label:x.h,ok:x===e}))};
+}
+
+/* ---------- lesson flow ---------- */
+let L=null;
+function startLesson(){L={queue:buildLesson(),done:0,total:LEN,first:new Set(),correctFirst:0,xp:0,start:Date.now()};L.total=L.queue.length;nextQ()}
+function nextQ(){
+  if(!L.queue.length)return finish();
+  L.q=L.queue[0];L.sel=null;L.order=[];renderQ();
+}
+function header(){return `<div class="lhead"><button class="iconbtn" id="quit" aria-label="Quit lesson">${CLOSE}</button><div class="lbar" role="progressbar" aria-valuemin="0" aria-valuemax="${L.total}" aria-valuenow="${L.done}"><i style="width:${Math.max(4,L.done/L.total*100)}%"></i></div></div>`}
+function renderQ(){
+  const q=L.q,e=q.e;let body="";
+  if(q.t==="what")body=`<div class="qtype">Which event?</div><div class="qtitle">Which event does this describe?</div><div class="clue"><span class="tag">${UNIT_NAME[e.u]}</span>${esc(e.w)}</div>`;
+  if(q.t==="why")body=`<div class="qtype">Why it matters</div><div class="qtitle">Which event is this about?</div><div class="clue"><span class="tag">Why it mattered</span>${esc(e.s)}</div>`;
+  if(q.t==="when")body=`<div class="qtype">When?</div><div class="qtitle">In which year did this happen?</div><div class="clue"><span class="tag">${UNIT_NAME[e.u]}</span><strong>${esc(e.h)}</strong></div>`;
+  if(q.t==="order")body=`<div class="qtype">Timeline</div><div class="qtitle">Put these in order, earliest first</div>
+    <div class="slots">${[0,1,2].map(i=>`<div class="slot" data-i="${i}"><b>${i+1}</b><span>Tap an event below</span></div>`).join("")}</div>`;
+  const opts=q.t==="order"
+    ? `<div class="opts" id="opts">${q.items.map((x,i)=>`<button class="opt" data-k="${i}">${esc(x.h)}</button>`).join("")}</div>`
+    : `<div class="opts${q.t==="when"?" years":""}" id="opts">${q.options.map((o,i)=>`<button class="opt" data-k="${i}" aria-pressed="false">${esc(o.label)}</button>`).join("")}</div>`;
+  app.innerHTML=header()+body+opts+`<div class="spacer"></div><div class="foot"><button class="btn green" id="check" disabled>Check</button></div>`;
+  $("#quit").onclick=()=>{L=null;home()};
+  const check=$("#check");
+  if(q.t==="order"){
+    const paint=()=>{
+      app.querySelectorAll(".slot").forEach((s,i)=>{const k=L.order[i];s.classList.toggle("filled",k!=null);s.querySelector("span").textContent=k!=null?q.items[k].h:"Tap an event below"});
+      app.querySelectorAll("#opts .opt").forEach(b=>b.hidden=L.order.includes(+b.dataset.k));
+      check.disabled=L.order.length<3;
+    };
+    app.querySelectorAll("#opts .opt").forEach(b=>b.onclick=()=>{SND.tap();if(L.order.length<3)L.order.push(+b.dataset.k);paint()});
+    app.querySelectorAll(".slot").forEach(s=>s.onclick=()=>{const i=+s.dataset.i;if(L.order[i]!=null&&!L.answered){L.order.splice(i,1);paint()}});
+    paint();
+  }else{
+    app.querySelectorAll("#opts .opt").forEach(b=>b.onclick=()=>{SND.tap();L.sel=+b.dataset.k;app.querySelectorAll("#opts .opt").forEach(x=>x.setAttribute("aria-pressed",x===b));check.disabled=false});
+  }
+  L.answered=false;
+  check.onclick=grade;
+  window.scrollTo(0,0);
+}
+function grade(){
+  const q=L.q;L.answered=true;let ok;
+  if(q.t==="order"){
+    const right=q.items.map((x,i)=>i).sort((a,b)=>q.items[a].key-q.items[b].key);
+    ok=right.every((k,i)=>L.order[i]===k);
+    app.querySelectorAll(".slot").forEach((s,i)=>{s.classList.add(L.order[i]===right[i]?"right":"wrong");s.onclick=null});
+    L.correctOrder=right;
+  }else{
+    ok=q.options[L.sel].ok;
+    app.querySelectorAll("#opts .opt").forEach((b,i)=>{b.disabled=true;if(q.options[i].ok)b.classList.add("right");else if(i===L.sel)b.classList.add("wrong")});
+  }
+  const firstTry=!L.first.has(q.e.id);L.first.add(q.e.id);
+  const c=S.cards[q.e.id]||{box:0,due:dayStr()};
+  if(firstTry){
+    if(ok){c.box=Math.min(c.box+1,5);c.due=addDays(dayStr(),INTERVALS[c.box]);L.correctFirst++;L.xp+=10}
+    else{c.box=0;c.due=dayStr()}
+    S.cards[q.e.id]=c;save();
+  }else if(ok)L.xp+=2;
+  L.queue.shift();
+  if(ok)L.done++;else L.queue.push(makeQ(q.e,q.t==="order"?"when":rnd(["what","why"])));
+  ok?SND.right():SND.wrong();
+  const e=q.e;
+  let fact;
+  if(q.t==="order")fact=L.correctOrder.map((k,i)=>`${i+1}. <strong>${esc(q.items[k].h)}</strong> <span class="d">${esc(q.items[k].d)}</span>`).join("<br>");
+  else fact=`<span class="d">${esc(e.d)}</span> · <strong>${esc(e.h)}</strong><br>${esc(e.s)}`;
+  const praise=rnd(["Correct!","Nice one!","Spot on!","Brilliant!","Exactly right!"]);
+  const sheet=document.createElement("div");
+  sheet.className="sheet "+(ok?"ok":"no");sheet.setAttribute("role","status");
+  sheet.innerHTML=`<div class="in"><div class="hd">${mascot(ok?"right":"wrong")}<span>${ok?praise:"Not quite"}</span></div><div class="fact">${ok?"":"<strong>Correct answer:</strong><br>"}${fact}</div><button class="btn ${ok?"green":"orange"}" id="cont">Continue</button></div>`;
+  app.querySelector(".foot").style.visibility="hidden";
+  document.body.appendChild(sheet);
+  const pad=sheet.offsetHeight;app.style.paddingBottom=pad+"px";
+  $("#cont").focus();
+  $("#cont").onclick=()=>{sheet.remove();app.style.paddingBottom="";
+    $(".lbar i")&&($(".lbar i").style.width=Math.max(4,L.done/L.total*100)+"%");
+    nextQ()};
+}
+function finish(){
+  const today=dayStr(),was=S.last;
+  let streakUp=false;
+  if(was!==today){S.streak=(was&&gap(was,today)===1)?S.streak+1:1;streakUp=true;S.days.push(today);S.days=S.days.slice(-120)}
+  S.last=today;S.best=Math.max(S.best,S.streak);
+  const bonus=10;S.xp+=L.xp+bonus;S.lessons++;save();
+  const acc=Math.round(L.correctFirst/L.total*100),secs=Math.round((Date.now()-L.start)/1000);
+  const msg=acc===100?"Perfect lesson!":acc>=75?"Lesson complete!":"Lesson done. Practice makes perfect!";
+  app.innerHTML=`<div class="done-wrap">${mascot("celebrate")}<h1>${msg}</h1>
+   ${streakUp?`<div class="stat" style="font-size:22px">${FLAME}${S.streak} day streak!</div>`:`<div class="sub">You’ve already kept your streak today. Extra practice still counts!</div>`}
+   <div class="tiles">
+    <div class="tile" style="--c:var(--gold)"><div class="t">XP</div><div class="v">+${L.xp+bonus}</div></div>
+    <div class="tile" style="--c:var(--green)"><div class="t">Accuracy</div><div class="v">${acc}%</div></div>
+    <div class="tile" style="--c:var(--blue)"><div class="t">Time</div><div class="v">${Math.floor(secs/60)}:${z(secs%60)}</div></div>
+   </div></div>
+   <div class="foot"><button class="btn" id="home">Continue</button></div>`;
+  SND.done();confetti();
+  $("#home").onclick=home;L=null;
+}
+
+/* ---------- browse ---------- */
+function browse(u){
+  const list=ALL.filter(e=>e.u===u);
+  app.innerHTML=`<div class="top"><button class="iconbtn" id="back" aria-label="Back">${CLOSE}</button><span></span><span></span></div>
+   <h1 class="page">Timeline</h1>
+   <div class="seg" role="group" aria-label="Choose unit" style="grid-template-columns:1fr 1fr">
+    <button data-u="a" aria-pressed="${u==="a"}">Russia<small>1905–24</small></button>
+    <button data-u="b" aria-pressed="${u==="b"}">USSR<small>1924–53</small></button></div>
+   <div class="blist">${list.map(e=>{const b=(S.cards[e.id]||{}).box;return`<details class="bitem"><summary><span class="d">${esc(e.d)}</span><span class="h">${esc(e.h)}${b>=3?'<span class="mini">Learned</span>':""}</span></summary><p>${esc(e.w)}</p><p class="w"><strong>Why it matters:</strong> ${esc(e.s)}</p></details>`}).join("")}</div>`;
+  $("#back").onclick=home;
+  app.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>browse(b.dataset.u));
+  window.scrollTo(0,0);
+}
+
+/* ---------- confetti ---------- */
+function confetti(){
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  const cv=$("#fx"),ctx=cv.getContext("2d");cv.hidden=false;
+  const W=cv.width=innerWidth*devicePixelRatio,H=cv.height=innerHeight*devicePixelRatio;
+  const cols=["#D9383A","#F4B740","#2D5BD7","#36A256","#FF8A1E"];
+  const P=Array.from({length:140},()=>({x:W/2+(Math.random()-.5)*W*.3,y:H*.35,vx:(Math.random()-.5)*W*.02,vy:-Math.random()*H*.025-H*.005,r:(4+Math.random()*5)*devicePixelRatio,c:rnd(cols),a:Math.random()*6,va:(Math.random()-.5)*.3}));
+  const t0=performance.now();
+  (function f(t){ctx.clearRect(0,0,W,H);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=H*.0009;p.a+=p.va;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.a);ctx.fillStyle=p.c;ctx.fillRect(-p.r,-p.r/2,p.r*2,p.r);ctx.restore()});
+   if(t-t0<2800)requestAnimationFrame(f);else{ctx.clearRect(0,0,W,H);cv.hidden=true}})(t0);
+}
+
+/* ---------- boot ---------- */
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!L&&app.querySelector(".week"))home()});
+home();
+if("serviceWorker" in navigator&&location.protocol==="https:"&&!/claude\.ai|claudeusercontent/.test(location.host)){
+  navigator.serviceWorker.register("sw.js").catch(()=>{});
+}
+</script>
