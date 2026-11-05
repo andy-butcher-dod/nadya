@@ -21,7 +21,8 @@
   --blue:#2D5BD7; --blue-d:#1E42A3; --blue-soft:#E7EDFF;
   --green:#36A256; --green-d:#267A40; --green-soft:#E2F5E7;
   --orange:#E35D38; --orange-d:#B04426; --orange-soft:#FDE8E1;
-  --flame:#FF8A1E; --gold:#F4B740;
+  --flame:#FF8A1E; --gold:#F4B740; --gold-soft:#FFF4D6; --gold-ink:#6B4A00; --line2:#B9C1D3;
+  --blue-ink:#1E42A3; --green-ink:#267A40; --green-line:#A9D9B6; --orange-ink:#B04426; --orange-line:#F0B7A4;
   --doll:#D9383A; --doll-d:#A9252B; --cream:#FFF4E0; --hair:#5A3A26; --cheek:#F48C8C; --tear:#5DB7F0;
   --font:"Nunito",ui-rounded,"SF Pro Rounded","Segoe UI",system-ui,sans-serif;
 }
@@ -29,12 +30,12 @@
   --bg:#121521; --surface:#1C2030; --ink:#ECEEF4; --muted:#9BA2B6; --line:#2F3549;
   --blue:#5B83F0; --blue-d:#3758BC; --blue-soft:#1F2A4A;
   --green:#4CC173; --green-d:#2E8A4F; --green-soft:#17301F;
-  --orange:#F27D58; --orange-d:#B5532F; --orange-soft:#3A2119; --flame:#FF9A3C; color-scheme:dark}}
+  --orange:#F27D58; --orange-d:#B5532F; --orange-soft:#3A2119; --flame:#FF9A3C; --gold-soft:#3A2F14; --gold-ink:#F4C766; --line2:#4A526A; --blue-ink:#A9C0FF; --green-ink:#7FD69C; --green-line:#2E6B42; --orange-ink:#F49A7C; --orange-line:#7A3A26; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#121521; --surface:#1C2030; --ink:#ECEEF4; --muted:#9BA2B6; --line:#2F3549;
   --blue:#5B83F0; --blue-d:#3758BC; --blue-soft:#1F2A4A;
   --green:#4CC173; --green-d:#2E8A4F; --green-soft:#17301F;
-  --orange:#F27D58; --orange-d:#B5532F; --orange-soft:#3A2119; --flame:#FF9A3C; color-scheme:dark}
+  --orange:#F27D58; --orange-d:#B5532F; --orange-soft:#3A2119; --flame:#FF9A3C; --gold-soft:#3A2F14; --gold-ink:#F4C766; --line2:#4A526A; --blue-ink:#A9C0FF; --green-ink:#7FD69C; --green-line:#2E6B42; --orange-ink:#F49A7C; --orange-line:#7A3A26; color-scheme:dark}
 
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{min-height:100%}
@@ -162,6 +163,69 @@ button:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
 .fact strong{font-weight:900}
 .fact .d{color:var(--muted);font-weight:800}
 @media (prefers-reduced-motion:no-preference){.sheet{animation:up .22s ease-out}}
+/* Answer-sheet timeline strip and ruler */
+.sheet{max-height:92vh;overflow-y:auto}
+.strip{background:var(--surface);border-radius:16px;padding:12px 8px 10px;position:relative;display:grid;gap:2px}
+.shead{display:flex;justify-content:space-between;gap:8px;padding:0 10px 6px;font-size:12.5px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.slist::before{content:"";position:absolute;left:98px;top:40px;bottom:18px;width:2px;background:var(--line)}
+.srow{display:flex;align-items:center;gap:10px;padding:6px 10px;border-radius:12px;border:2px solid transparent;position:relative}
+.sd{width:66px;flex:none;text-align:right;font-size:12.5px;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums;line-height:1.2}
+.sdot{width:10px;height:10px;border-radius:50%;background:var(--line2);flex:none;box-shadow:0 0 0 3px var(--surface);position:relative;z-index:1}
+.st{font-size:14.5px;font-weight:700;line-height:1.25;min-width:0}
+.srow.cur{background:var(--gold-soft);border-color:var(--gold);padding-block:8px}
+.srow.cur .sd{color:var(--gold-ink)}
+.srow.cur .st{font-weight:900}
+.srow.cur .sdot{width:14px;height:14px;margin:0 -2px;background:var(--gold);box-shadow:0 0 0 3px var(--gold-soft),0 0 0 5px var(--gold)}
+.srow.guess{border:2px dashed var(--orange)}
+.srow.guess .sd,.srow.guess .st{color:var(--orange-ink);font-weight:800}
+.srow.guess .sdot{background:var(--surface);box-shadow:0 0 0 2px var(--orange)}
+.ruler{position:relative;height:156px;margin:2px 10px 4px}
+.rline{position:absolute;left:5%;right:5%;top:74px;height:2px;background:var(--line2)}
+.rtick{position:absolute;top:70px;width:2px;height:10px;margin-left:-1px;background:var(--line2)}
+.rdot{position:absolute;top:67px;width:16px;height:16px;margin-left:-8px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 3px var(--surface),0 0 0 5px var(--gold)}
+.rlab{position:absolute;max-width:46%;font-size:13.5px;font-weight:800;line-height:1.2}
+.rlab b{display:block;font-size:12px;font-weight:900;color:var(--gold-ink)}
+.rlab.up{bottom:96px}
+.rlab.dn{top:98px}
+.rstem{position:absolute;width:2px;margin-left:-1px;background:var(--gold)}
+.rstem.up{top:60px;height:8px}
+.rstem.dn{top:84px;height:14px}
+.rgap{position:absolute;top:64px;transform:translateX(-50%);background:var(--blue-soft);color:var(--blue-ink);font-size:11.5px;font-weight:900;border-radius:99px;padding:3px 8px;white-space:nowrap}
+.btns{display:grid;grid-template-columns:2fr 3fr;gap:10px}
+.btn.tl{display:flex;align-items:center;justify-content:center;gap:6px;background:var(--surface);font-size:15px;letter-spacing:.04em;padding:13px 8px}
+.btn.tl svg{width:18px;height:18px;flex:none}
+.btn.tl.g{color:var(--green-ink);border:2px solid var(--green-line);box-shadow:0 4px 0 var(--green-line)}
+.btn.tl.o{color:var(--orange-ink);border:2px solid var(--orange-line);box-shadow:0 4px 0 var(--orange-line)}
+
+/* Timeline view */
+.tlo{position:fixed;inset:0;z-index:40;background:var(--bg);overflow-y:auto;overscroll-behavior:contain}
+.tlo .wrapper{max-width:480px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-bottom:calc(40px + env(safe-area-inset-bottom,0px))}
+.tlhead{position:sticky;top:0;z-index:2;background:var(--bg);padding-top:calc(12px + env(safe-area-inset-top,0px));padding-bottom:10px;border-bottom:2px solid var(--line);display:grid;gap:10px}
+.tlhead .r1,.tlhead .r2{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.tlhead h1{margin:0;font-size:24px;font-weight:900}
+.tlhead .meta{font-size:13px;font-weight:800;color:var(--muted);text-align:right}
+.backbtn{display:inline-flex;align-items:center;gap:6px;border:0;background:var(--blue);color:#fff;border-radius:99px;padding:9px 14px 9px 10px;font-weight:900;font-size:14.5px;box-shadow:0 3px 0 var(--blue-d);cursor:pointer}
+.backbtn svg{width:18px;height:18px}
+.tlhead .seg{margin-top:0;grid-template-columns:1fr 1fr}
+.tlyr{display:grid;grid-template-columns:52px minmax(0,1fr);gap:0 14px;padding-top:14px}
+.tlyr .y{font-size:22px;font-weight:900;padding-top:6px;font-variant-numeric:tabular-nums}
+.tlevs{display:flex;flex-direction:column;gap:8px;border-left:2px solid var(--line);padding-left:16px;min-width:0}
+.tev{position:relative;background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:9px 14px}
+.tev::before{content:"";position:absolute;left:-25px;top:15px;width:10px;height:10px;border-radius:50%;background:var(--line2);box-shadow:0 0 0 3px var(--bg)}
+.tev summary{list-style:none;cursor:pointer;display:grid;gap:2px}
+.tev summary::-webkit-details-marker{display:none}
+.tev .drow{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.tev .d{font-size:12.5px;font-weight:900;color:var(--orange-ink);letter-spacing:.02em}
+.tev .h{font-size:15.5px;font-weight:800;line-height:1.25}
+.tev p{margin:8px 0 0;font-size:14.5px;font-weight:600;line-height:1.45}
+.tev p.w{color:var(--muted)}
+.tev p.w strong{color:var(--ink)}
+.tev.cur{background:var(--gold-soft);border-color:var(--gold);box-shadow:0 4px 0 var(--gold);scroll-margin-top:180px}
+.tev.cur::before{width:14px;height:14px;left:-27px;top:13px;background:var(--gold)}
+.tev.cur .d{color:var(--gold-ink)}
+.tev.cur .h{font-size:17px;font-weight:900}
+.chip{font-size:11.5px;font-weight:900;background:var(--blue);color:#fff;border-radius:99px;padding:2px 8px;white-space:nowrap}
+
 @keyframes up{from{transform:translateY(100%)}}
 
 /* Complete */
@@ -347,7 +411,7 @@ b:[
 [1953,"5 Mar 1953",5,"Stalin dies","Stalin died after a stroke at his dacha near Moscow.","His legacy: a nuclear superpower controlling eastern Europe, with strong heavy industry. But farming was weak, living standards low and millions were in the gulags."]
 ]};
 EV.b.sort((x,y)=>x[0]-y[0]);
-const APP_VERSION="1.7";
+const APP_VERSION="1.8";
 const UNIT_NAME={a:"Russia 1905–24",b:"USSR 1924–53"};
 const LEN=8, INTERVALS=[0,1,2,4,7,14], MAX_NEW=5;
 const MONTH={Jan:1,Feb:2,Mar:3,Apr:4,May:5,Jun:6,June:6,Jul:7,Aug:8,Sep:9,Oct:10,Nov:11,Dec:12,Winter:12};
@@ -491,7 +555,7 @@ function home(){
   <button class="reset" id="reset">Reset progress</button><div class="sub" style="margin-top:10px;font-size:12px">Version ${APP_VERSION}</div>`;
   $("#go").onclick=()=>{SND.tap();startLesson()};
   $("#mute").onclick=()=>{S.muted=!S.muted;save();home()};
-  $("#browse").onclick=()=>browse(S.unit==="b"?"b":"a");
+  $("#browse").onclick=()=>openTimeline(S.unit==="b"?"b":"a",null,false);
   app.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{S.unit=b.dataset.u;save();home()});
   $("#reset").onclick=confirmReset;
   const ib=$("#install");if(ib)ib.onclick=()=>{installEvt.prompt();installEvt.userChoice.finally(()=>{installEvt=null;home()})};
@@ -600,13 +664,16 @@ function grade(){
   if(ok)L.done++;else L.queue.push(makeQ(q.e,q.t==="order"?"when":rnd(["what","why"])));
   ok?SND.right():SND.wrong();
   const e=q.e;
-  let fact;
-  if(q.t==="order")fact=L.correctOrder.map((k,i)=>`${i+1}. <strong>${esc(q.items[k].h)}</strong> <span class="d">${esc(q.items[k].d)}</span>`).join("<br>");
-  else fact=`<span class="d">${esc(e.d)}</span> · <strong>${esc(e.h)}</strong><br>${esc(e.s)}`;
+  let fact="",viz;
+  if(q.t==="order")viz=ruler(L.correctOrder.map(k=>q.items[k]),ok);
+  else{
+    fact=`${ok?"":`<strong>Correct answer${q.t==="when"?": "+e.fy:""}</strong><br>`}<span class="d">${esc(e.d)}</span> · <strong>${esc(e.h)}</strong><br>${esc(e.s)}`;
+    viz=strip(e,(q.t==="when"&&!ok)?+q.options[L.sel].label:null);
+  }
   const praise=rnd(["Correct!","Nice one!","Spot on!","Brilliant!","Exactly right!"]);
   const sheet=document.createElement("div");
   sheet.className="sheet "+(ok?"ok":"no");sheet.setAttribute("role","status");
-  sheet.innerHTML=`<div class="in"><div class="hd">${mascot(ok?"right":"wrong")}<span>${ok?praise:"Not quite"}</span></div><div class="fact">${ok?"":"<strong>Correct answer:</strong><br>"}${fact}</div><button class="btn ${ok?"green":"orange"}" id="cont">Continue</button></div>`;
+  sheet.innerHTML=`<div class="in"><div class="hd">${mascot(ok?"right":"wrong")}<span>${ok?praise:"Not quite"}</span></div>${fact?`<div class="fact">${fact}</div>`:""}${viz}<div class="btns"><button class="btn tl ${ok?"g":"o"}" id="tl">${TL_ICON}Timeline</button><button class="btn ${ok?"green":"orange"}" id="cont">Continue</button></div></div>`;
   app.querySelector(".foot").style.visibility="hidden";
   document.body.appendChild(sheet);
   const pad=sheet.offsetHeight;app.style.paddingBottom=pad+"px";
@@ -614,6 +681,7 @@ function grade(){
   $("#cont").onclick=()=>{sheet.remove();app.style.paddingBottom="";
     $(".lbar i")&&($(".lbar i").style.width=Math.max(4,L.done/L.total*100)+"%");
     nextQ()};
+  $("#tl").onclick=()=>openTimeline(e.u,e.id,true);
 }
 function finish(){
   const today=dayStr(),was=S.last;
@@ -635,19 +703,68 @@ function finish(){
   $("#home").onclick=home;L=null;
 }
 
-/* ---------- browse ---------- */
-function browse(u){
-  const list=ALL.filter(e=>e.u===u);
-  app.innerHTML=`<div class="top"><button class="iconbtn" id="back" aria-label="Back">${CLOSE}</button><span></span><span></span></div>
-   <h1 class="page">Timeline</h1>
-   <div class="seg" role="group" aria-label="Choose unit" style="grid-template-columns:1fr 1fr">
-    <button data-u="a" aria-pressed="${u==="a"}">Russia<small>1905–24</small></button>
-    <button data-u="b" aria-pressed="${u==="b"}">USSR<small>1924–53</small></button></div>
-   <div class="blist">${list.map(e=>{const b=(S.cards[e.id]||{}).box;return`<details class="bitem"><summary><span class="d">${esc(e.d)}</span><span class="h">${esc(e.h)}${b>=3?'<span class="mini">Learned</span>':""}</span></summary><p>${esc(e.w)}</p><p class="w"><strong>Why it matters:</strong> ${esc(e.s)}</p></details>`}).join("")}</div>`;
-  $("#back").onclick=home;
-  app.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>browse(b.dataset.u));
-  window.scrollTo(0,0);
+/* ---------- timeline helpers ---------- */
+const TL_ICON=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 4v16M5 7h10M5 12h14M5 17h8"/></svg>`;
+const BACK=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>`;
+const yrsLabel=(a,b)=>a===b?String(a):`${a}–${String(a).slice(0,2)===String(b).slice(0,2)?String(b).slice(2):b}`;
+// A short strip of the timeline around one event (2 before, 2 after), plus the player's wrong year if given
+function strip(e,guess){
+  const U=ALL.filter(x=>x.u===e.u).slice().sort((a,b)=>a.key-b.key);
+  const i=U.indexOf(e),start=Math.max(0,Math.min(i-2,U.length-5)),W=U.slice(start,start+5);
+  const ys=W.map(x=>x.fy).concat(guess!=null?[guess]:[]);
+  const lo=Math.min(...ys),hi=Math.max(...ys),sameYear=lo===hi&&W.every(x=>x.single);
+  const lbl=x=>{const t=sameYear?x.d.replace(/\s*\d{4}$/,""):x.d;return t||x.d};
+  const rows=W.map(x=>({k:x.key,h:`<div class="srow${x===e?" cur":""}"><span class="sd">${esc(lbl(x))}</span><span class="sdot"></span><span class="st">${esc(x.h)}</span></div>`}));
+  if(guess!=null){
+    const diff=guess-e.fy,n=Math.abs(diff);
+    const m={k:guess*100,h:`<div class="srow guess"><span class="sd">${guess}</span><span class="sdot"></span><span class="st">You said ${guess}: ${n} year${n>1?"s":""} too ${diff<0?"early":"late"}</span></div>`};
+    const at=rows.findIndex(r=>r.k>=m.k);if(at<0)rows.push(m);else rows.splice(at,0,m);
+  }
+  return `<div class="strip slist"><div class="shead"><span>Where it fits · ${yrsLabel(lo,hi)}</span><span>KT${e.k}</span></div>${rows.map(r=>r.h).join("")}</div>`;
 }
+// The three events of an order question on a year ruler, with the gaps between them
+function ruler(items,ok){
+  const fr=x=>x.fy+(((x.key%100)||6)-0.5)/12, f=items.map(fr);
+  const a=Math.floor(f[0]);let b=Math.ceil(f[2]);if(b-a<2)b=a+2;
+  const P=v=>5+(v-a)/(b-a)*90, step=b-a<=15?1:5;
+  let h='<div class="rline"></div>';
+  for(let y=a;y<=b;y+=step)h+=`<i class="rtick" style="left:${P(y)}%"></i>`;
+  [0,1].forEach(j=>{const d=items[j+1].fy-items[j].fy,p1=P(f[j]),p2=P(f[j+1]);if(p2-p1>=18)h+=`<span class="rgap" style="left:${(p1+p2)/2}%">${d} year${d>1?"s":""}</span>`});
+  const lab=x=>`<b>${esc(x.d)}</b>${esc(x.h)}`, pm=P(f[1]);
+  const midPos=pm<30?"left:0":pm>70?"right:0;text-align:right":`left:${pm}%;transform:translateX(-50%);text-align:center`;
+  h+=`<div class="rlab up" style="left:0">${lab(items[0])}</div><i class="rstem up" style="left:${P(f[0])}%"></i>`;
+  h+=`<div class="rlab up" style="right:0;text-align:right">${lab(items[2])}</div><i class="rstem up" style="left:${P(f[2])}%"></i>`;
+  h+=`<div class="rlab dn" style="${midPos}">${lab(items[1])}</div><i class="rstem dn" style="left:${pm}%"></i>`;
+  f.forEach(v=>h+=`<i class="rdot" style="left:${P(v)}%"></i>`);
+  return `<div class="strip"><div class="shead"><span>${ok?"How far apart":"The right order"} · ${yrsLabel(a,b)}</span></div><div class="ruler">${h}</div></div>`;
+}
+
+/* ---------- timeline view ---------- */
+let tlOpen=false;
+function openTimeline(u,focusId,fromLesson){
+  const old=$(".tlo");if(old)old.remove();
+  const f=focusId?ALL.find(x=>x.id===focusId):null;
+  const list=ALL.filter(x=>x.u===u),groups=[];
+  list.forEach(x=>{const g=groups[groups.length-1];if(g&&g.y===x.y)g.items.push(x);else groups.push({y:x.y,items:[x]})});
+  const card=x=>{const cur=x===f,b=(S.cards[x.id]||{}).box;
+    return `<details class="tev${cur?" cur":""}"${cur?" open":""}><summary><span class="drow"><span class="d">${esc(x.d)}</span>${cur&&fromLesson?'<span class="chip">You just answered this</span>':""}</span><span class="h">${esc(x.h)}${b>=3?'<span class="mini">Learned</span>':""}</span></summary><p>${esc(x.w)}</p><p class="w"><strong>Why it matters:</strong> ${esc(x.s)}</p></details>`};
+  const o=document.createElement("div");o.className="tlo";o.setAttribute("role","dialog");o.setAttribute("aria-label","Timeline");
+  o.innerHTML=`<div class="wrapper"><div class="tlhead">
+    <div class="r1"><button class="backbtn" id="tlback">${BACK}${fromLesson?"Back to lesson":"Back"}</button><span class="meta">${UNIT_NAME[u]}</span></div>
+    <div class="r2"><h1>Timeline</h1>${f?`<span class="meta">KT${f.k} · ${esc(TOPICS[u][f.k-1])}</span>`:""}</div>
+    ${fromLesson?"":`<div class="seg" role="group" aria-label="Choose unit"><button data-u="a" aria-pressed="${u==="a"}">Russia<small>1905–24</small></button><button data-u="b" aria-pressed="${u==="b"}">USSR<small>1924–53</small></button></div>`}
+  </div>${groups.map(g=>`<div class="tlyr"><div class="y">${g.y}</div><div class="tlevs">${g.items.map(card).join("")}</div></div>`).join("")}</div>`;
+  document.body.appendChild(o);document.body.style.overflow="hidden";
+  if(!tlOpen){try{history.pushState({nadyaTl:1},"")}catch(err){}}
+  tlOpen=true;
+  $("#tlback").onclick=()=>{if(history.state&&history.state.nadyaTl){try{history.back();return}catch(err){}}closeTimeline()};
+  o.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>openTimeline(b.dataset.u,null,false));
+  const el=o.querySelector(".tev.cur");
+  requestAnimationFrame(()=>{if(el)el.scrollIntoView({block:"center"});else o.scrollTop=0});
+  $("#tlback").focus({preventScroll:true});
+}
+function closeTimeline(){const o=$(".tlo");if(o)o.remove();document.body.style.overflow="";tlOpen=false;const c=$("#cont");if(c)c.focus()}
+window.addEventListener("popstate",()=>{if(tlOpen)closeTimeline()});
 
 /* ---------- confetti ---------- */
 function confetti(){
