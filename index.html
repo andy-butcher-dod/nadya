@@ -69,13 +69,15 @@ button:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
 .mascot[data-mood="sad"] [data-show~="sad"],
 .mascot[data-mood="miserable"] [data-show~="miserable"],
 .mascot[data-mood="right"] [data-show~="right"],
-.mascot[data-mood="wrong"] [data-show~="wrong"]{display:inline}
+.mascot[data-mood="wrong"] [data-show~="wrong"],
+.mascot[data-mood="laugh"] [data-show~="laugh"]{display:inline}
 .mascot[data-mood="miserable"]{filter:saturate(.35)}
 .mascot[data-mood="sad"]{filter:saturate(.75)}
 @media (prefers-reduced-motion:no-preference){
   .mascot .doll{animation:bob 2.4s ease-in-out infinite}
   .mascot[data-mood="happy"] .doll,.mascot[data-mood="hello"] .doll,.mascot[data-mood="right"] .doll{animation:rock 1.6s ease-in-out infinite}
   .mascot[data-mood="celebrate"] .doll{animation:jump .9s ease-in-out infinite}
+  .mascot[data-mood="laugh"] .doll{animation:giggle .26s ease-in-out infinite}
   .mascot[data-mood="worried"] .doll{animation:fidget .5s ease-in-out infinite}
   .mascot[data-mood="sad"] .doll{animation:droop 4s ease-in-out infinite}
   .mascot[data-mood="miserable"] .doll{animation:droop 6s ease-in-out infinite}
@@ -85,6 +87,7 @@ button:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
   .mascot .tear{animation:tear 2.2s ease-in infinite}
   .mascot .tear.t2{animation-delay:1.1s}
 }
+@keyframes giggle{0%,100%{transform:rotate(-4deg) translateY(0)}50%{transform:rotate(4deg) translateY(-6px)}}
 @keyframes bob{50%{transform:translateY(-6px)}}
 @keyframes rock{25%{transform:rotate(-5deg)}75%{transform:rotate(5deg)}}
 @keyframes jump{0%,100%{transform:translateY(0) scale(1,1)}20%{transform:translateY(0) scale(1.06,.92)}50%{transform:translateY(-22px) scale(.96,1.05)}80%{transform:translateY(0) scale(1.04,.95)}}
@@ -248,7 +251,12 @@ button:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
 .mini{display:inline-block;font-size:11.5px;font-weight:900;padding:1px 7px;border-radius:99px;background:var(--gold);color:#3A2A08;margin-left:6px;vertical-align:middle}
 h1.page{font-size:24px;font-weight:900;margin:8px 0 0}
 #fx{position:fixed;inset:0;pointer-events:none;z-index:30;width:100%;height:100%}
-.settings{margin-top:22px;display:grid;gap:12px}
+.settings{margin-top:22px}
+.settings > :not(summary){margin-top:12px}
+.sethead{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 16px;background:var(--surface);border:2px solid var(--line);border-radius:16px;box-shadow:0 3px 0 var(--line);font-weight:900;font-size:15px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.sethead::-webkit-details-marker{display:none}
+.sethead svg{width:20px;height:20px;transition:transform .2s}
+.settings[open] .sethead svg{transform:rotate(180deg)}
 .rem .lbl label{font-weight:800}
 #remOn{width:24px;height:24px;margin:0;accent-color:var(--blue)}
 .remrow{display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:700;font-size:15px}
@@ -261,6 +269,7 @@ h1.page{font-size:24px;font-weight:900;margin:8px 0 0}
 .btn.small{padding:11px 12px;font-size:14px;letter-spacing:.04em}
 #importBox{width:100%;box-sizing:border-box;font:12px/1.4 ui-monospace,Menlo,monospace;padding:8px 10px;border:2px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);resize:vertical}
 .getapp{display:block;text-align:center;font-weight:800;font-size:14.5px;color:var(--blue-ink);margin-top:16px;text-wrap:balance}
+.tickle{appearance:none;border:0;background:none;padding:0;margin:0;cursor:pointer;color:inherit;border-radius:24px;display:block}
 .reset{appearance:none;border:0;background:none;color:var(--muted);font-size:13px;text-decoration:underline;cursor:pointer;margin-top:28px;justify-self:center}
 </style>
 </head>
@@ -424,7 +433,8 @@ b:[
 [1953,"5 Mar 1953",5,"Stalin dies","Stalin died after a stroke at his dacha near Moscow.","His legacy: a nuclear superpower controlling eastern Europe, with strong heavy industry. But farming was weak, living standards low and millions were in the gulags."]
 ]};
 EV.b.sort((x,y)=>x[0]-y[0]);
-const APP_VERSION="1.9.1";
+const APP_VERSION="1.10";
+let settingsOpen=false;
 const NATIVE=!!window.NadyaNative;
 const APK_URL="https://github.com/andy-butcher-dod/nadya/releases/latest/download/nadya.apk";
 function syncNative(){if(!NATIVE)return;try{NadyaNative.reportProgress(JSON.stringify({last:S.last,streak:S.streak,best:S.best}))}catch(e){}}
@@ -472,7 +482,7 @@ function tone(seq){if(S.muted)return;try{AC=AC||new(window.AudioContext||window.
   seq.forEach(([f,d,type])=>{const o=AC.createOscillator(),g=AC.createGain();o.type=type||"sine";o.frequency.value=f;
   g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.18,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+d);
   o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.03);t+=d*.75})}catch(e){}}
-const SND={right:()=>tone([[660,.12],[990,.22]]),wrong:()=>tone([[220,.18,"triangle"],[180,.25,"triangle"]]),done:()=>tone([[523,.14],[659,.14],[784,.14],[1047,.35]]),tap:()=>tone([[520,.05]])};
+const SND={right:()=>tone([[660,.12],[990,.22]]),wrong:()=>tone([[220,.18,"triangle"],[180,.25,"triangle"]]),done:()=>tone([[523,.14],[659,.14],[784,.14],[1047,.35]]),tap:()=>tone([[520,.05]]),laugh:()=>tone([[760,.07,"triangle"],[600,.07,"triangle"],[780,.07,"triangle"],[620,.07,"triangle"],[800,.08,"triangle"],[640,.12,"triangle"]])};
 
 /* ---------- mascot ---------- */
 function mascot(mood,cls=""){return `<svg class="mascot ${cls}" data-mood="${mood}" viewBox="0 0 200 250" role="img" aria-label="Nadya the matryoshka doll, looking ${moodWord(mood)}">
@@ -501,7 +511,7 @@ function mascot(mood,cls=""){return `<svg class="mascot ${cls}" data-mood="${moo
    <ellipse cx="88" cy="77" rx="4.6" ry="6" fill="#2A1D14"/><ellipse cx="112" cy="77" rx="4.6" ry="6" fill="#2A1D14"/>
    <circle cx="89.5" cy="75" r="1.6" fill="#fff"/><circle cx="113.5" cy="75" r="1.6" fill="#fff"/>
   </g>
-  <g data-show="celebrate right" stroke="#2A1D14" stroke-width="3.2" stroke-linecap="round" fill="none"><path d="M82 79Q88 71 94 79M106 79Q112 71 118 79"/></g>
+  <g data-show="celebrate right laugh" stroke="#2A1D14" stroke-width="3.2" stroke-linecap="round" fill="none"><path d="M82 79Q88 71 94 79M106 79Q112 71 118 79"/></g>
   <g data-show="miserable" stroke="#2A1D14" stroke-width="3.2" stroke-linecap="round" fill="none"><path d="M82 76Q88 82 94 76M106 76Q112 82 118 76"/></g>
   <!-- mouths -->
   <g stroke="#2A1D14" stroke-width="3" stroke-linecap="round" fill="none">
@@ -511,12 +521,13 @@ function mascot(mood,cls=""){return `<svg class="mascot ${cls}" data-mood="${moo
    <path data-show="sad wrong" d="M91 98Q100 91 109 98"/>
    <path data-show="miserable" d="M90 100Q100 90 110 100"/>
   </g>
-  <path data-show="celebrate right" d="M88 91Q100 107 112 91Z" fill="#7A2420" stroke="#2A1D14" stroke-width="2.5" stroke-linejoin="round"/>
+  <path data-show="celebrate right laugh" d="M88 91Q100 107 112 91Z" fill="#7A2420" stroke="#2A1D14" stroke-width="2.5" stroke-linejoin="round"/>
+  <g data-show="laugh" fill="var(--tear)"><path d="M77 81q-4 6 0 9q4-3 0-9Z"/><path d="M123 81q-4 6 0 9q4-3 0-9Z"/></g>
   <g data-show="sad miserable" fill="var(--tear)"><path class="tear" d="M86 84q-3 5 0 7q3-2 0-7Z"/><path class="tear t2" data-show="miserable" d="M114 84q-3 5 0 7q3-2 0-7Z"/></g>
   <g data-show="worried" fill="var(--tear)"><path d="M128 64q-3 6 0 8q3-2 0-8Z"/></g>
   <g data-show="celebrate" fill="var(--gold)"><path d="M30 40l4 9 9 4-9 4-4 9-4-9-9-4 9-4z"/><path d="M168 30l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/></g>
  </g></svg>`}
-function moodWord(m){return{hello:"friendly",happy:"happy",celebrate:"delighted",waiting:"hopeful",worried:"worried",sad:"sad",miserable:"very sad",right:"pleased",wrong:"disappointed"}[m]||"friendly"}
+function moodWord(m){return{hello:"friendly",happy:"happy",celebrate:"delighted",waiting:"hopeful",worried:"worried",sad:"sad",miserable:"very sad",right:"pleased",wrong:"disappointed",laugh:"laughing"}[m]||"friendly"}
 
 function homeMood(){
   if(!S.last)return["hello","Privet! I’m Nadya. A few minutes of Russian history every day and you’ll be an expert. Shall we start?"];
@@ -552,7 +563,7 @@ function home(){
     <span class="stat" title="Total XP">${STAR}${S.xp}</span>
     <span><button class="iconbtn" id="browse" aria-label="Browse the timeline">${BOOK}</button><button class="iconbtn" id="mute" aria-label="${S.muted?"Turn sound on":"Turn sound off"}">${S.muted?SOUND_OFF:SOUND_ON}</button></span>
   </div>
-  <div class="stage"><div class="bubble">${esc(msg)}</div>${mascot(mood)}</div>
+  <div class="stage"><div class="bubble" aria-live="polite">${esc(msg)}</div><button class="tickle" id="tickle" aria-label="Tickle Nadya">${mascot(mood)}</button></div>
   <div class="week" aria-label="Practice this week">${week}</div>
   <div class="seg" role="group" aria-label="Choose unit">
     <button data-u="both" aria-pressed="${S.unit==="both"}">Both<small>1905–53</small></button>
@@ -569,8 +580,8 @@ function home(){
     ${[["a",pa],["b",pb]].map(([u,p])=>`<div class="unitrow"><div class="lbl"><span>${UNIT_NAME[u]}</span><span>${p.m} / ${p.n} learned</span></div><div class="bar"><i style="width:${Math.round(p.m/p.n*100)}%"></i></div></div>`).join("")}
     <div class="legend">An event counts as learned once you’ve got it right three times on different days.</div>
   </div>
-  <div class="settings">
-    <h2 style="font-size:15px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0;font-weight:900">Settings</h2>
+  <details class="settings" id="settings"${settingsOpen?" open":""}>
+    <summary class="sethead"><span>Settings</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
     ${NATIVE?reminderBlock():""}
     <details class="unitrow xfer"><summary>Move progress to another app or phone</summary>
       <div class="legend">Copy your progress code here, then paste it into Nadya on the other app or phone. Your streak and learned events come with it.</div>
@@ -580,7 +591,7 @@ function home(){
       <button class="btn small" id="loadProg">Load this progress</button>
       <div class="legend" id="xferMsg" role="status"></div>
     </details>
-  </div>
+  </details>
   ${!NATIVE&&/Android/i.test(navigator.userAgent)?`<a class="getapp" href="${APK_URL}">Get the Nadya Android app, with daily reminders and a home-screen widget</a>`:""}
   <button class="reset" id="reset">Reset progress</button><div class="sub" style="margin-top:10px;font-size:12px">Version ${APP_VERSION}</div>`;
   $("#go").onclick=()=>{SND.tap();startLesson()};
@@ -588,6 +599,11 @@ function home(){
   $("#browse").onclick=()=>openTimeline(S.unit==="b"?"b":"a",null,false);
   app.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{S.unit=b.dataset.u;save();home()});
   $("#reset").onclick=confirmReset;
+  const tk=$("#tickle");let tkTimer;
+  tk.onclick=()=>{const m=tk.querySelector(".mascot"),bub=$(".bubble");m.dataset.mood="laugh";
+    bub.textContent=rnd(["Hee hee! That tickles!","Ha ha ha! Stop it, comrade!","Hahaha! Careful, I’ve got six more dolls inside me!","Hee hee! Do that again and I’ll set you a pop quiz!","Ha ha! Even the Tsar wasn’t this ticklish!"]);
+    SND.laugh();clearTimeout(tkTimer);tkTimer=setTimeout(()=>{if(m.isConnected){m.dataset.mood=mood;bub.textContent=msg}},1900)};
+  $("#settings").ontoggle=e=>{settingsOpen=e.target.open};
   const ro=$("#remOn"),rt=$("#remTime");
   if(ro){const send=()=>{const [h,m]=(rt.value||"18:00").split(":").map(Number);try{NadyaNative.setReminder(ro.checked,h||0,m||0)}catch(e){}rt.disabled=!ro.checked};ro.onchange=send;rt.onchange=send}
   const xmsg=t=>{$("#xferMsg").textContent=t};

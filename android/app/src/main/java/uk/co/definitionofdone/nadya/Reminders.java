@@ -21,6 +21,38 @@ final class Reminders {
 
     static final String CHANNEL = "daily";
 
+    // Nadya's (comically) bossy reminders: {title, text}. {n} is the current streak.
+    private static final String[][] FIRST = {
+            {"Comrade! Report for history!", "Nadya has prepared your first lesson. Attendance is compulsory."},
+            {"Nadya is waiting. Impatiently.", "Your first lesson takes 3 minutes. She has cleared her whole schedule."},
+    };
+    private static final String[][] STREAK = {
+            {"Comrade! Your {n}-day streak needs you", "Nadya has issued a decree: one lesson, today. No excuses."},
+            {"Nadya is tapping her tiny wooden foot", "Your {n}-day streak won\u2019t keep itself. Three minutes. Go!"},
+            {"This is your daily reminder. Nadya\u2019s orders.", "Keep the {n}-day streak alive, or Nadya will sulk all week."},
+            {"The Five-Year Plan says: practise today", "Target: one lesson. Deadline: midnight. Nadya is watching."},
+            {"Don\u2019t make Nadya come over there", "Your {n}-day streak is on the line. One quick lesson, please!"},
+    };
+    private static final String[][] WORRIED = {
+            {"Midnight is coming, comrade!", "Your {n}-day streak ends tonight. Nadya refuses to let that happen."},
+            {"Nadya is pacing up and down", "{n} days of history, and you\u2019re going to stop NOW? Three minutes!"},
+            {"Comrade! Your {n}-day streak needs you", "Nadya has issued a decree: one lesson, today. No excuses."},
+            {"Don\u2019t make Nadya come over there", "Your {n}-day streak is on the line. One quick lesson, please!"},
+    };
+    private static final String[][] SAD = {
+            {"Nadya noticed you were missing", "She\u2019s not angry. Just disappointed. One lesson to make up?"},
+            {"Where were you yesterday, comrade?", "Nadya kept your seat warm. Back to history, please!"},
+    };
+    private static final String[][] MISERABLE = {
+            {"Nadya has called an emergency meeting", "Item 1 on the agenda: you. Item 2: a quick history lesson."},
+            {"Nadya is all alone with the Tsar", "And frankly he\u2019s terrible company. Please come back!"},
+            {"Official notice from Nadya", "Your history lessons miss you. So does she. Three minutes, today."},
+    };
+
+    private static String[] pick(String[][] options) {
+        return options[new java.util.Random().nextInt(options.length)];
+    }
+
     static void schedule(Context c) {
         SharedPreferences p = Store.prefs(c);
         Calendar t = Calendar.getInstance();
@@ -61,23 +93,13 @@ final class Reminders {
 
         String mood = Store.mood(c);
         int streak = Store.streak(c);
-        String title, body;
-        if (last == null) {
-            title = "Nadya is waiting for you";
-            body = "Your first history lesson takes about 3 minutes.";
-        } else if (mood.equals("sad")) {
-            title = "Nadya misses you…";
-            body = "One quick lesson to start a new streak?";
-        } else if (mood.equals("miserable")) {
-            title = "Nadya is all alone with the Tsar";
-            body = "Please come back for a quick lesson!";
-        } else if (streak > 0) {
-            title = "Keep your " + streak + "-day streak going!";
-            body = "Today’s history lesson takes about 3 minutes.";
-        } else {
-            title = "Time for today’s history lesson";
-            body = "Just 3 minutes with Nadya.";
-        }
+        String[] m = pick(last == null ? FIRST
+                : mood.equals("sad") ? SAD
+                : mood.equals("miserable") ? MISERABLE
+                : mood.equals("worried") ? WORRIED
+                : STREAK);
+        String title = m[0].replace("{n}", String.valueOf(streak));
+        String body = m[1].replace("{n}", String.valueOf(streak));
 
         createChannel(c);
         Intent open = new Intent(c, MainActivity.class)
@@ -90,6 +112,7 @@ final class Reminders {
                 .setColor(0xFF2D5BD7)
                 .setContentTitle(title)
                 .setContentText(body)
+                .setStyle(new Notification.BigTextStyle().bigText(body))
                 .setContentIntent(pi)
                 .setAutoCancel(true)
                 .build();
