@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="widget_bg">#1C2030</color>
-    <color name="widget_text">#ECEEF4</color>
+    <color name="widget_sky_top">#132A5E</color>
+    <color name="widget_sky_mid">#24498F</color>
+    <color name="widget_sky_bottom">#3D6DBA</color>
+    <color name="widget_text">#FFFFFF</color>
     <color name="app_bg">#121521</color>
 </resources>

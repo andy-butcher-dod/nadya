@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-    <solid android:color="@color/widget_bg" />
+    <!-- Sky: deeper blue at the top, fading lighter towards the horizon -->
+    <gradient
+        android:angle="270"
+        android:startColor="@color/widget_sky_top"
+        android:centerColor="@color/widget_sky_mid"
+        android:endColor="@color/widget_sky_bottom"
+        android:type="linear" />
     <corners android:radius="24dp" />
 </shape>
