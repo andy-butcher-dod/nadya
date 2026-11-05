@@ -1,0 +1,77 @@
+name: Android app
+
+on:
+  push:
+    branches: [main]
+    paths: ['android/**', 'index.html', '.github/workflows/android.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-app
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+
+      - name: Copy the web app into the Android app
+        run: |
+          mkdir -p android/app/src/main/assets/www
+          cp index.html manifest.webmanifest icon-192.png android/app/src/main/assets/www/
+
+      - name: Load the signing key
+        env:
+          KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/nadya-release.jks"
+            echo "KEYSTORE_FILE=$RUNNER_TEMP/nadya-release.jks" >> "$GITHUB_ENV"
+            echo "SIGNED=yes" >> "$GITHUB_ENV"
+          else
+            echo "::warning::The KEYSTORE_B64 secret is not set, so this build is only a check and will not be published."
+          fi
+
+      - name: Build
+        working-directory: android
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          VERSION_CODE: ${{ github.run_number }}
+          VERSION_NAME: '1.9'
+        run: gradle --no-daemon assembleRelease bundleRelease
+
+      - name: Collect the app files
+        run: |
+          cp android/app/build/outputs/apk/release/app-release.apk nadya.apk
+          cp android/app/build/outputs/bundle/release/app-release.aab nadya.aab
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nadya-android
+          path: |
+            nadya.apk
+            nadya.aab
+
+      - name: Publish the download
+        if: env.SIGNED == 'yes'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete android-app --cleanup-tag --yes || true
+          gh release create android-app nadya.apk nadya.aab \
+            --title "Nadya Android app (build ${{ github.run_number }})" \
+            --notes "To install on an Android phone, open this page on the phone and tap nadya.apk. nadya.aab is for uploading to Google Play." \
+            --latest

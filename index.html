@@ -248,6 +248,19 @@ button:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
 .mini{display:inline-block;font-size:11.5px;font-weight:900;padding:1px 7px;border-radius:99px;background:var(--gold);color:#3A2A08;margin-left:6px;vertical-align:middle}
 h1.page{font-size:24px;font-weight:900;margin:8px 0 0}
 #fx{position:fixed;inset:0;pointer-events:none;z-index:30;width:100%;height:100%}
+.settings{margin-top:22px;display:grid;gap:12px}
+.rem .lbl label{font-weight:800}
+#remOn{width:24px;height:24px;margin:0;accent-color:var(--blue)}
+.remrow{display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:700;font-size:15px}
+#remTime{font:inherit;font-weight:800;padding:6px 10px;border:2px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
+.legend.warn{color:var(--orange-ink);font-weight:700}
+.xfer summary{cursor:pointer;font-weight:800;font-size:15px}
+.xfer[open] summary{margin-bottom:10px}
+.xfer .btn{margin:2px 0 12px}
+.xfer .legend{margin-bottom:6px}
+.btn.small{padding:11px 12px;font-size:14px;letter-spacing:.04em}
+#importBox{width:100%;box-sizing:border-box;font:12px/1.4 ui-monospace,Menlo,monospace;padding:8px 10px;border:2px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);resize:vertical}
+.getapp{display:block;text-align:center;font-weight:800;font-size:14.5px;color:var(--blue-ink);margin-top:16px;text-wrap:balance}
 .reset{appearance:none;border:0;background:none;color:var(--muted);font-size:13px;text-decoration:underline;cursor:pointer;margin-top:28px;justify-self:center}
 </style>
 </head>
@@ -411,7 +424,10 @@ b:[
 [1953,"5 Mar 1953",5,"Stalin dies","Stalin died after a stroke at his dacha near Moscow.","His legacy: a nuclear superpower controlling eastern Europe, with strong heavy industry. But farming was weak, living standards low and millions were in the gulags."]
 ]};
 EV.b.sort((x,y)=>x[0]-y[0]);
-const APP_VERSION="1.8";
+const APP_VERSION="1.9";
+const NATIVE=!!window.NadyaNative;
+const APK_URL="https://github.com/andy-butcher-dod/nadya/releases/latest/download/nadya.apk";
+function syncNative(){if(!NATIVE)return;try{NadyaNative.reportProgress(JSON.stringify({last:S.last,streak:S.streak,best:S.best}))}catch(e){}}
 const UNIT_NAME={a:"Russia 1905–24",b:"USSR 1924–53"};
 const LEN=8, INTERVALS=[0,1,2,4,7,14], MAX_NEW=5;
 const MONTH={Jan:1,Feb:2,Mar:3,Apr:4,May:5,Jun:6,June:6,Jul:7,Aug:8,Sep:9,Oct:10,Nov:11,Dec:12,Winter:12};
@@ -522,6 +538,7 @@ const BOOK=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
 
 /* ---------- home ---------- */
 function home(){
+  syncNative();
   const [mood,msg]=homeMood(), st=liveStreak(), today=dayStr(), doneToday=S.last===today;
   const days=new Set(S.days);
   let week="";
@@ -552,18 +569,53 @@ function home(){
     ${[["a",pa],["b",pb]].map(([u,p])=>`<div class="unitrow"><div class="lbl"><span>${UNIT_NAME[u]}</span><span>${p.m} / ${p.n} learned</span></div><div class="bar"><i style="width:${Math.round(p.m/p.n*100)}%"></i></div></div>`).join("")}
     <div class="legend">An event counts as learned once you’ve got it right three times on different days.</div>
   </div>
+  <div class="settings">
+    <h2 style="font-size:15px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0;font-weight:900">Settings</h2>
+    ${NATIVE?reminderBlock():""}
+    <details class="unitrow xfer"><summary>Move progress to another app or phone</summary>
+      <div class="legend">Copy your progress code here, then paste it into Nadya on the other app or phone. Your streak and learned events come with it.</div>
+      <button class="btn ghost small" id="copyProg">Copy my progress</button>
+      <label for="importBox" class="legend">Or paste a progress code from another app or phone:</label>
+      <textarea id="importBox" rows="3" placeholder="Paste the code here"></textarea>
+      <button class="btn small" id="loadProg">Load this progress</button>
+      <div class="legend" id="xferMsg" role="status"></div>
+    </details>
+  </div>
+  ${!NATIVE&&/Android/i.test(navigator.userAgent)?`<a class="getapp" href="${APK_URL}">Get the Nadya Android app, with daily reminders and a home-screen widget</a>`:""}
   <button class="reset" id="reset">Reset progress</button><div class="sub" style="margin-top:10px;font-size:12px">Version ${APP_VERSION}</div>`;
   $("#go").onclick=()=>{SND.tap();startLesson()};
   $("#mute").onclick=()=>{S.muted=!S.muted;save();home()};
   $("#browse").onclick=()=>openTimeline(S.unit==="b"?"b":"a",null,false);
   app.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{S.unit=b.dataset.u;save();home()});
   $("#reset").onclick=confirmReset;
+  const ro=$("#remOn"),rt=$("#remTime");
+  if(ro){const send=()=>{const [h,m]=(rt.value||"18:00").split(":").map(Number);try{NadyaNative.setReminder(ro.checked,h||0,m||0)}catch(e){}rt.disabled=!ro.checked};ro.onchange=send;rt.onchange=send}
+  const xmsg=t=>{$("#xferMsg").textContent=t};
+  $("#copyProg").onclick=async()=>{const c="NADYA1:"+btoa(unescape(encodeURIComponent(JSON.stringify(S))));
+    try{await navigator.clipboard.writeText(c);xmsg("Copied. Now open Nadya in the other app or on the other phone and paste it into the box there.")}
+    catch(e){const box=$("#importBox");box.value=c;box.focus();box.select();xmsg("Copy the selected code, then paste it into Nadya in the other app or on the other phone.")}};
+  $("#loadProg").onclick=()=>{const v=$("#importBox").value.trim();let d;
+    try{if(!v.startsWith("NADYA1:"))throw 0;d=JSON.parse(decodeURIComponent(escape(atob(v.slice(7)))));if(!d||typeof d!=="object"||!d.cards)throw 0}
+    catch(e){xmsg("That doesn’t look like a Nadya progress code. Copy it again and paste the whole code.");return}
+    const b=$("#loadProg");
+    if(S.lessons>0&&!b.dataset.armed){b.dataset.armed="1";b.textContent="Tap again to replace the progress here";return}
+    try{localStorage.setItem(KEY,JSON.stringify(d))}catch(e){}
+    S=Object.assign(load(),d);save();home();const bub=$(".bubble");if(bub)bub.textContent="Progress loaded. Welcome back!"};
   const ib=$("#install");if(ib)ib.onclick=()=>{installEvt.prompt();installEvt.userChoice.finally(()=>{installEvt=null;home()})};
   window.scrollTo(0,0);
 }
+function reminderBlock(){
+  let r={on:true,hour:18,min:0,allowed:true};try{r=JSON.parse(NadyaNative.getReminder())}catch(e){}
+  return `<div class="unitrow rem">
+    <div class="lbl"><label for="remOn">Daily reminder</label><input type="checkbox" id="remOn"${r.on?" checked":""}></div>
+    <div class="remrow"><label for="remTime">Remind me at</label><input type="time" id="remTime" value="${z(r.hour)}:${z(r.min)}"${r.on?"":" disabled"}></div>
+    ${r.on&&!r.allowed?`<div class="legend warn">Notifications are switched off for Nadya. Turn them on in your phone’s Settings › Apps › Nadya › Notifications.</div>`:""}
+    <div class="legend">Add Nadya to your home screen: touch and hold an empty space on the home screen, tap Widgets, then find Nadya.</div>
+  </div>`;
+}
 function confirmReset(){
   const r=$("#reset");
-  if(r.dataset.armed){localStorage.removeItem(KEY);S=load();home();return}
+  if(r.dataset.armed){localStorage.removeItem(KEY);S=load();save();home();return}
   r.dataset.armed="1";r.textContent="Tap again to delete all progress and streaks";r.style.color="var(--orange)";
   setTimeout(()=>{if(r.isConnected){delete r.dataset.armed;r.textContent="Reset progress";r.style.color=""}},4000);
 }
@@ -688,7 +740,7 @@ function finish(){
   let streakUp=false;
   if(was!==today){S.streak=(was&&gap(was,today)===1)?S.streak+1:1;streakUp=true;S.days.push(today);S.days=S.days.slice(-120)}
   S.last=today;S.best=Math.max(S.best,S.streak);
-  const bonus=10;S.xp+=L.xp+bonus;S.lessons++;save();
+  const bonus=10;S.xp+=L.xp+bonus;S.lessons++;save();syncNative();
   const acc=Math.round(L.correctFirst/L.total*100),secs=Math.round((Date.now()-L.start)/1000);
   const msg=acc===100?"Perfect lesson!":acc>=75?"Lesson complete!":"Lesson done. Practice makes perfect!";
   app.innerHTML=`<div class="done-wrap">${mascot("celebrate")}<h1>${msg}</h1>
@@ -785,7 +837,7 @@ window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installEvt=
 window.addEventListener("appinstalled",()=>{installEvt=null;if(!L&&app.querySelector(".week"))home()});
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!L&&app.querySelector(".week"))home()});
 home();
-if("serviceWorker" in navigator&&location.protocol==="https:"&&!/claude\.ai|claudeusercontent/.test(location.host)){
+if(!NATIVE&&"serviceWorker" in navigator&&location.protocol==="https:"&&!/claude\.ai|claudeusercontent/.test(location.host)){
   navigator.serviceWorker.register("sw.js").catch(()=>{});
 }
 </script>
