@@ -424,7 +424,7 @@ b:[
 [1953,"5 Mar 1953",5,"Stalin dies","Stalin died after a stroke at his dacha near Moscow.","His legacy: a nuclear superpower controlling eastern Europe, with strong heavy industry. But farming was weak, living standards low and millions were in the gulags."]
 ]};
 EV.b.sort((x,y)=>x[0]-y[0]);
-const APP_VERSION="1.9";
+const APP_VERSION="1.9.1";
 const NATIVE=!!window.NadyaNative;
 const APK_URL="https://github.com/andy-butcher-dod/nadya/releases/latest/download/nadya.apk";
 function syncNative(){if(!NATIVE)return;try{NadyaNative.reportProgress(JSON.stringify({last:S.last,streak:S.streak,best:S.best}))}catch(e){}}
@@ -835,7 +835,15 @@ let installEvt=null;
 const isStandalone=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installEvt=e;if(!L&&app.querySelector(".week"))home()});
 window.addEventListener("appinstalled",()=>{installEvt=null;if(!L&&app.querySelector(".week"))home()});
-document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!L&&app.querySelector(".week"))home()});
+// When the app comes back on screen, pick up a newer version if one has been published (not mid-lesson)
+function checkForUpdate(){
+  if(NATIVE||!/^https:/.test(location.protocol)||/claude\.ai|claudeusercontent/.test(location.host))return;
+  fetch("./index.html?check="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.text():"").then(t=>{
+    const m=t.match(/const APP_VERSION="([^"]+)"/);
+    if(m&&m[1]!==APP_VERSION&&!L&&!tlOpen)location.reload();
+  }).catch(()=>{});
+}
+document.addEventListener("visibilitychange",()=>{if(document.hidden)return;if(!L&&app.querySelector(".week"))home();checkForUpdate()});
 home();
 if(!NATIVE&&"serviceWorker" in navigator&&location.protocol==="https:"&&!/claude\.ai|claudeusercontent/.test(location.host)){
   navigator.serviceWorker.register("sw.js").catch(()=>{});
