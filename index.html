@@ -258,6 +258,7 @@ h1.page{font-size:24px;font-weight:900;margin:8px 0 0}
 .sethead svg{width:20px;height:20px;transition:transform .2s}
 .settings[open] .sethead svg{transform:rotate(180deg)}
 .rem .lbl label{font-weight:800}
+.rem .btn{margin-top:4px}
 #remOn{width:24px;height:24px;margin:0;accent-color:var(--blue)}
 .remrow{display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:700;font-size:15px}
 #remTime{font:inherit;font-weight:800;padding:6px 10px;border:2px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
@@ -433,7 +434,7 @@ b:[
 [1953,"5 Mar 1953",5,"Stalin dies","Stalin died after a stroke at his dacha near Moscow.","His legacy: a nuclear superpower controlling eastern Europe, with strong heavy industry. But farming was weak, living standards low and millions were in the gulags."]
 ]};
 EV.b.sort((x,y)=>x[0]-y[0]);
-const APP_VERSION="1.10";
+const APP_VERSION="1.11";
 let settingsOpen=false;
 const NATIVE=!!window.NadyaNative;
 const APK_URL="https://github.com/andy-butcher-dod/nadya/releases/latest/download/nadya.apk";
@@ -605,7 +606,10 @@ function home(){
     SND.laugh();clearTimeout(tkTimer);tkTimer=setTimeout(()=>{if(m.isConnected){m.dataset.mood=mood;bub.textContent=msg}},1900)};
   $("#settings").ontoggle=e=>{settingsOpen=e.target.open};
   const ro=$("#remOn"),rt=$("#remTime");
-  if(ro){const send=()=>{const [h,m]=(rt.value||"18:00").split(":").map(Number);try{NadyaNative.setReminder(ro.checked,h||0,m||0)}catch(e){}rt.disabled=!ro.checked};ro.onchange=send;rt.onchange=send}
+  if(ro){const send=()=>{const [h,m]=(rt.value||"18:00").split(":").map(Number);try{NadyaNative.setReminder(ro.checked,h||0,m||0)}catch(e){}home()};ro.onchange=send;rt.onchange=send}
+  const tr=$("#testRem");if(tr)tr.onclick=()=>{let res="";try{res=NadyaNative.testReminder()}catch(e){}
+    $("#testMsg").textContent=res==="sent"?"Sent! Check your notifications. If nothing appears, notifications are being blocked on this phone.":"Couldn’t send it: notifications are switched off for Nadya. Turn them on in your phone’s Settings › Apps › Nadya › Notifications."};
+  const as=$("#appSettings");if(as)as.onclick=()=>{try{NadyaNative.openAppSettings()}catch(e){}};
   const xmsg=t=>{$("#xferMsg").textContent=t};
   $("#copyProg").onclick=async()=>{const c="NADYA1:"+btoa(unescape(encodeURIComponent(JSON.stringify(S))));
     try{await navigator.clipboard.writeText(c);xmsg("Copied. Now open Nadya in the other app or on the other phone and paste it into the box there.")}
@@ -620,12 +624,29 @@ function home(){
   const ib=$("#install");if(ib)ib.onclick=()=>{installEvt.prompt();installEvt.userChoice.finally(()=>{installEvt=null;home()})};
   window.scrollTo(0,0);
 }
+function whenText(ms){
+  const d=new Date(ms),t=d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}),g=gap(dayStr(d),dayStr());
+  return (g===0?"today":g===-1?"tomorrow":g===1?"yesterday":d.toLocaleDateString([],{weekday:"long"}))+" at "+t;
+}
 function reminderBlock(){
-  let r={on:true,hour:18,min:0,allowed:true};try{r=JSON.parse(NadyaNative.getReminder())}catch(e){}
+  let r={on:true,hour:18,min:0,allowed:true,next:0,lastAt:0,lastResult:"",unrestricted:true};
+  try{r=Object.assign(r,JSON.parse(NadyaNative.getReminder()))}catch(e){}
+  const done=S.last===dayStr();
+  let status="";
+  if(r.on&&r.allowed){
+    if(done)status="No reminder needed today: you’ve already done a lesson.";
+    else if(r.next)status=`Next reminder: ${whenText(r.next)}.`;
+  }
+  const lastTxt={sent:"sent",done:"skipped, because a lesson was already done",off:"not sent, because reminders were off",blocked:"not sent, because notifications were off"}[r.lastResult];
   return `<div class="unitrow rem">
     <div class="lbl"><label for="remOn">Daily reminder</label><input type="checkbox" id="remOn"${r.on?" checked":""}></div>
     <div class="remrow"><label for="remTime">Remind me at</label><input type="time" id="remTime" value="${z(r.hour)}:${z(r.min)}"${r.on?"":" disabled"}></div>
     ${r.on&&!r.allowed?`<div class="legend warn">Notifications are switched off for Nadya. Turn them on in your phone’s Settings › Apps › Nadya › Notifications.</div>`:""}
+    ${status?`<div class="legend">${status}</div>`:""}
+    ${r.lastAt&&lastTxt?`<div class="legend">Last reminder: ${whenText(r.lastAt)}, ${lastTxt}.</div>`:""}
+    ${r.on&&!r.unrestricted?`<div class="legend warn">Battery saving can delay or block reminders. In Nadya’s app settings, tap Battery and choose Unrestricted.</div><button class="btn ghost small" id="appSettings">Open Nadya’s app settings</button>`:""}
+    <button class="btn ghost small" id="testRem">Send a test reminder</button>
+    <div class="legend" id="testMsg" role="status"></div>
     <div class="legend">Add Nadya to your home screen: touch and hold an empty space on the home screen, tap Widgets, then find Nadya.</div>
   </div>`;
 }

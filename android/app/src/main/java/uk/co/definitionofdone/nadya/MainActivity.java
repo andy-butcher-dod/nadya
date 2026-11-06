@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -126,10 +127,32 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public String getReminder() {
             SharedPreferences p = Store.prefs(MainActivity.this);
+            PowerManager pm = getSystemService(PowerManager.class);
+            boolean unrestricted = pm != null && pm.isIgnoringBatteryOptimizations(getPackageName());
             return "{\"on\":" + p.getBoolean("remOn", true)
                     + ",\"hour\":" + p.getInt("remHour", 18)
                     + ",\"min\":" + p.getInt("remMin", 0)
-                    + ",\"allowed\":" + Reminders.allowed(MainActivity.this) + "}";
+                    + ",\"allowed\":" + Reminders.allowed(MainActivity.this)
+                    + ",\"next\":" + p.getLong("nextAt", 0)
+                    + ",\"lastAt\":" + p.getLong("lastAt", 0)
+                    + ",\"lastResult\":\"" + p.getString("lastResult", "") + "\""
+                    + ",\"unrestricted\":" + unrestricted + "}";
+        }
+
+        @JavascriptInterface
+        public String testReminder() {
+            return Reminders.sendTest(MainActivity.this);
+        }
+
+        @JavascriptInterface
+        public void openAppSettings() {
+            runOnUiThread(() -> {
+                try {
+                    startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            Uri.parse("package:" + getPackageName())));
+                } catch (Exception ignored) {
+                }
+            });
         }
 
         @JavascriptInterface

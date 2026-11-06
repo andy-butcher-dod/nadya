@@ -61,6 +61,7 @@ final class Reminders {
         t.set(Calendar.SECOND, 0);
         t.set(Calendar.MILLISECOND, 0);
         if (t.getTimeInMillis() <= System.currentTimeMillis() + 1000) t.add(Calendar.DAY_OF_MONTH, 1);
+        p.edit().putLong("nextAt", t.getTimeInMillis()).apply();
         AlarmManager am = c.getSystemService(AlarmManager.class);
         PendingIntent pi = alarmIntent(c);
         am.cancel(pi);
@@ -85,14 +86,32 @@ final class Reminders {
                 || c.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED;
     }
 
+    /** Called by the daily alarm. Records what happened so the app can show it in Settings. */
     static void notifyIfNeeded(Context c) {
         SharedPreferences p = Store.prefs(c);
-        if (!p.getBoolean("remOn", true) || !allowed(c)) return;
         String last = Store.last(c);
-        if (last != null && Store.daysSince(last) == 0) return; // already practised today
+        String result;
+        if (!p.getBoolean("remOn", true)) result = "off";
+        else if (!allowed(c)) result = "blocked";
+        else if (last != null && Store.daysSince(last) == 0) result = "done"; // already practised today
+        else {
+            post(c, 1);
+            result = "sent";
+        }
+        p.edit().putLong("lastAt", System.currentTimeMillis()).putString("lastResult", result).apply();
+    }
 
+    /** "Send a test reminder" in Settings: posts a reminder now, whatever the time or progress. */
+    static String sendTest(Context c) {
+        if (!allowed(c)) return "blocked";
+        post(c, 2);
+        return "sent";
+    }
+
+    private static void post(Context c, int id) {
+        String last = Store.last(c);
         String mood = Store.mood(c);
-        int streak = Store.streak(c);
+        int streak = Math.max(1, Store.streak(c));
         String[] m = pick(last == null ? FIRST
                 : mood.equals("sad") ? SAD
                 : mood.equals("miserable") ? MISERABLE
@@ -116,6 +135,6 @@ final class Reminders {
                 .setContentIntent(pi)
                 .setAutoCancel(true)
                 .build();
-        c.getSystemService(NotificationManager.class).notify(1, n);
+        c.getSystemService(NotificationManager.class).notify(id, n);
     }
 }
