@@ -432,7 +432,11 @@ b:[
 [1953,"5 Mar 1953",5,"Stalin dies","Stalin died after a stroke at his dacha near Moscow.","His legacy: a nuclear superpower controlling eastern Europe, with strong heavy industry. But farming was weak, living standards low and millions were in the gulags."]
 ]};
 EV.b.sort((x,y)=>x[0]-y[0]);
-const APP_VERSION="1.12.2";
+const APP_VERSION="1.13";
+// Android app: a newer version of this page has been downloaded. Switch to it when it won't interrupt anything.
+let updatePending=false;
+window.nadyaUpdateReady=()=>{if(!L&&!tlOpen)location.reload();else updatePending=true};
+const shellVer=()=>{try{return NATIVE&&typeof NadyaNative.shellVersion==="function"?NadyaNative.shellVersion():""}catch(e){return ""}};
 let settingsOpen=false;
 const NATIVE=!!window.NadyaNative;
 const APK_URL="https://github.com/andy-butcher-dod/nadya/releases/latest/download/nadya.apk";
@@ -548,6 +552,7 @@ const BOOK=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
 
 /* ---------- home ---------- */
 function home(){
+  if(updatePending&&!tlOpen){updatePending=false;location.reload();return}
   syncNative();
   const [mood,msg]=homeMood(), st=liveStreak(), today=dayStr(), doneToday=S.last===today;
   const days=new Set(S.days);
@@ -592,7 +597,7 @@ function home(){
     </details>
   </details>
   ${!NATIVE&&/Android/i.test(navigator.userAgent)?`<a class="getapp" href="${APK_URL}">Get the Nadya Android app, with daily reminders and a home-screen widget</a>`:""}
-  <button class="reset" id="reset">Reset progress</button><div class="sub" style="margin-top:10px;font-size:12px">Version ${APP_VERSION}</div>`;
+  <button class="reset" id="reset">Reset progress</button><div class="sub" style="margin-top:10px;font-size:12px">Version ${APP_VERSION}${shellVer()?` · Android app ${shellVer()}`:""}</div>`;
   $("#go").onclick=()=>{SND.tap();startLesson()};
   $("#mute").onclick=()=>{S.muted=!S.muted;save();home()};
   $("#browse").onclick=()=>openTimeline(S.unit==="b"?"b":"a",null,false);
