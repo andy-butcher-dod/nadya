@@ -432,7 +432,7 @@ b:[
 [1953,"5 Mar 1953",5,"Stalin dies","Stalin died after a stroke at his dacha near Moscow.","His legacy: a nuclear superpower controlling eastern Europe, with strong heavy industry. But farming was weak, living standards low and millions were in the gulags."]
 ]};
 EV.b.sort((x,y)=>x[0]-y[0]);
-const APP_VERSION="1.12.1";
+const APP_VERSION="1.12.2";
 let settingsOpen=false;
 const NATIVE=!!window.NadyaNative;
 const APK_URL="https://github.com/andy-butcher-dod/nadya/releases/latest/download/nadya.apk";
@@ -502,7 +502,7 @@ function mascot(mood,cls=""){return `<svg class="mascot ${cls}" data-mood="${moo
   <circle cx="80" cy="88" r="7" fill="var(--cheek)" opacity=".7"/><circle cx="120" cy="88" r="7" fill="var(--cheek)" opacity=".7"/>
   <!-- eyebrows -->
   <g stroke="var(--hair)" stroke-width="3" stroke-linecap="round" fill="none">
-   <path data-show="sad miserable wrong" d="M80 66L91 70M120 66L109 70"/>
+   <path data-show="sad miserable wrong" d="M79 70Q85 68 91 63M121 70Q115 68 109 63"/>
    <path data-show="worried" d="M80 68L91 64M120 68L109 64"/>
   </g>
   <!-- eyes -->
@@ -522,7 +522,7 @@ function mascot(mood,cls=""){return `<svg class="mascot ${cls}" data-mood="${moo
   </g>
   <path data-show="celebrate right laugh" d="M88 91Q100 107 112 91Z" fill="#7A2420" stroke="#2A1D14" stroke-width="2.5" stroke-linejoin="round"/>
   <g data-show="laugh" fill="var(--tear)"><path d="M77 81q-4 6 0 9q4-3 0-9Z"/><path d="M123 81q-4 6 0 9q4-3 0-9Z"/></g>
-  <g data-show="sad miserable" fill="var(--tear)"><path class="tear" d="M86 84q-3 5 0 7q3-2 0-7Z"/><path class="tear t2" data-show="miserable" d="M114 84q-3 5 0 7q3-2 0-7Z"/></g>
+  <g data-show="sad miserable" fill="var(--tear)"><path class="tear" d="M86 83q-5 8 0 11q5-3 0-11Z"/><path class="tear t2" data-show="miserable" d="M114 83q-5 8 0 11q5-3 0-11Z"/></g>
   <g data-show="worried" fill="var(--tear)"><path d="M128 64q-3 6 0 8q3-2 0-8Z"/></g>
   <g data-show="celebrate" fill="var(--gold)"><path d="M30 40l4 9 9 4-9 4-4 9-4-9-9-4 9-4z"/><path d="M168 30l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/></g>
  </g></svg>`}
