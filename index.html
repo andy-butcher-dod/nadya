@@ -294,8 +294,8 @@ const EV={a:[
 [1905,"17 Oct 1905",1,"The October Manifesto","Advised by Sergei Witte, Nicholas promised civil rights (free speech, freedom of assembly) and an elected parliament called the Duma.","It split the opposition. Liberals were mostly satisfied, so the Tsar could turn on the workers and peasants. A main reason Nicholas survived 1905."],
 [1905,"Dec 1905",1,"The 1905 Revolution crushed","The leaders of the St Petersburg Soviet were arrested. An armed rising organised by the Social Democrats in Moscow failed, with more than 1,000 people killed by tsarist troops. Soldiers were sent into the countryside to crush peasant unrest.","The army stayed loyal, and troops returning from the Far East helped. Together with the October Manifesto, this explains why Nicholas survived."],
 [1906,"Apr 1906",1,"The Fundamental Laws","Days before the First Duma met, Nicholas declared that ‘supreme autocratic power’ belonged to the Tsar. He could dissolve the Duma and make laws when it was not sitting (Article 87).","Showed that Nicholas never meant to share real power. It undermined the promises of the October Manifesto."],
-[1906,"Apr – Jul 1906",1,"The First Duma","Dominated by the liberal Kadets, it demanded land reform and more power. Nicholas dissolved it after just 10 weeks.","Key evidence for Nicholas’s attitude to the dumas: he closed any duma that challenged him."],
-[1906,"Jul 1906",1,"Stolypin becomes Prime Minister","Pyotr Stolypin combined harsh repression with reform: order first, then change.","His policies are a named part of the specification: repression and land reform."],
+[1906,"Apr – Jul 1906",1,"The First Duma","Dominated by the liberal Kadets, it demanded land reform and more power. Nicholas dissolved it after just 10 weeks.","Showed Nicholas’s attitude to the dumas: he closed any duma that challenged him."],
+[1906,"Jul 1906",1,"Stolypin becomes Prime Minister","Pyotr Stolypin combined harsh repression with reform: order first, then change.","His mix of harsh repression (‘Stolypin’s necktie’) and land reform (the ‘wager on the strong’) helped the Tsar regain control after 1905, until Stolypin was assassinated in 1911."],
 [1906,"1906 – 1909",1,"Stolypin’s repression","Special army courts tried suspected revolutionaries with no lawyers and no appeal. Over a thousand people were executed in 1906–07 and many thousands more exiled to Siberia. The hangman’s noose became known as ‘Stolypin’s necktie’. Newspapers and trade unions were shut down.","Restored order and weakened the revolutionaries, but increased hatred of the regime."],
 [1906,"Nov 1906",1,"Stolypin’s land reform","Peasants could leave the mir (village commune) and join their strips of land into one farm of their own. Stolypin called it his ‘wager on the strong’: successful farmers would stop rebelling and support the government.","Grain output rose, but by May 1915 only 14% of peasants taking up the reform had combined their land into individual farms. In 1917 peasant unrest swept the countryside again."],
 [1907,"Feb – Jun 1907",1,"The Second Duma","Even more radical than the first, with many socialists. Dissolved after about three months.","More evidence that Nicholas would not work with a critical duma."],
@@ -304,7 +304,7 @@ const EV={a:[
 [1911,"Sep 1911",1,"Stolypin assassinated","Shot at the opera in Kiev, with the Tsar in the audience. Revolutionaries, including the terrorist wing of the Socialist Revolutionaries, had long targeted him.","Nicholas had already lost confidence in him. Reform lost its driving force."],
 [1912,"Apr 1912",1,"Lena Goldfields Massacre","Gold miners in Siberia protested about rotten horsemeat and terrible conditions, and went on strike with Bolshevik help. Troops fired on a huge crowd of strikers: between 200 and 500 were killed and hundreds more wounded.","Strikes had fallen to a few hundred in 1911; after the massacre there were nearly 2,000, and thousands of protest meetings. It felt as if nothing had changed since Bloody Sunday."],
 [1912,"Nov 1912 – Feb 1917",1,"The Fourth Duma","Conservative, but it became more and more critical of the government once war began.","Its members later formed the Progressive Bloc (1915) and the Provisional Committee (1917)."],
-[1914,"Aug 1914",2,"Russia enters the First World War","Russia went to war against Germany and Austria-Hungary. There was a wave of patriotism, and St Petersburg was renamed Petrograd to sound less German.","The war’s economic, social and political effects are the core of this key topic."],
+[1914,"Aug 1914",2,"Russia enters the First World War","Russia went to war against Germany and Austria-Hungary. There was a wave of patriotism, and St Petersburg was renamed Petrograd to sound less German.","The war brought huge losses, food shortages and soaring prices, and turned many Russians against the Tsar. Within three years he had lost his throne."],
 [1914,"26 – 30 Aug 1914",2,"Battle of Tannenberg","The Germans won a stunning victory in East Prussia. Russia lost 122,000 men: around 30,000 killed and the rest captured. The Russian commander was so ashamed that he killed himself.","Exposed poor leadership, communications and supplies in the Russian army."],
 [1915,"1915",2,"The Great Retreat and shortages","By the end of 1915 Russia had lost 2 million men and was in retreat. Over 15 million men were called up, so factories and farms lost workers: over 500 factories closed in 1915. The government printed money, causing inflation, and the railways could not get enough food to the cities.","Military effects: huge losses and falling morale. Economic and social effects: shortages, inflation and hunger in the cities."],
 [1915,"Aug 1915",2,"The Progressive Bloc","The duma demanded a government of duma deputies that the people could trust. The Tsar refused, so around half the deputies formed the Progressive Bloc, which became a centre of opposition.","A political effect of the war: even moderate supporters of the monarchy turned against the Tsar’s government."],
@@ -432,7 +432,7 @@ b:[
 [1953,"5 Mar 1953",5,"Stalin dies","Stalin died after a stroke at his dacha near Moscow.","His legacy: a nuclear superpower controlling eastern Europe, with strong heavy industry. But farming was weak, living standards low and millions were in the gulags."]
 ]};
 EV.b.sort((x,y)=>x[0]-y[0]);
-const APP_VERSION="1.13";
+const APP_VERSION="1.13.1";
 // Android app: a newer version of this page has been downloaded. Switch to it when it won't interrupt anything.
 let updatePending=false;
 window.nadyaUpdateReady=()=>{if(!L&&!tlOpen)location.reload();else updatePending=true};
@@ -812,7 +812,7 @@ function strip(e,guess){
     const m={k:guess*100,h:`<div class="srow guess"><span class="sd">${guess}</span><span class="sdot"></span><span class="st">You said ${guess}: ${n} year${n>1?"s":""} too ${diff<0?"early":"late"}</span></div>`};
     const at=rows.findIndex(r=>r.k>=m.k);if(at<0)rows.push(m);else rows.splice(at,0,m);
   }
-  return `<div class="strip slist"><div class="shead"><span>Where it fits · ${yrsLabel(lo,hi)}</span><span>KT${e.k}</span></div>${rows.map(r=>r.h).join("")}</div>`;
+  return `<div class="strip slist"><div class="shead"><span>Where it fits · ${yrsLabel(lo,hi)}</span></div>${rows.map(r=>r.h).join("")}</div>`;
 }
 // The three events of an order question on a year ruler, with the gaps between them
 function ruler(items,ok){
@@ -843,7 +843,7 @@ function openTimeline(u,focusId,fromLesson){
   const o=document.createElement("div");o.className="tlo";o.setAttribute("role","dialog");o.setAttribute("aria-label","Timeline");
   o.innerHTML=`<div class="wrapper"><div class="tlhead">
     <div class="r1"><button class="backbtn" id="tlback">${BACK}${fromLesson?"Back to lesson":"Back"}</button><span class="meta">${UNIT_NAME[u]}</span></div>
-    <div class="r2"><h1>Timeline</h1>${f?`<span class="meta">KT${f.k} · ${esc(TOPICS[u][f.k-1])}</span>`:""}</div>
+    <div class="r2"><h1>Timeline</h1>${f?`<span class="meta">${esc(TOPICS[u][f.k-1])}</span>`:""}</div>
     ${fromLesson?"":`<div class="seg" role="group" aria-label="Choose unit"><button data-u="a" aria-pressed="${u==="a"}">Russia<small>1905–24</small></button><button data-u="b" aria-pressed="${u==="b"}">USSR<small>1924–53</small></button></div>`}
   </div>${groups.map(g=>`<div class="tlyr"><div class="y">${g.y}</div><div class="tlevs">${g.items.map(card).join("")}</div></div>`).join("")}</div>`;
   document.body.appendChild(o);document.body.style.overflow="hidden";
