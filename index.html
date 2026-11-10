@@ -122,8 +122,9 @@ button:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
 .unitrow{display:grid;gap:6px;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:12px 14px}
 .unitrow .lbl{display:flex;justify-content:space-between;gap:8px;font-weight:800;font-size:15px}
 .unitrow .lbl span:last-child{color:var(--muted);font-variant-numeric:tabular-nums}
-.bar{height:12px;border-radius:99px;background:var(--line);overflow:hidden}
-.bar i{display:block;height:100%;background:var(--gold);border-radius:99px;transition:width .4s}
+.bar{position:relative;height:12px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar i{position:absolute;left:0;top:0;bottom:0;background:var(--gold);border-radius:99px;transition:width .4s}
+.bar i.st{opacity:.35}
 .legend{font-size:13px;color:var(--muted)}
 
 /* Lesson */
@@ -432,7 +433,7 @@ b:[
 [1953,"5 Mar 1953",5,"Stalin dies","Stalin died after a stroke at his dacha near Moscow.","His legacy: a nuclear superpower controlling eastern Europe, with strong heavy industry. But farming was weak, living standards low and millions were in the gulags."]
 ]};
 EV.b.sort((x,y)=>x[0]-y[0]);
-const APP_VERSION="1.13.1";
+const APP_VERSION="1.14";
 // Android app: a newer version of this page has been downloaded. Switch to it when it won't interrupt anything.
 let updatePending=false;
 window.nadyaUpdateReady=()=>{if(!L&&!tlOpen)location.reload();else updatePending=true};
@@ -581,8 +582,8 @@ function home(){
   </div>
   <div class="progress">
     <h2>Your progress</h2>
-    ${[["a",pa],["b",pb]].map(([u,p])=>`<div class="unitrow"><div class="lbl"><span>${UNIT_NAME[u]}</span><span>${p.m} / ${p.n} learned</span></div><div class="bar"><i style="width:${Math.round(p.m/p.n*100)}%"></i></div></div>`).join("")}
-    <div class="legend">An event counts as learned once you’ve got it right three times on different days.</div>
+    ${[["a",pa],["b",pb]].map(([u,p])=>`<div class="unitrow"><div class="lbl"><span>${UNIT_NAME[u]}</span><span>${p.m} learned · ${p.s} of ${p.n} started</span></div><div class="bar" role="img" aria-label="${p.m} learned and ${p.s} started out of ${p.n} events"><i class="st" style="width:${Math.round(p.s/p.n*100)}%"></i><i style="width:${Math.round(p.m/p.n*100)}%"></i></div></div>`).join("")}
+    <div class="legend">Started: you’ve met the event in a lesson. Learned: you’ve got it right three times, on different days.</div>
   </div>
   <details class="settings" id="settings"${settingsOpen?" open":""}>
     <summary class="sethead"><span>Settings</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
@@ -663,10 +664,12 @@ function confirmReset(){
 /* ---------- lesson building ---------- */
 function buildLesson(){
   const P=pool(),today=dayStr(),c=S.cards;
-  const due=shuffle(P.filter(e=>c[e.id]&&c[e.id].due<=today)).sort((a,b)=>c[a.id].box-c[b.id].box);
+  // Reviews come first: every event that's due, the longest-waiting first (and, among equals, the closest to learned)
+  const due=shuffle(P.filter(e=>c[e.id]&&c[e.id].due<=today)).sort((a,b)=>c[a.id].due<c[b.id].due?-1:c[a.id].due>c[b.id].due?1:c[b.id].box-c[a.id].box);
   let fresh=P.filter(e=>!c[e.id]);
   if(S.unit==="both"){const fa=fresh.filter(e=>e.u==="a"),fb=fresh.filter(e=>e.u==="b");fresh=[];while(fa.length||fb.length){if(fa.length)fresh.push(fa.shift());if(fb.length)fresh.push(fb.shift())}}
-  let picks=due.slice(0,LEN-Math.min(3,fresh.length));
+  // New events only take the places left over
+  let picks=due.slice(0,LEN);
   picks=picks.concat(fresh.slice(0,Math.min(MAX_NEW,LEN-picks.length)));
   if(picks.length<LEN){const rest=shuffle(P.filter(e=>!picks.includes(e)&&c[e.id])).sort((a,b)=>c[a.id].box-c[b.id].box);picks=picks.concat(rest.slice(0,LEN-picks.length))}
   if(picks.length<LEN)picks=picks.concat(fresh.filter(e=>!picks.includes(e)).slice(0,LEN-picks.length));
@@ -749,7 +752,7 @@ function grade(){
   const c=S.cards[q.e.id]||{box:0,due:dayStr()};
   if(firstTry){
     if(ok){c.box=Math.min(c.box+1,5);c.due=addDays(dayStr(),INTERVALS[c.box]);L.correctFirst++;L.xp+=10}
-    else{c.box=0;c.due=dayStr()}
+    else{c.box=Math.max(0,c.box-1);c.due=dayStr()}
     S.cards[q.e.id]=c;save();
   }else if(ok)L.xp+=2;
   L.queue.shift();
