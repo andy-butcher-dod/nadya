@@ -272,6 +272,27 @@ h1.page{font-size:24px;font-weight:900;margin:8px 0 0}
 #importBox{width:100%;box-sizing:border-box;font:12px/1.4 ui-monospace,Menlo,monospace;padding:8px 10px;border:2px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);resize:vertical}
 .getapp{display:block;text-align:center;font-weight:800;font-size:14.5px;color:var(--blue-ink);margin-top:16px;text-wrap:balance}
 .tickle{appearance:none;border:0;background:none;padding:0;margin:0;cursor:pointer;color:inherit;border-radius:24px;display:block}
+.topr{display:inline-flex;align-items:center;gap:4px}
+.tlpill{appearance:none;border:2px solid var(--line);background:var(--surface);color:var(--blue-ink);border-radius:99px;padding:6px 12px 6px 9px;font:inherit;font-weight:900;font-size:14px;box-shadow:0 3px 0 var(--line);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.tlpill svg{width:17px;height:17px}
+/* First-time tour */
+.tour{position:fixed;inset:0;z-index:80}
+.tour .shade{position:absolute;inset:0;background:rgba(10,14,28,.62)}
+.tour .hole{position:absolute;border-radius:18px;box-shadow:0 0 0 9999px rgba(10,14,28,.62),0 0 0 4px var(--gold);transition:all .25s ease;pointer-events:none}
+.tour .tcard{position:absolute;left:max(16px,env(safe-area-inset-left,0px));right:max(16px,env(safe-area-inset-right,0px));max-width:448px;margin:0 auto;background:var(--surface);color:var(--ink);border-radius:20px;padding:16px 18px 14px;box-shadow:0 18px 40px rgba(0,0,0,.3);display:grid;gap:8px}
+.tour .tcard .mascot{width:84px;justify-self:center}
+.tour .tcard h2{margin:0;font-size:20px;font-weight:900;text-wrap:balance}
+.tour .tcard p{margin:0;font-size:16px;line-height:1.45;font-weight:600}
+.tour .trow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:4px}
+.tour .dots{display:flex;gap:6px}
+.tour .dots i{width:8px;height:8px;border-radius:50%;background:var(--line)}
+.tour .dots i.on{background:var(--blue)}
+.tour .tbtns{display:flex;gap:8px;align-items:center}
+.tour .skip{appearance:none;border:0;background:none;color:var(--muted);font:inherit;font-weight:800;font-size:14.5px;padding:10px 6px;cursor:pointer}
+.tour .btn{width:auto;padding:11px 18px;font-size:15px}
+.tour .finalbtns{display:grid;gap:10px;margin-top:6px}
+.tour .finalbtns .btn{width:100%}
+@media (prefers-reduced-motion:reduce){.tour .hole{transition:none}}
 /* Timeline challenge */
 .chalbtn{appearance:none;border:2px solid var(--line);background:var(--surface);color:var(--blue-ink);border-radius:99px;padding:8px 12px;font:inherit;font-weight:900;font-size:13.5px;box-shadow:0 3px 0 var(--line);cursor:pointer;display:inline-flex;gap:6px;align-items:center;white-space:nowrap}
 .chalbtn svg{width:16px;height:16px}
@@ -465,7 +486,7 @@ b:[
 [1953,"5 Mar 1953",5,"Stalin dies","Stalin died after a stroke at his dacha near Moscow.","His legacy: a nuclear superpower controlling eastern Europe, with strong heavy industry. But farming was weak, living standards low and millions were in the gulags."]
 ]};
 EV.b.sort((x,y)=>x[0]-y[0]);
-const APP_VERSION="1.16";
+const APP_VERSION="1.17";
 // Android app: a newer version of this page has been downloaded. Switch to it when it won't interrupt anything.
 let updatePending=false;
 window.nadyaUpdateReady=()=>{if(!L&&!tlOpen)location.reload();else updatePending=true};
@@ -602,7 +623,7 @@ function home(){
   <div class="top">
     <span class="stat${st?"":" off"}" title="Day streak">${st?FLAME:FLAME_OFF}${st}</span>
     <span class="stat" title="Total XP">${STAR}${S.xp}</span>
-    <span><button class="iconbtn" id="browse" aria-label="Browse the timeline">${BOOK}</button><button class="iconbtn" id="mute" aria-label="${S.muted?"Turn sound on":"Turn sound off"}">${S.muted?SOUND_OFF:SOUND_ON}</button></span>
+    <span class="topr"><button class="tlpill" id="browse">${TL_ICON}Timeline</button><button class="iconbtn" id="mute" aria-label="${S.muted?"Turn sound on":"Turn sound off"}">${S.muted?SOUND_OFF:SOUND_ON}</button></span>
   </div>
   <div class="stage"><div class="bubble" aria-live="polite">${esc(msg)}</div><button class="tickle" id="tickle" aria-label="Tickle Nadya">${mascot(mood)}</button></div>
   <div class="week" aria-label="Practice this week">${week}</div>
@@ -624,6 +645,7 @@ function home(){
   <details class="settings" id="settings"${settingsOpen?" open":""}>
     <summary class="sethead"><span>Settings</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
     ${NATIVE?reminderBlock():""}
+    <button class="btn ghost small" id="tourAgain">Show the tour again</button>
     <details class="unitrow xfer"><summary>Move progress to another app or phone</summary>
       <div class="legend">Copy your progress code here, then paste it into Nadya on the other app or phone. Your streak and learned events come with it.</div>
       <button class="btn ghost small" id="copyProg">Copy my progress</button>
@@ -640,6 +662,8 @@ function home(){
   $("#browse").onclick=()=>openTimeline(S.unit==="b"?"b":"a",null,false);
   app.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{S.unit=b.dataset.u;save();home()});
   $("#reset").onclick=confirmReset;
+  $("#tourAgain").onclick=()=>startTour();
+  if(!S.tourDone&&!tourOn&&!L)setTimeout(()=>{if(!S.tourDone&&!tourOn&&!L&&!tlOpen)startTour()},400);
   const tk=$("#tickle");let tkTimer;
   tk.onclick=()=>{const m=tk.querySelector(".mascot"),bub=$(".bubble");m.dataset.mood="laugh";
     bub.textContent=rnd(["Hee hee! That tickles!","Ha ha ha! Stop it, comrade!","Hahaha! Careful, I’ve got six more dolls inside me!","Hee hee! Do that again and I’ll set you a pop quiz!","Ha ha! Even the Tsar wasn’t this ticklish!"]);
@@ -906,6 +930,50 @@ function openTimeline(u,focusId,fromLesson){
 }
 function closeTimeline(){const o=$(".tlo");if(o)o.remove();document.body.style.overflow="";tlOpen=false;const c=$("#cont");if(c)c.focus()}
 window.addEventListener("popstate",()=>{if(chOpen)closeChallenge();else if(tlOpen)closeTimeline()});
+
+/* ---------- first-time tour ---------- */
+let tourOn=false,tourI=0;
+function tourSteps(){
+  const t=[
+    {mood:"hello",title:"Privet! I’m Nadya",text:"I’ll help you learn the big events in Russia and the USSR from 1905 to 1953, a few minutes at a time. (Psst: tap me whenever you like. I’m very ticklish.)"},
+    {sel:"#go",title:"One short lesson a day",text:"Each lesson is 8 quick questions and takes about 3 minutes. After every answer you’ll see where that event fits in history."},
+    {sel:".week",title:"Keep your streak going",text:"Each day you practise lights a flame. Miss a day and I get sad… so please don’t!"},
+    {sel:".seg",title:"Choose what to practise",text:"Russia 1905–24, the USSR 1924–53, or both mixed together."},
+    {sel:"#browse",title:"The timeline",text:"Tap here to see every event in order, with what happened and why it mattered. There’s a Timeline challenge in there too."},
+    {sel:".progress",title:"Watch your progress",text:"Events you’ve met show as started. Get one right three times, on different days, and it’s learned."}
+  ];
+  if(NATIVE)t.push({sel:"#settings",title:"Daily reminders",text:"I’ll send you a reminder each day, so you don’t forget. Change the time in Settings."});
+  t.push({mood:"celebrate",title:S.last?"That’s the tour!":"Ready, comrade?",text:S.last?"Back to history. Your streak is waiting.":"Let’s do your first lesson together.",final:true});
+  return t;
+}
+function startTour(){if(tourOn)return;tourOn=true;tourI=0;window.scrollTo(0,0);showTour()}
+function endTour(){const o=$(".tour");if(o)o.remove();tourOn=false;S.tourDone=true;save();window.removeEventListener("resize",placeTour)}
+function showTour(){
+  const steps=tourSteps(),st=steps[tourI];
+  let o=$(".tour");
+  if(!o){o=document.createElement("div");o.className="tour";o.setAttribute("role","dialog");o.setAttribute("aria-modal","true");o.setAttribute("aria-label","Welcome tour");document.body.appendChild(o);window.addEventListener("resize",placeTour)}
+  const dots=steps.map((x,i)=>`<i class="${i===tourI?"on":""}"></i>`).join("");
+  o.innerHTML=`${st.sel?'<div class="hole"></div>':'<div class="shade"></div>'}<div class="tcard" aria-live="polite">
+    ${st.mood?mascot(st.mood):""}<h2>${esc(st.title)}</h2><p>${esc(st.text)}</p>
+    ${st.final?`<div class="finalbtns"><button class="btn" id="tourGo">${S.last?"Got it":"Start my first lesson"}</button>${S.last?"":'<button class="btn ghost" id="tourLater">Not now</button>'}</div>`
+      :`<div class="trow"><span class="dots" aria-label="Step ${tourI+1} of ${steps.length}">${dots}</span><span class="tbtns"><button class="skip" id="tourSkip">Skip</button><button class="btn" id="tourNext">Next</button></span></div>`}
+  </div>`;
+  if(st.final){$("#tourGo").onclick=()=>{endTour();if(!S.last||S.last!==dayStr()){SND.tap();if(!S.last)startLesson()}};const l=$("#tourLater");if(l)l.onclick=endTour;$("#tourGo").focus()}
+  else{$("#tourNext").onclick=()=>{tourI++;showTour()};$("#tourSkip").onclick=endTour;$("#tourNext").focus()}
+  const el=st.sel&&document.querySelector(st.sel);
+  if(el){el.scrollIntoView({block:"center",behavior:"auto"});requestAnimationFrame(placeTour)}else placeTour();
+}
+// Put the highlight round the step's element and the card in whichever half of the screen is free
+function placeTour(){
+  const o=$(".tour");if(!o)return;
+  const st=tourSteps()[tourI],card=o.querySelector(".tcard"),hole=o.querySelector(".hole"),el=st.sel&&document.querySelector(st.sel);
+  if(!el||!hole){card.style.top="50%";card.style.transform="translateY(-50%)";return}
+  const r=el.getBoundingClientRect(),pad=8;
+  Object.assign(hole.style,{left:(r.left-pad)+"px",top:(r.top-pad)+"px",width:(r.width+pad*2)+"px",height:(r.height+pad*2)+"px"});
+  card.style.transform="";
+  const ch=card.offsetHeight,below=innerHeight-r.bottom;
+  if(below>ch+28){card.style.top=(r.bottom+pad+14)+"px"}else{card.style.top=Math.max(12,r.top-pad-14-ch)+"px"}
+}
 
 /* ---------- timeline challenge ---------- */
 let CH=null,chOpen=false;
