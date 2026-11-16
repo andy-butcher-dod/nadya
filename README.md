@@ -1,6 +1,6 @@
 # Nadya: History Practice
 
-A daily history practice app with Nadya, an animated matryoshka doll. It covers Russia 1905–24 and the USSR 1924–53 in short daily lessons, with streaks, spaced repetition and a timeline of 142 key events.
+A daily history practice app with Nadya, an animated matryoshka doll. It covers four units of Pearson Edexcel International GCSE History (4HI1): Russia 1905–24 and Changes in medicine c1848–c1948 (Paper 2), and the USSR 1924–53 and Germany 1918–45 (Paper 1). Short daily lessons, streaks, spaced repetition and a timeline of 284 key events. Practise one unit, both units of a paper, or all four.
 
 ## Features
 

@@ -108,6 +108,10 @@ button:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
 .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:16px}
 .seg button{appearance:none;border:2px solid var(--line);background:var(--surface);border-radius:14px;padding:10px 6px;font-weight:800;font-size:14.5px;cursor:pointer;box-shadow:0 3px 0 var(--line);line-height:1.2}
 .seg button small{display:block;font-weight:700;font-size:12px;color:var(--muted)}
+.seg.home{grid-template-columns:repeat(12,1fr)}
+.seg.home button{grid-column:span 3;padding:9px 3px;font-size:14px}
+.seg.home button small{font-size:11px}
+.seg.home button.grp{grid-column:span 4}
 .seg button[aria-pressed="true"]{border-color:var(--blue);background:var(--blue-soft);box-shadow:0 3px 0 var(--blue)}
 .btn{appearance:none;border:0;width:100%;background:var(--blue);color:#fff;border-radius:16px;padding:15px 18px;font-weight:900;font-size:17px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;box-shadow:0 5px 0 var(--blue-d);transition:transform .05s}
 .btn:active{transform:translateY(5px);box-shadow:none}
@@ -210,7 +214,9 @@ button:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
 .tlhead .meta{font-size:13px;font-weight:800;color:var(--muted);text-align:right}
 .backbtn{display:inline-flex;align-items:center;gap:6px;border:0;background:var(--blue);color:#fff;border-radius:99px;padding:9px 14px 9px 10px;font-weight:900;font-size:14.5px;box-shadow:0 3px 0 var(--blue-d);cursor:pointer}
 .backbtn svg{width:18px;height:18px}
-.tlhead .seg{margin-top:0;grid-template-columns:1fr 1fr}
+.tlhead .seg{margin-top:0;grid-template-columns:repeat(4,1fr)}
+.tlhead .seg button{padding:8px 3px;font-size:13.5px}
+.tlhead .seg button small{font-size:11px}
 .tlyr{display:grid;grid-template-columns:52px minmax(0,1fr);gap:0 14px;padding-top:14px}
 .tlyr .y{font-size:22px;font-weight:900;padding-top:6px;font-variant-numeric:tabular-nums}
 .tlevs{display:flex;flex-direction:column;gap:8px;border-left:2px solid var(--line);padding-left:16px;min-width:0}
@@ -336,7 +342,9 @@ h1.page{font-size:24px;font-weight:900;margin:8px 0 0}
 <script>
 const TOPICS={
  a:["Tsarist rule in Russia, 1905–14","Impact of war & the February Revolution, 1914–17","Provisional Government & the Bolshevik Revolution","Bolshevik consolidation of power & the Civil War","War Communism & the NEP"],
- b:["The leadership struggle, 1924–29","Five-Year Plans & collectivisation","Purges, show trials, the cult of Stalin & the revision of history","Life in the Soviet Union, 1924–41","The Second World War & after, 1941–53"]
+ b:["The leadership struggle, 1924–29","Five-Year Plans & collectivisation","Purges, show trials, the cult of Stalin & the revision of history","Life in the Soviet Union, 1924–41","The Second World War & after, 1941–53"],
+ c:["The Weimar Republic & its early problems, 1918–23", "The recovery of Germany, 1924–29", "The rise of Hitler & the Nazis to Jan 1933", "Nazi Germany, 1933–39", "Germany & occupied territories in the Second World War"],
+ d:["Progress in the mid-19th century: Nightingale, Chadwick, Snow & Simpson", "Discovery & development, 1860–75: Lister & Pasteur", "Accelerating change, 1875–1905: Ehrlich, Koch & chemistry", "Government action & war, 1905–20", "Advances in medicine, surgery & public health, 1920–48"]
 };
 // [year, date, key topic, title, what happened, why it matters]
 const EV={a:[
@@ -486,7 +494,154 @@ b:[
 [1953,"5 Mar 1953",5,"Stalin dies","Stalin died after a stroke at his dacha near Moscow.","His legacy: a nuclear superpower controlling eastern Europe, with strong heavy industry. But farming was weak, living standards low and millions were in the gulags."]
 ]};
 EV.b.sort((x,y)=>x[0]-y[0]);
-const APP_VERSION="1.17";
+// [year, date, key topic, title, what happened, why it matters]
+EV.c=[
+[1918,"Nov 1918",1,"Kiel mutiny and the German Revolution","Sailors at Kiel refused orders to sail out and fight the British. The revolt spread fast: workers’ and soldiers’ councils took over towns across Germany.","The start of the German Revolution. It showed the Kaiser had lost control, and pushed him to give up power."],
+[1918,"9 Nov 1918",1,"The Kaiser abdicates","Kaiser Wilhelm II gave up the throne and fled to the Netherlands. Germany was declared a republic, and Friedrich Ebert, leader of the Social Democrats (SPD), took charge.","The end of the monarchy. The new republic was born in defeat and chaos, which made it look weak from the start."],
+[1918,"11 Nov 1918",1,"The armistice is signed","Ebert’s new government agreed a ceasefire with the Allies, ending the fighting of the First World War.","Many Germans believed the army had not really been beaten. They blamed the politicians who signed: the ‘November Criminals’ who had ‘stabbed Germany in the back’."],
+[1919,"Jan 1919",1,"The Spartacist uprising","Communists of the Spartacist League, led by Rosa Luxemburg and Karl Liebknecht, tried to seize power in Berlin. The government used the army and the Freikorps (ex-soldiers) to crush them, and both leaders were killed.","A threat from the Left. Relying on the right-wing Freikorps showed how weak the government was without the army."],
+[1919,"Feb 1919",1,"National Assembly meets at Weimar","The newly elected National Assembly met in the small town of Weimar because Berlin was too dangerous. It chose Ebert as the first president.","The republic took its name from the town. It had to begin life away from the capital: a sign of how unstable Germany was."],
+[1919,"28 Jun 1919",1,"The Treaty of Versailles signed","Germany lost about 13% of its land and all its colonies. Its army was cut to 100,000 men, with no air force or submarines, and the Rhineland was demilitarised. Germany had to accept blame for the war (the ‘war guilt’ clause) and pay reparations.","Germans called it a ‘diktat’: a dictated peace. The hatred it caused was turned on the Weimar politicians who signed it, and later used by Hitler."],
+[1919,"Aug 1919",1,"The Weimar Constitution","Germany became a democracy. Men and women over 20 could vote, the Reichstag was elected by proportional representation, and an elected president served for seven years. Article 48 let the president rule by decree in an emergency.","Its strengths: rights for all and a fair voting system. Its weaknesses: proportional representation led to many small parties and weak coalitions, and Article 48 could be used to bypass the Reichstag."],
+[1919,"Sep 1919",3,"Hitler joins the German Workers’ Party","Sent by the army to spy on the small German Workers’ Party (DAP), led by Anton Drexler, Hitler joined it instead. He soon became its star speaker.","The beginning of Hitler’s political career."],
+[1920,"Feb 1920",3,"The Twenty-Five Point Programme","The party set out its aims: tearing up the Treaty of Versailles, uniting all Germans, taking land for Germany to expand, and excluding Jews from citizenship. It renamed itself the National Socialist German Workers’ Party (NSDAP), the Nazis.","Its policies appealed to nationalists, workers and the lower middle class. Many of its ideas became Nazi policy after 1933."],
+[1920,"Mar 1920",1,"The Kapp Putsch","Freikorps units led by Wolfgang Kapp marched into Berlin to take power for the Right. The army refused to fire on them, and the government fled. Workers in Berlin called a general strike, and the putsch collapsed within days.","A threat from the Right. It showed the army could not be relied on to defend the republic, but also that ordinary workers would."],
+[1920,"Dec 1920",3,"The Nazis buy a newspaper","The party bought the Völkischer Beobachter (People’s Observer), which became its own newspaper.","Gave the Nazis a way to spread their ideas to many more people."],
+[1921,"Apr 1921",1,"Reparations set at £6,600 million","The Allies fixed the reparations bill at £6,600 million, to be paid in yearly instalments.","A huge burden on an economy already weakened by war. Germany soon struggled to pay, which led to the occupation of the Ruhr."],
+[1921,"Jul 1921",3,"Hitler becomes party leader","Hitler threatened to leave the party unless he was made leader. Drexler stepped aside, and Hitler took full control.","The party was now Hitler’s. The ‘leader principle’ (Führerprinzip) meant he alone made the decisions."],
+[1921,"Oct 1921",3,"The SA is set up","The Sturmabteilung (SA), or stormtroopers, was formed, mostly from ex-soldiers and unemployed young men. They wore brown shirts.","The SA protected Nazi meetings and attacked opponents, giving the party a violent, disciplined image."],
+[1922,"Jun 1922",1,"Foreign Minister Rathenau murdered","Walther Rathenau was shot by right-wing extremists. Between 1919 and 1922 there were hundreds of political murders, most of them by the Right.","Showed the violence of the extreme Right. Judges were often lenient towards right-wing killers, which suggested sympathy for them."],
+[1923,"Jan 1923",1,"French and Belgian troops occupy the Ruhr","When Germany failed to pay reparations, French and Belgian troops occupied the Ruhr, Germany’s main industrial area, to take goods instead. The government told workers to go on strike (passive resistance) and kept paying them.","Paying striking workers meant printing more money. Industrial output collapsed, and this pushed Germany into hyperinflation."],
+[1923,"Aug 1923",2,"Stresemann becomes chancellor","Gustav Stresemann was chancellor for about 100 days, then served as foreign minister until his death in 1929. In September he called off passive resistance in the Ruhr.","The start of Germany’s recovery. Stresemann ended the Ruhr crisis and began to rebuild trust with Britain and France."],
+[1923,"Nov 1923",1,"Hyperinflation peaks","Prices rose so fast that money became worthless. A loaf of bread that cost under 1 mark in 1921 cost over 200,000 million marks by November 1923. Workers were paid daily and rushed to spend their wages.","Savers and people on fixed incomes, such as pensioners, lost everything. Borrowers could pay off debts cheaply. Many middle-class Germans blamed the republic."],
+[1923,"Nov 1923",2,"The Rentenmark introduced","Stresemann replaced the worthless mark with a new temporary currency, the Rentenmark, backed by Germany’s land and industry. In 1924 it was replaced by the Reichsmark.","It ended hyperinflation and restored confidence in German money."],
+[1923,"8 – 9 Nov 1923",3,"The Munich Putsch","Hitler and his supporters took over a meeting in a Munich beer hall and tried to seize power in Bavaria, with the support of General Ludendorff. The next day armed police stopped their march through Munich. Shots were fired, 14 Nazis were killed, and Hitler was arrested.","A failure, but Hitler learned he must win power by legal means, through elections."],
+[1924,"Feb – Apr 1924",3,"Hitler’s trial","Hitler used his trial for treason to make speeches that were reported across Germany. He was sentenced to five years in Landsberg prison but served only nine months.","Made Hitler a national figure. The light sentence showed that judges were sympathetic to the Right."],
+[1924,"1924 – 1929",2,"The ‘Golden Years’ of recovery","Industry grew, unemployment fell, wages rose and new housing was built. Berlin became famous for its art, film and nightlife.","Support for extreme parties fell. But the recovery rested on US loans that could be recalled at any time."],
+[1924,"Aug 1924",2,"The Dawes Plan","An American banker, Charles Dawes, helped to agree a plan that lowered Germany’s yearly reparations payments for a time. The USA would lend Germany 800 million marks.","US loans paid for new factories, roads and housing, and French troops left the Ruhr in 1925. But recovery now depended on American money."],
+[1925,"Jul 1925",3,"Mein Kampf published","Hitler wrote Mein Kampf (‘My Struggle’) in prison. It set out his ideas: hatred of Jews and communists, destroying the Treaty of Versailles, and gaining ‘living space’ (Lebensraum) in the east.","It became the bible of the Nazi movement."],
+[1925,"Oct 1925",2,"The Locarno Treaties","Germany, Britain, France, Italy and Belgium agreed to keep Germany’s borders with France and Belgium as set at Versailles.","Germany was treated as an equal again, not an outcast. It improved relations with France and paved the way into the League of Nations."],
+[1926,"Feb 1926",3,"The Bamberg Conference","Hitler won a dispute with party members, such as Gregor Strasser, who wanted more socialist policies. He confirmed his total control of the party.","Part of the reorganisation of the party, 1924–28, which made it a national party ready to fight elections."],
+[1926,"Jul 1926",3,"The Hitler Youth founded","The party set up the Hitler Youth to recruit young people. The SS, set up in 1925 as Hitler’s bodyguard, grew too.","Part of the reorganisation: the party built organisations to reach every group in society."],
+[1926,"Sep 1926",2,"Germany joins the League of Nations","Germany was admitted to the League and given a permanent seat on its Council, alongside Britain, France, Italy and Japan.","Germany was accepted back as a great power. Nationalists still complained it meant accepting the Treaty of Versailles."],
+[1928,"May 1928",3,"Nazis win only 12 seats","In the Reichstag election the Nazis won just 12 seats. With Germany prosperous, few people wanted extreme parties.","The ‘lean years’: until the Depression, Nazi support stayed small."],
+[1928,"Aug 1928",2,"The Kellogg-Briand Pact","Germany was one of 62 countries that promised not to use war to settle disputes.","Showed Germany was a peaceful, trusted member of the international community."],
+[1929,"Jun 1929",2,"The Young Plan","The total reparations bill was cut to about $8 billion, and Germany was given 59 years to pay.","Lowered the burden and allowed lower taxes. But nationalists, including Hitler, campaigned against paying anything at all, which gave the Nazis publicity."],
+[1929,"Oct 1929",2,"Stresemann dies","Stresemann died of a stroke in early October 1929, weeks before the Wall Street Crash.","Germany lost its most able politician just as the Depression was about to hit."],
+[1929,"Oct 1929",3,"The Wall Street Crash","The US stock market collapsed. American banks called in their loans to Germany, and German businesses closed. Unemployment rose to about 6 million by 1932.","The Great Depression gave the Nazis their chance. Desperate people turned to extreme parties that promised to solve their problems."],
+[1930,"Mar 1930",3,"Brüning rules by decree","Heinrich Brüning became chancellor. Without a majority in the Reichstag, he governed through President Hindenburg’s emergency powers (Article 48).","His cuts to wages and unemployment pay made him unpopular. Democracy was already being bypassed before Hitler came to power."],
+[1930,"Sep 1930",3,"Nazi breakthrough: 107 seats","In the Reichstag election the Nazis rose from 12 to 107 seats, becoming the second-largest party.","The Depression had turned the Nazis into a mass party."],
+[1932,"Apr 1932",3,"Hitler runs for president","Hitler stood against Hindenburg in the presidential election and came second, with over 13 million votes. He flew from city to city to speak to rallies.","Hindenburg won, but Hitler’s campaign made him famous across Germany. Nazi methods: modern propaganda, mass rallies and Hitler as a strong leader."],
+[1932,"Jun 1932",3,"Von Papen becomes chancellor","Franz von Papen, a conservative aristocrat, was made chancellor by Hindenburg, encouraged by General Kurt von Schleicher. He had little support in the Reichstag.","Germany was now run by a small group around the president, who hoped to use Hitler to gain popular support."],
+[1932,"Jul 1932",3,"Nazis become the largest party","In the Reichstag election the Nazis won 230 seats and about 37% of the vote. Hitler demanded to be made chancellor, but Hindenburg refused.","The high point of the Nazi vote in a free election."],
+[1932,"Nov 1932",3,"Nazi vote falls","In another election the Nazis won 196 seats, losing 34. The party was short of money and some members were losing heart.","Hitler’s support seemed to have peaked. He came to power through a deal, not a majority."],
+[1932,"Dec 1932",3,"Von Schleicher becomes chancellor","Schleicher replaced Papen as chancellor and tried to split the Nazis by offering a post to Gregor Strasser. He failed to win support.","Papen, angry at being pushed out, plotted to bring back himself as vice-chancellor under Hitler."],
+[1933,"30 Jan 1933",3,"Hitler becomes chancellor","Persuaded by Papen, Hindenburg appointed Hitler chancellor, with Papen as vice-chancellor. Only two other Nazis were in the cabinet.","Papen thought he could control Hitler. Within 18 months Hitler had made himself dictator."],
+[1933,"27 Feb 1933",4,"The Reichstag Fire","The Reichstag building was burned down. A young Dutch communist, Marinus van der Lubbe, was arrested. The next day Hindenburg signed a decree suspending civil rights, and thousands of communists were arrested.","Hitler used the fire to claim there was a communist plot, and to silence his opponents before the March election."],
+[1933,"Mar 1933",4,"Ministry of Propaganda set up","Joseph Goebbels became Minister of Popular Enlightenment and Propaganda. He controlled newspapers, radio, films and the arts, and organised huge rallies.","Propaganda was a key method of control: making Germans believe in Hitler and Nazi ideas."],
+[1933,"23 Mar 1933",4,"The Enabling Act","The Reichstag voted 444 to 94 to give Hitler’s government the power to make laws without it, for four years. SA men surrounded the building, and communist deputies were barred.","The legal basis of Hitler’s dictatorship. The Reichstag had voted away its own power."],
+[1933,"Apr 1933",4,"The Gestapo set up","The Gestapo, the secret state police, was set up. It could arrest people and send them to concentration camps without trial.","The heart of the police state. Fear of informers kept many Germans quiet."],
+[1933,"2 May 1933",4,"Trade unions banned; Labour Front set up","Trade unions were closed down and their leaders arrested. Workers had to join the German Labour Front (DAF), run by Robert Ley.","Workers lost the right to strike or bargain for higher wages. The Labour Front controlled working life."],
+[1933,"10 May 1933",4,"Book burnings","Students and Nazis burned books by Jewish, communist and other ‘un-German’ writers in cities across Germany.","Censorship: only ideas the Nazis approved of were allowed."],
+[1933,"1933 – 1939",4,"Women: ‘Children, Kitchen, Church’","Women were encouraged to leave work and have large families. Marriage loans were offered, and mothers of large families were awarded the Honour Cross.","The Nazi ideal of women as wives and mothers. But from 1937 women were needed in industry again as rearmament grew."],
+[1933,"1933 – 1939",4,"Unemployment falls","Unemployment fell from 6 million in 1933 to about half a million by 1939, through public works, rearmament, conscription and the Labour Service.","A major reason many Germans supported Hitler. But Jews and women removed from jobs were not counted, and wages stayed low."],
+[1933,"Jul 1933",4,"One-party state","A law banned all political parties except the Nazis.","Germany was now a one-party state. Opposition could only be illegal."],
+[1933,"20 Jul 1933",4,"The Concordat with the Catholic Church","Hitler signed an agreement with the Pope: the Church would stay out of politics and the Nazis would leave Catholic schools and worship alone.","Hitler soon broke it, closing Catholic schools and youth groups and arresting priests."],
+[1933,"Nov 1933",4,"Strength Through Joy","The Labour Front set up Strength Through Joy (KdF), which gave workers cheap holidays, concerts and sports. Workers could save for a ‘people’s car’, the Volkswagen.","Rewarded workers for longer hours and lost rights, and kept their free time under Nazi control. No saver ever received a car."],
+[1934,"30 Jun 1934",4,"The Night of the Long Knives","The SS arrested about 200 SA leaders, and many were shot, including the SA leader Ernst Röhm. Hitler also had old enemies killed, such as von Schleicher and Gregor Strasser. Around 90 people are thought to have died.","Hitler removed a rival and won over the army, which feared the SA. He showed he would kill to stay in power."],
+[1934,"1934",4,"The Confessing Church","Protestants who refused to accept the Nazi-controlled Reich Church set up the Confessing Church, led by Pastor Martin Niemöller. Niemöller was sent to a concentration camp in 1937.","Showed the limits of Nazi control over the Churches, and the price of opposing them."],
+[1934,"2 Aug 1934",4,"Hitler becomes Führer","When President Hindenburg died, Hitler combined the posts of chancellor and president and called himself Führer. Soldiers swore an oath of loyalty to Hitler personally.","Hitler now had complete power. The army was tied to him by oath."],
+[1935,"Jun 1935",4,"Labour Service made compulsory","All men aged 18 to 25 had to do six months in the National Labour Service (RAD), building roads, draining marshes and planting forests.","Helped cut unemployment, along with rearmament and public works such as the autobahns."],
+[1935,"Sep 1935",4,"The Nuremberg Laws","Jews lost German citizenship, and marriages and relationships between Jews and non-Jews were banned.","Persecution was now written into law."],
+[1936,"Dec 1936",4,"The Hitler Youth Law","All other youth groups had been banned. Now all young people were expected to join a Nazi youth organisation, and in 1939 membership became compulsory. Boys trained for the army; girls in the League of German Maidens trained to be wives and mothers.","The Nazis aimed to win over the young. Schools and teachers had to teach Nazi ideas too."],
+[1938,"9 – 10 Nov 1938",4,"Kristallnacht","After a German diplomat was shot in Paris by a young Jew, the Nazis organised attacks on Jewish shops, homes and synagogues across Germany. 91 Jews were killed and about 30,000 Jewish men were arrested and sent to concentration camps.","The ‘Night of Broken Glass’ marked a shift from discrimination to open violence against Jews."],
+[1939,"Aug 1939",5,"Rationing begins","Just before the war, rationing of bread, meat, dairy products and soap began; clothing followed in November. In May 1942 rations were cut.","The Home Front: shortages grew worse as the war went on, though Germany took food from the countries it conquered."],
+[1939,"Sep 1939",5,"War begins","Germany invaded Poland. Two days later Britain and France declared war.","The start of the Second World War, which brought the Nazis’ worst crimes and, in the end, the destruction of the Third Reich."],
+[1940,"1939 – 1941",5,"Ghettos in Poland","Jews in occupied Poland were forced into sealed ghettos, such as those in Warsaw and Łódź. Overcrowding, starvation and disease killed many thousands.","A step towards mass murder: Jews were separated, robbed and starved."],
+[1941,"Jun 1941",5,"Death squads in the East","When Germany invaded the Soviet Union, SS death squads (Einsatzgruppen) followed the army and shot Jews, communists and others in mass killings.","The Holocaust began with mass shootings. Over a million people were killed this way."],
+[1941,"Oct 1941",5,"Forced labour from the East","Hitler allowed Soviet prisoners of war to be brought to Germany as slave labour. By 1944 over 7 million prisoners and foreign workers were working for German industry.","Germany had a growing shortage of workers. Forced labour kept the war economy going at a terrible cost in lives."],
+[1942,"Jan 1942",5,"The Wannsee Conference","Senior Nazis met at Wannsee, near Berlin, to plan the ‘Final Solution’: the murder of all of Europe’s Jews.","Genocide was now organised across Europe."],
+[1942,"1942 – 1945",5,"The death camps","Jews from across Europe were sent by train to death camps such as Auschwitz-Birkenau and Treblinka and murdered in gas chambers.","About 6 million Jews were killed in the Holocaust, along with many Roma, Slavs, disabled people and others."],
+[1943,"Feb 1943",5,"‘Total war’","After defeat at Stalingrad, Goebbels told Germans they were now fighting a ‘total war’. All men aged 16–65 and women aged 17–45 had to register for work, and businesses not needed for the war were closed.","Every part of German life was now geared to the war. Women were needed in factories, despite Nazi ideas about women."],
+[1943,"22 Feb 1943",5,"The White Rose executed","Hans and Sophie Scholl, Munich students in the White Rose group, were caught handing out leaflets attacking the Nazis. They were executed.","Brave but small: student opposition did not shake Nazi control."],
+[1943,"Jul 1943",5,"The bombing of Hamburg","Allied air raids on Hamburg in the summer of 1943 killed 42,600 civilians and forced about a million people to flee the city.","Allied bombing destroyed homes and factories and killed hundreds of thousands of German civilians. It damaged morale, but did not end the war."],
+[1944,"20 Jul 1944",5,"The July Bomb Plot","Army officers led by Colonel Claus von Stauffenberg planted a bomb at Hitler’s headquarters. It exploded, but Hitler survived.","The most serious attempt to kill Hitler. About 7,000 people were arrested, and thousands were executed."],
+[1944,"Oct 1944",5,"The Volkssturm","A Home Guard, the Volkssturm, was set up from men too old or too young for the army. By the end, boys as young as 12 were being made to fight.","Showed how desperate Germany had become as the Allies closed in."],
+[1944,"Nov 1944",5,"Edelweiss Pirates hanged","Thirteen people linked to the Edelweiss Pirates were publicly hanged in Cologne. The Pirates, mostly working-class young people, had spread since 1937; they hated the Hitler Youth and mocked Nazi culture.","Showed growing opposition among the young, and how harshly it was punished."],
+[1945,"Feb 1945",5,"The bombing of Dresden","Allied raids destroyed the city of Dresden, killing around 25,000 people.","By 1945 German cities lay in ruins and millions were homeless."],
+[1945,"30 Apr 1945",5,"Hitler’s death","With Soviet troops fighting in the streets of Berlin, Hitler shot himself in his bunker.","The end of Hitler’s rule. Goebbels killed himself the next day."],
+[1945,"May 1945",5,"Germany surrenders","Germany surrendered unconditionally to the Allies on 7–8 May 1945.","The end of the Third Reich. Germany was occupied and divided by the Allies."]
+];
+EV.d=[
+[1840,"1840s – 1860s",1,"Miasma: the ‘bad air’ theory","Most doctors believed disease was caused by miasma: poisonous bad air given off by rotting rubbish, sewage and dead bodies.","The biggest barrier to progress. Without knowing that germs cause disease, doctors could not prevent or cure it, although cleaning up smells sometimes helped by accident."],
+[1840,"1840s – 1860s",1,"Spontaneous generation","Scientists who saw microorganisms under the microscope thought they were produced by disease, not the cause of it. This idea was called spontaneous generation.","A barrier to progress: it stopped scientists linking microorganisms to illness until Pasteur disproved it."],
+[1842,"1842",1,"Chadwick’s report on living conditions","Edwin Chadwick’s report showed that poor people in towns lived much shorter lives than the better off. He blamed filthy living conditions and called for drains, sewers, clean water and rubbish removal.","It linked dirt with disease and made the case for government action on public health, which led to the 1848 Public Health Act."],
+[1846,"Dec 1846",1,"Liston operates using ether","After hearing of the American dentist William Morton’s use of ether, Robert Liston amputated a leg in London with the patient unconscious.","Anaesthetics began to solve the problem of pain. But ether irritated the lungs, made patients cough, and was highly flammable."],
+[1847,"Nov 1847",1,"Simpson discovers chloroform","James Simpson, an Edinburgh doctor, tested chemicals on himself and his friends and found that chloroform made them unconscious.","Chloroform was easier to use than ether and became the most popular anaesthetic. It solved the problem of pain in surgery."],
+[1848,"Jan 1848",1,"Hannah Greener dies under chloroform","Fifteen-year-old Hannah Greener died from chloroform given before a minor operation to remove a toenail.","Showed that the right dose was hard to judge. Fears about safety slowed the acceptance of anaesthetics."],
+[1848,"1848",1,"The 1848 Public Health Act","After a cholera threat, the Act set up a General Board of Health, with Chadwick as one of its commissioners. Towns could set up local boards to employ a medical officer, remove rubbish and build sewers.","A first step, but its impact was limited: towns were allowed to act but not forced to, and many did nothing. The General Board of Health ended in 1854."],
+[1849,"1848 – 1849",1,"The cholera epidemic","Cholera swept through Britain’s overcrowded towns, killing tens of thousands of people. Victims could die within a day from severe diarrhoea.","Cholera terrified people because it killed rich as well as poor. Fear of it pushed governments towards public health reform."],
+[1850,"1850s – 1870s",1,"The ‘black period’ of surgery","With anaesthetics, surgeons attempted longer and more complicated operations. But they still worked in ordinary clothes with unwashed hands and instruments, and did not understand infection.","Anaesthetics solved pain but death rates from infection rose. Infection and bleeding were still unsolved problems."],
+[1853,"1853",1,"Queen Victoria uses chloroform","Queen Victoria was given chloroform during the birth of her son Leopold.","If the Queen used it, it must be safe: her use helped make anaesthetics acceptable."],
+[1854,"1854",1,"Snow and the Broad Street pump","During a cholera outbreak in Soho, London, John Snow mapped the deaths and found they clustered around a water pump in Broad Street. He had the pump handle removed. He also found that workers at a nearby brewery, who drank beer rather than water, escaped the disease.","Snow proved that cholera spread through dirty water, not bad air. But without germ theory, many did not accept his explanation at first."],
+[1854,"Nov 1854",1,"Nightingale arrives at Scutari","During the Crimean War, Florence Nightingale took 38 nurses to the army hospital at Scutari. They found almost 10,000 patients in filthy, overcrowded wards. They cleaned the wards, washed bedding and equipment, opened windows and improved food.","Nightingale became famous as ‘the Lady with the Lamp’. The death rate fell sharply after a government Sanitary Commission repaired the drains and water supply in 1855."],
+[1858,"1858",1,"The Great Stink","In a hot summer, the River Thames, full of sewage, smelled so bad that Parliament could hardly meet.","It pushed the government into paying for a new sewer system for London."],
+[1859,"1859 – 1875",1,"Bazalgette builds London’s sewers","The engineer Joseph Bazalgette designed a vast network of sewers that carried London’s waste away from the city, downstream into the Thames.","London’s water became much cleaner. When cholera returned in 1866, areas linked to the new sewers were largely spared."],
+[1859,"1859",2,"Nightingale’s Notes on Nursing","Nightingale published Notes on Nursing and Notes on Hospitals. They stressed cleanliness, fresh air and good design, and recommended the ‘pavilion’ plan for hospitals with separate airy wards.","Her ideas shaped the design of new hospitals and the way nurses worked."],
+[1860,"1860",2,"The Nightingale School of nursing","The Nightingale School for training nurses opened at St Thomas’ Hospital in London, paid for by money raised in Nightingale’s honour.","Nursing became a respected, trained profession for women."],
+[1861,"1861",2,"Pasteur’s germ theory","Louis Pasteur, a French chemist, showed that microorganisms in the air cause liquids to go bad. His experiments with swan-necked flasks disproved spontaneous generation.","Germ theory was the turning point: it showed that germs cause decay, and soon disease. It led to antiseptics, vaccines and better public health."],
+[1865,"1865",2,"Elizabeth Garrett qualifies","Refused entry to medical schools, Elizabeth Garrett studied privately and passed the exams of the Society of Apothecaries, which could not legally stop her. She was licensed to practise medicine.","The first woman to qualify as a doctor in Britain. The Society then changed its rules to stop other women doing the same."],
+[1865,"Aug 1865",2,"Lister first uses carbolic acid","After reading Pasteur’s work, Joseph Lister treated a boy’s badly broken leg with bandages soaked in carbolic acid. The wound healed without infection.","The start of antiseptic surgery: fighting infection by killing germs."],
+[1866,"1866",2,"Cholera returns to London","Another cholera epidemic hit London. It struck hardest in the East End, which was not yet linked to Bazalgette’s new sewers.","Supported Snow’s ideas and showed that government spending on sewers and clean water saved lives."],
+[1867,"1867",2,"Lister publishes his results","Lister published his results. Amputation death rates in his own records fell from about 46% without antiseptics to 15% with them. He went on to develop a carbolic spray to kill germs in the air during operations.","Strong evidence for antiseptics. But many surgeons opposed them at first: carbolic was unpleasant, slowed operations and stung their hands."],
+[1867,"1867",2,"The Second Reform Act","Many working men in towns were given the vote.","Politicians now needed working-class votes, which encouraged them to improve living conditions and public health."],
+[1869,"1869",2,"Jex-Blake at Edinburgh","Sophia Jex-Blake and four other women persuaded Edinburgh University to let them study medicine. They faced harassment from male students, and in 1874 the university forced them to leave.","Showed the strong opposition women faced. Jex-Blake helped found the London School of Medicine for Women in 1874."],
+[1870,"1870",2,"Garrett gains a medical degree","Elizabeth Garrett gained a medical degree from the University of Paris, as British universities would not give her one. In 1872 she opened the New Hospital for Women in London.","Proved women could succeed as doctors and opened a path for others."],
+[1875,"1875",2,"The 1875 Public Health Act","Local councils were forced to provide clean water, sewers and drainage, and to remove rubbish. Every area had to appoint a medical officer of health and a sanitary inspector.","Unlike 1848, action was now compulsory. A turning point: government accepted responsibility for public health."],
+[1875,"1875",2,"The Artisans’ Dwellings Act","Councils were given the power to buy and knock down slum housing and build better homes.","Improved housing helped health, though few councils used the power at first."],
+[1876,"1876",3,"Koch identifies the anthrax germ","Robert Koch, a German doctor, proved that a particular microorganism caused anthrax, a disease of animals and people.","The first time a specific germ was proved to cause a specific disease. Bacteriology, the study of bacteria, was born."],
+[1876,"1876",3,"The Medical Act and women","A new Medical Act allowed women to study medicine and qualify as doctors.","A breakthrough for women, though they still faced prejudice from patients and male doctors for decades."],
+[1878,"1878",3,"Pasteur’s Germ Theory and its Applications","Pasteur published Germ Theory and its Applications to Medicine and Surgery.","Spread the germ theory among doctors and surgeons and encouraged hygiene in operations."],
+[1879,"1879",3,"Pasteur’s chicken cholera vaccine","Pasteur’s team found that chickens injected with an old, weakened culture of chicken cholera did not fall ill, and were then protected from fresh germs.","Showed that weakened germs could be used to make vaccines against many diseases."],
+[1880,"1880s – 1890s",3,"Aseptic surgery","Surgeons moved from killing germs (antiseptic) to keeping them away (aseptic). Instruments were sterilised with steam, operating theatres were cleaned thoroughly, and surgeons wore gowns, masks and rubber gloves.","Infection in surgery was largely solved, so more complex operations became possible."],
+[1881,"1881",3,"Pasteur’s anthrax vaccine","Pasteur proved his anthrax vaccine worked in a public test: vaccinated sheep survived an injection of anthrax germs, while unvaccinated sheep died.","A dramatic public success that made Pasteur famous. Rivalry with Koch pushed both teams to work faster."],
+[1882,"1882",3,"Koch identifies the tuberculosis germ","Koch identified the microorganism that causes tuberculosis (TB). His team used dyes to stain bacteria and agar jelly to grow them.","TB was a major killer. Koch’s methods let scientists find the germs behind many other diseases."],
+[1883,"1883",3,"Koch identifies the cholera germ","In Egypt, Koch identified the microorganism that causes cholera, carried in dirty water.","Finally proved Snow right, and confirmed the need for clean water and sewers."],
+[1885,"1885",3,"Pasteur’s rabies vaccine","Pasteur used his rabies vaccine on a boy, Joseph Meister, who had been bitten by a rabid dog. The boy survived.","The first vaccine created in a laboratory for a human disease."],
+[1889,"1889",3,"Infectious Disease (Notification) Act","Doctors had to report cases of infectious diseases such as smallpox and cholera to the local medical officer of health.","Helped councils to isolate patients and stop outbreaks spreading."],
+[1895,"Nov 1895",3,"Röntgen discovers X-rays","The German scientist Wilhelm Röntgen found that rays from a cathode ray tube passed through flesh but not bone, and could be recorded on a photographic plate.","Doctors could see inside the body without surgery, to find broken bones and objects such as bullets."],
+[1898,"1898",3,"The Curies discover radium","Marie and Pierre Curie discovered two new radioactive elements, polonium and radium.","Led to radiotherapy: using radiation to treat cancer."],
+[1899,"1899 – 1902",3,"The Boer War: an unfit nation","Over a third of the volunteers for the army in the Boer War were found unfit to serve. In some slums the figure was much higher.","Shocked the government into acting on the health of the poor: a key reason for the Liberal reforms."],
+[1901,"1901",3,"Landsteiner discovers blood groups","The Austrian doctor Karl Landsteiner found that there are different blood groups, and that only some can be mixed safely.","Explained why so many blood transfusions failed, and made safe transfusions possible."],
+[1906,"1906",4,"Free school meals","The new Liberal government allowed councils to provide free school meals for children from poor families.","Better nutrition for poor children: the start of the Liberal reforms."],
+[1907,"1907",4,"The School Medical Service","Schoolchildren were given regular medical checks. Free treatment followed from 1912.","Found and treated health problems in children early."],
+[1908,"1908",4,"Old age pensions","People over 70 with low incomes were given a weekly pension of 25p. About 600,000 pensions were granted in the first year.","Helped old people afford food, housing and heating, so they stayed healthier."],
+[1909,"1909",3,"Ehrlich’s magic bullet: Salvarsan 606","Paul Ehrlich’s team tested hundreds of compounds to find one that would kill the germ causing syphilis without harming the body. The 606th worked.","The first chemical cure, or ‘magic bullet’, targeting a specific germ. It encouraged the search for more."],
+[1910,"1910",3,"Marie Curie and radiotherapy","A new Radium Institute was built in Paris, where Marie Curie led research into using radiation to shrink or kill tumours.","Radiotherapy became a treatment for cancer."],
+[1911,"1911",4,"The National Insurance Act","Workers and employers paid into a scheme. Workers who fell ill got free care from a doctor and sickness benefit, and there was a maternity grant. Some workers could also insure against unemployment.","Stopped illness pushing families into poverty. But it did not cover workers’ wives and children or hospital treatment."],
+[1914,"1914 – 1918",4,"Women doctors in the First World War","At first the War Office refused women doctors. Dr Elsie Inglis set up hospitals run by women abroad, and Flora Murray and Louisa Garrett Anderson ran hospitals in France and then the Endell Street Military Hospital in London.","Women proved their skill in surgery and running hospitals. Nurses, including FANY volunteers, worked close to the front lines."],
+[1915,"1915",4,"Mobile X-ray units","X-ray machines were used in base hospitals and in mobile units near the front, to find bullets and shrapnel in wounds.","Surgeons could remove fragments quickly and accurately, saving lives and limbs."],
+[1915,"1915",4,"The Thomas splint","The Thomas splint, which held a broken leg still, was introduced on the Western Front at the end of 1915.","Survival for soldiers with a broken thigh bone rose from 20% to 82%."],
+[1915,"1914 – 1918",4,"Fighting infection in war","Wounds in the farmland of the Western Front were often infected by gas gangrene. Surgeons cut away infected and dead tissue and cleaned wounds with salt solutions.","Infection was a huge killer in the war. There was still no cure for infection once it set in, until penicillin."],
+[1917,"1917",4,"Storing blood for transfusion","Scientists found that adding chemicals such as sodium citrate stopped blood clotting, so it could be stored for weeks. Before the Battle of Cambrai, depots of stored blood were set up.","Blood transfusions could now be used on a large scale."],
+[1917,"1917",4,"Gillies and plastic surgery","Harold Gillies set up a plastic surgery unit at the Queen’s Hospital in Sidcup, Kent, to rebuild the faces of wounded soldiers using skin grafts.","Plastic surgery developed as a new specialism."],
+[1919,"1919",4,"The Ministry of Health","The government set up a Ministry of Health to take charge of public health. Isolation hospitals were created for people with tuberculosis.","Health was now the responsibility of a government department."],
+[1919,"1919",4,"‘Homes fit for heroes’","A new Housing Act gave councils money to build homes for working people, to replace slums.","Better housing improved health, though many slums remained."],
+[1928,"Sep 1928",5,"Fleming discovers penicillin","Alexander Fleming noticed that mould had killed the bacteria growing on a dish in his laboratory. The mould was penicillin.","The first antibiotic. But Fleming could not produce enough to use, and did not test it on infected animals, so his work stalled."],
+[1929,"1929",5,"Councils take over hospitals","The Local Government Act gave councils control of the old workhouse hospitals.","Began to organise hospitals into a more national system."],
+[1932,"1932",5,"Domagk and Prontosil","The German scientist Gerhard Domagk found that a red dye, Prontosil, killed the germs that cause blood poisoning in mice. In 1935 he used it to save his own daughter.","The second ‘magic bullet’. Its key ingredient, sulphonamide, led to a family of new drugs."],
+[1939,"1939",5,"Florey and Chain begin work on penicillin","Howard Florey and Ernst Chain, at Oxford, began researching penicillin and found ways to purify it.","Turned Fleming’s discovery into a usable drug."],
+[1939,"1939",5,"The Emergency Medical Service","At the start of the Second World War, the government organised hospitals into the Emergency Medical Service to treat air-raid casualties and wounded servicemen.","Showed a national health system could work, and how unequal hospital care had been."],
+[1939,"Sep 1939",5,"Evacuation reveals poor health","Children evacuated from cities to the countryside were often found to be underfed, dirty and suffering from lice and disease.","Shocked many people about the health of the poor, and built support for change after the war."],
+[1940,"1940",5,"Penicillin cures mice","Florey and Chain’s team infected mice with deadly bacteria. The mice given penicillin survived; the others died.","Proved penicillin could cure infections in living creatures."],
+[1941,"1941",5,"The first penicillin patient","Albert Alexander, a policeman with severe blood poisoning, was treated with penicillin and began to recover. But the team ran out of the drug and he died.","Showed penicillin could save lives, and that it had to be mass-produced."],
+[1941,"1941 – 1945",5,"The Guinea Pig Club","Archibald McIndoe treated badly burned airmen with new skin-graft methods. His patients called themselves the ‘Guinea Pig Club’.","Plastic surgery advanced again, along with care for patients’ confidence and return to normal life."],
+[1942,"Dec 1942",5,"The Beveridge Report","William Beveridge’s report named five ‘giant evils’: want, disease, ignorance, squalor and idleness. He proposed a welfare state, including a free national health service.","Hugely popular: it became the plan for Britain after the war."],
+[1944,"Jun 1944",5,"Penicillin for D-Day","With American factories mass-producing it, there was enough penicillin to treat all Allied casualties in the D-Day landings.","War drove mass production. Penicillin saved thousands of lives from infected wounds."],
+[1946,"1946",5,"The National Health Service Act","Labour’s Health Minister Aneurin Bevan passed the Act to create the NHS. Many doctors opposed it, but Bevan won them round by letting them keep private patients.","The law that created a free health service for everyone."],
+[1948,"5 Jul 1948",5,"The NHS begins","Medical care, hospital treatment, dentists and opticians became free to all at the point of use. About 90% of doctors had joined the NHS.","The biggest change in health care in British history: no one had to worry about the cost of being ill."]
+];
+const APP_VERSION="1.18";
 // Android app: a newer version of this page has been downloaded. Switch to it when it won't interrupt anything.
 let updatePending=false;
 window.nadyaUpdateReady=()=>{if(!L&&!tlOpen)location.reload();else updatePending=true};
@@ -495,12 +650,18 @@ let settingsOpen=false;
 const NATIVE=!!window.NadyaNative;
 const APK_URL="https://github.com/andy-butcher-dod/nadya/releases/latest/download/nadya.apk";
 function syncNative(){if(!NATIVE)return;try{NadyaNative.reportProgress(JSON.stringify({last:S.last,streak:S.streak,best:S.best}))}catch(e){}}
-const UNIT_NAME={a:"Russia 1905–24",b:"USSR 1924–53"};
+const UNITS=["a","b","c","d"];
+const UNIT_NAME={a:"Russia 1905–24",b:"USSR 1924–53",c:"Germany 1918–45",d:"Medicine c1848–1948"};
+const UNIT_BTN={a:["Russia","1905–24"],b:["USSR","1924–53"],c:["Germany","1918–45"],d:["Medicine","c1848–1948"]};
+const UNIT_YEARS={a:[1900,1924],b:[1917,1955],c:[1914,1946],d:[1840,1950]};
+// Mixes: all units, or the two units of each exam paper
+const GROUPS={all:{name:"All",sub:"4 units",u:UNITS},p1:{name:"Paper 1",sub:"USSR + Germany",u:["b","c"]},p2:{name:"Paper 2",sub:"Russia + Medicine",u:["a","d"]}};
+const unitsOf=k=>GROUPS[k]?GROUPS[k].u:UNITS.includes(k)?[k]:UNITS;
 const LEN=8, INTERVALS=[0,1,2,4,7,14], MAX_NEW=5;
 const MONTH={Jan:1,Feb:2,Mar:3,Apr:4,May:5,Jun:6,June:6,Jul:7,Aug:8,Sep:9,Oct:10,Nov:11,Dec:12,Winter:12};
 
 const ALL=[];
-["a","b"].forEach(u=>EV[u].forEach((e,i)=>{
+UNITS.forEach(u=>EV[u].forEach((e,i)=>{
   const [y,d,k,h,w,s]=e;
   const yrs=[...new Set(d.match(/\d{4}/g)||[])];
   const single=yrs.length===1&&!/\d{4}\s*–\s*\d{2}(?!\d)/.test(d);
@@ -512,7 +673,9 @@ const ALL=[];
 const KEY="nadya-v1";
 let S=load();
 function load(){let d=null;try{d=JSON.parse(localStorage.getItem(KEY))}catch(e){}
-  return Object.assign({streak:0,best:0,last:null,days:[],xp:0,cards:{},unit:"both",muted:false,lessons:0},d||{})}
+  const o=Object.assign({streak:0,best:0,last:null,days:[],xp:0,cards:{},unit:"all",muted:false,lessons:0},d||{});
+  if(!GROUPS[o.unit]&&!UNITS.includes(o.unit))o.unit="all";
+  return o}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 
@@ -531,7 +694,7 @@ const app=$("#app");
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const rnd=a=>a[Math.floor(Math.random()*a.length)];
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-const pool=()=>ALL.filter(e=>S.unit==="both"||e.u===S.unit);
+const pool=()=>{const us=unitsOf(S.unit);return ALL.filter(e=>us.includes(e.u))};
 
 /* ---------- sound ---------- */
 let AC;
@@ -591,7 +754,7 @@ function mascot(mood,cls=""){return `<svg class="mascot ${cls}" data-mood="${moo
 function moodWord(m){return{hello:"friendly",happy:"happy",celebrate:"delighted",waiting:"hopeful",worried:"worried",sad:"sad",miserable:"very sad",right:"pleased",wrong:"disappointed",laugh:"laughing"}[m]||"friendly"}
 
 function homeMood(){
-  if(!S.last)return["hello","Privet! I’m Nadya. A few minutes of Russian history every day and you’ll be an expert. Shall we start?"];
+  if(!S.last)return["hello","Privet! I’m Nadya. A few minutes of history every day and you’ll be an expert. Shall we start?"];
   const g=gap(S.last,dayStr()),st=liveStreak();
   if(g===0)return["happy",rnd([`Done for today! Your streak is ${st} day${st>1?"s":""}.`,"Great work today. See you tomorrow!",`${st}-day streak! Lenin would be impressed. Stalin would be suspicious.`])];
   if(g===1){if(new Date().getHours()>=18)return["worried",`Your ${st}-day streak ends at midnight! Quick lesson?`];return["waiting",`Ready for today’s lesson? Keep your ${st}-day streak going!`]}
@@ -618,7 +781,6 @@ function home(){
   for(let i=6;i>=0;i--){const ds=addDays(today,-i),d=parse(ds),done=days.has(ds);
     week+=`<div class="day"><span>${"SMTWTFS"[d.getDay()]}</span><span class="dot${done?" done":""}${i===0?" today":""}">${done?FLAME.replace('<svg','<svg aria-hidden="true"'):""}</span></div>`}
   const pr=u=>{const P=ALL.filter(e=>e.u===u),m=P.filter(e=>(S.cards[e.id]||{}).box>=3).length,s=P.filter(e=>S.cards[e.id]).length;return{m,s,n:P.length}};
-  const pa=pr("a"),pb=pr("b");
   app.innerHTML=`
   <div class="top">
     <span class="stat${st?"":" off"}" title="Day streak">${st?FLAME:FLAME_OFF}${st}</span>
@@ -627,10 +789,9 @@ function home(){
   </div>
   <div class="stage"><div class="bubble" aria-live="polite">${esc(msg)}</div><button class="tickle" id="tickle" aria-label="Tickle Nadya">${mascot(mood)}</button></div>
   <div class="week" aria-label="Practice this week">${week}</div>
-  <div class="seg" role="group" aria-label="Choose unit">
-    <button data-u="both" aria-pressed="${S.unit==="both"}">Both<small>1905–53</small></button>
-    <button data-u="a" aria-pressed="${S.unit==="a"}">Russia<small>1905–24</small></button>
-    <button data-u="b" aria-pressed="${S.unit==="b"}">USSR<small>1924–53</small></button>
+  <div class="seg home" role="group" aria-label="Choose what to practise">
+    ${Object.entries(GROUPS).map(([k,g])=>`<button class="grp" data-u="${k}" aria-pressed="${S.unit===k}">${g.name}<small>${g.sub}</small></button>`).join("")}
+    ${UNITS.map(u=>`<button data-u="${u}" aria-pressed="${S.unit===u}">${UNIT_BTN[u][0]}<small>${UNIT_BTN[u][1]}</small></button>`).join("")}
   </div>
   <div class="cta">
     <button class="btn${doneToday?" ghost":""}" id="go">${doneToday?"Practise again":"Start today’s lesson"}</button>
@@ -639,7 +800,7 @@ function home(){
   </div>
   <div class="progress">
     <h2>Your progress</h2>
-    ${[["a",pa],["b",pb]].map(([u,p])=>`<div class="unitrow"><div class="lbl"><span>${UNIT_NAME[u]}</span><span>${p.m} learned · ${p.s} of ${p.n} started</span></div><div class="bar" role="img" aria-label="${p.m} learned and ${p.s} started out of ${p.n} events"><i class="st" style="width:${Math.round(p.s/p.n*100)}%"></i><i style="width:${Math.round(p.m/p.n*100)}%"></i></div></div>`).join("")}
+    ${UNITS.map(u=>[u,pr(u)]).map(([u,p])=>`<div class="unitrow"><div class="lbl"><span>${UNIT_NAME[u]}</span><span>${p.m} learned · ${p.s} of ${p.n} started</span></div><div class="bar" role="img" aria-label="${p.m} learned and ${p.s} started out of ${p.n} events"><i class="st" style="width:${Math.round(p.s/p.n*100)}%"></i><i style="width:${Math.round(p.m/p.n*100)}%"></i></div></div>`).join("")}
     <div class="legend">Started: you’ve met the event in a lesson. Learned: you’ve got it right three times, on different days.</div>
   </div>
   <details class="settings" id="settings"${settingsOpen?" open":""}>
@@ -659,7 +820,7 @@ function home(){
   <button class="reset" id="reset">Reset progress</button><div class="sub" style="margin-top:10px;font-size:12px">Version ${APP_VERSION}${shellVer()?` · Android app ${shellVer()}`:""}</div>`;
   $("#go").onclick=()=>{SND.tap();startLesson()};
   $("#mute").onclick=()=>{S.muted=!S.muted;save();home()};
-  $("#browse").onclick=()=>openTimeline(S.unit==="b"?"b":"a",null,false);
+  $("#browse").onclick=()=>openTimeline(unitsOf(S.unit)[0],null,false);
   app.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{S.unit=b.dataset.u;save();home()});
   $("#reset").onclick=confirmReset;
   $("#tourAgain").onclick=()=>startTour();
@@ -684,7 +845,7 @@ function home(){
     const b=$("#loadProg");
     if(S.lessons>0&&!b.dataset.armed){b.dataset.armed="1";b.textContent="Tap again to replace the progress here";return}
     try{localStorage.setItem(KEY,JSON.stringify(d))}catch(e){}
-    S=Object.assign(load(),d);save();home();const bub=$(".bubble");if(bub)bub.textContent="Progress loaded. Welcome back!"};
+    S=Object.assign(load(),d);if(!GROUPS[S.unit]&&!UNITS.includes(S.unit))S.unit="all";save();home();const bub=$(".bubble");if(bub)bub.textContent="Progress loaded. Welcome back!"};
   const ib=$("#install");if(ib)ib.onclick=()=>{installEvt.prompt();installEvt.userChoice.finally(()=>{installEvt=null;home()})};
   window.scrollTo(0,0);
 }
@@ -727,7 +888,9 @@ function buildLesson(){
   // Reviews come first: every event that's due, the longest-waiting first (and, among equals, the closest to learned)
   const due=shuffle(P.filter(e=>c[e.id]&&c[e.id].due<=today)).sort((a,b)=>c[a.id].due<c[b.id].due?-1:c[a.id].due>c[b.id].due?1:c[b.id].box-c[a.id].box);
   let fresh=P.filter(e=>!c[e.id]);
-  if(S.unit==="both"){const fa=fresh.filter(e=>e.u==="a"),fb=fresh.filter(e=>e.u==="b");fresh=[];while(fa.length||fb.length){if(fa.length)fresh.push(fa.shift());if(fb.length)fresh.push(fb.shift())}}
+  // When mixing units, take new events from each unit in turn
+  const us=unitsOf(S.unit);
+  if(us.length>1){const q=us.map(u=>fresh.filter(e=>e.u===u));fresh=[];while(q.some(x=>x.length))q.forEach(x=>{if(x.length)fresh.push(x.shift())})}
   // New events only take the places left over
   let picks=due.slice(0,LEN);
   picks=picks.concat(fresh.slice(0,Math.min(MAX_NEW,LEN-picks.length)));
@@ -751,7 +914,7 @@ function makeQ(e,forceType){
     return{t,e,items:shuffle(picked)};
   }
   if(t==="when"){
-    const lo=e.u==="a"?1900:1917,hi=e.u==="a"?1924:1955,ys=new Set([e.fy]);
+    const [lo,hi]=UNIT_YEARS[e.u],ys=new Set([e.fy]);
     const near=shuffle([-4,-3,-2,-1,1,2,3,4].map(n=>e.fy+n).filter(y=>y>=lo&&y<=hi));
     for(const y of near){if(ys.size>=4)break;ys.add(y)}
     return{t,e,options:shuffle([...ys]).map(y=>({label:String(y),ok:y===e.fy}))};
@@ -916,7 +1079,7 @@ function openTimeline(u,focusId,fromLesson){
   o.innerHTML=`<div class="wrapper"><div class="tlhead">
     <div class="r1"><button class="backbtn" id="tlback">${BACK}${fromLesson?"Back to lesson":"Back"}</button><span class="meta">${UNIT_NAME[u]}</span></div>
     <div class="r2"><h1>Timeline</h1>${f?`<span class="meta">${esc(TOPICS[u][f.k-1])}</span>`:""}${fromLesson?"":`<button class="chalbtn" id="tlchal">${TL_ICON}Timeline challenge</button>`}</div>
-    ${fromLesson?"":`<div class="seg" role="group" aria-label="Choose unit"><button data-u="a" aria-pressed="${u==="a"}">Russia<small>1905–24</small></button><button data-u="b" aria-pressed="${u==="b"}">USSR<small>1924–53</small></button></div>`}
+    ${fromLesson?"":`<div class="seg" role="group" aria-label="Choose unit">${UNITS.map(x=>`<button data-u="${x}" aria-pressed="${u===x}">${UNIT_BTN[x][0]}<small>${UNIT_BTN[x][1]}</small></button>`).join("")}</div>`}
   </div>${groups.map(g=>`<div class="tlyr"><div class="y">${g.y}</div><div class="tlevs">${g.items.map(card).join("")}</div></div>`).join("")}</div>`;
   document.body.appendChild(o);document.body.style.overflow="hidden";
   if(!tlOpen){try{history.pushState({nadyaTl:1},"")}catch(err){}}
@@ -935,10 +1098,10 @@ window.addEventListener("popstate",()=>{if(chOpen)closeChallenge();else if(tlOpe
 let tourOn=false,tourI=0;
 function tourSteps(){
   const t=[
-    {mood:"hello",title:"Privet! I’m Nadya",text:"I’ll help you learn the big events in Russia and the USSR from 1905 to 1953, a few minutes at a time. (Psst: tap me whenever you like. I’m very ticklish.)"},
+    {mood:"hello",title:"Privet! I’m Nadya",text:"I’ll help you learn the big events in Russia, the USSR, Germany and the history of medicine, a few minutes at a time. (Psst: tap me whenever you like. I’m very ticklish.)"},
     {sel:"#go",title:"One short lesson a day",text:"Each lesson is 8 quick questions and takes about 3 minutes. After every answer you’ll see where that event fits in history."},
     {sel:".week",title:"Keep your streak going",text:"Each day you practise lights a flame. Miss a day and I get sad… so please don’t!"},
-    {sel:".seg",title:"Choose what to practise",text:"Russia 1905–24, the USSR 1924–53, or both mixed together."},
+    {sel:".seg",title:"Choose what to practise",text:"Practise one unit, both units of an exam paper, or all four mixed together."},
     {sel:"#browse",title:"The timeline",text:"Tap here to see every event in order, with what happened and why it mattered. There’s a Timeline challenge in there too."},
     {sel:".progress",title:"Watch your progress",text:"Events you’ve met show as started. Get one right three times, on different days, and it’s learned."}
   ];
