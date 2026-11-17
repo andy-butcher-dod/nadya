@@ -649,7 +649,7 @@ EV.d=[
 [1946,"1946",5,"The National Health Service Act","Labour’s Health Minister Aneurin Bevan passed the Act to create the NHS. Many doctors opposed it, but Bevan won them round by letting them keep private patients.","The law that created a free health service for everyone."],
 [1948,"5 Jul 1948",5,"The NHS begins","Medical care, hospital treatment, dentists and opticians became free to all at the point of use. About 90% of doctors had joined the NHS.","The biggest change in health care in British history: no one had to worry about the cost of being ill."]
 ];
-const APP_VERSION="1.24";
+const APP_VERSION="1.25";
 // Android app: a newer version of this page has been downloaded. Switch to it when it won't interrupt anything.
 let updatePending=false;
 window.nadyaUpdateReady=()=>{if(!L&&!tlOpen)location.reload();else updatePending=true};
@@ -1124,7 +1124,7 @@ function tourSteps(){
     {sel:".progress",bottom:true,title:"Watch your progress",text:"Events you’ve met show as started. Get one right three times, on different days, and it’s learned."}
   ];
   if(NATIVE)t.push({sel:"#settings",bottom:true,title:"Daily reminders",text:"I’ll send you a reminder each day, so you don’t forget. Change the time in Settings."});
-  t.push({mood:"celebrate",title:S.last?"That’s the tour!":"Ready, comrade?",text:S.last?"Back to history. Your streak is waiting.":"Let’s do your first challenge together.",final:true});
+  t.push({mood:"celebrate",title:S.last?"That’s the tour!":"Ready, comrade?",text:S.last?"Back to history. Your streak is waiting.":"Choose what you’d like to practise, then start your first challenge.",final:true});
   return t;
 }
 function startTour(){if(tourOn)return;tourOn=true;tourI=0;document.body.style.paddingBottom="45vh";window.scrollTo(0,0);showTour()}
@@ -1148,10 +1148,10 @@ function showTour(){
   const dots=steps.map((x,i)=>`<i class="${i===tourI?"on":""}"></i>`).join("");
   o.innerHTML=`${st.sel?'<div class="hole"></div>':'<div class="shade"></div>'}<div class="tcard" aria-live="polite">
     ${st.mood?mascot(st.mood):""}<h2>${esc(st.title)}</h2><p>${esc(st.text)}</p>
-    ${st.final?`<div class="finalbtns"><button class="btn" id="tourGo">${S.last?"Got it":"Start my first challenge"}</button>${S.last?"":'<button class="btn ghost" id="tourLater">Not now</button>'}</div>`
+    ${st.final?`<div class="finalbtns"><button class="btn" id="tourGo">${S.last?"Got it":"Let’s go"}</button></div>`
       :`<div class="trow"><span class="dots" aria-label="Step ${tourI+1} of ${steps.length}">${dots}</span><span class="tbtns"><button class="skip" id="tourSkip">Skip</button><button class="btn" id="tourNext">Next</button></span></div>`}
   </div>`;
-  if(st.final){$("#tourGo").onclick=()=>{endTour();if(!S.last||S.last!==dayStr()){SND.tap();if(!S.last)startLesson()}};const l=$("#tourLater");if(l)l.onclick=endTour;$("#tourGo").focus()}
+  if(st.final){$("#tourGo").onclick=()=>{SND.tap();endTour()};$("#tourGo").focus()}
   else{$("#tourNext").onclick=()=>{tourI++;showTour()};$("#tourSkip").onclick=endTour;$("#tourNext").focus()}
   const el=st.sel&&document.querySelector(st.sel);
   if(!el){placeTour();return}
