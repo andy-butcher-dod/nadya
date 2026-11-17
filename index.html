@@ -26,9 +26,19 @@
 .cheerpop .ring{position:absolute;left:30px;top:20px;width:96px;height:96px;border-radius:50%;border:4px solid var(--gold);opacity:0}
 .cheerpop .say{position:absolute;right:138px;top:26px;width:max-content;max-width:170px;background:var(--surface);border:2px solid var(--green);border-radius:16px;padding:7px 11px;font-weight:900;font-size:15px;color:var(--green-ink);transform-origin:100% 100%}
 /* wrong answer: Nadya is kind */
-.kind{display:flex;align-items:flex-end;gap:10px}
-.kind .mascot{width:76px;flex:none}
-.kind .say{background:var(--surface);border:2px solid var(--orange);border-radius:16px;padding:8px 12px;font-weight:900;font-size:15px;color:var(--orange-ink);margin-bottom:22px}
+.sheet.tight{padding-block:12px calc(14px + env(safe-area-inset-bottom,0px))}
+.sheet.tight .in{gap:8px}
+.sheet.tight .hd{font-size:20px}
+.sheet.tight .fact{font-size:14.5px;line-height:1.4}
+.sheet.tight .strip{padding:8px 6px 6px}
+.sheet.tight .srow{padding-block:3px}
+.sheet.tight .srow.cur{padding-block:5px}
+.sheet.tight .btn{padding-block:12px}
+.sheet.tighter .srow.far{display:none}
+.kind{display:flex;align-items:center;gap:12px}
+.kind .mascot{width:58px;flex:none}
+.kind .kt{display:grid;gap:4px;min-width:0}
+.kind .say{font-weight:800;font-size:15px;line-height:1.35;color:var(--orange-ink)}
 .again{display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px;color:var(--orange-ink);background:var(--surface);border-radius:12px;padding:7px 10px;border:1.5px dashed var(--orange-line)}
 .again svg{width:16px;height:16px;flex:none}
 /* halfway: Nadya peeks in at the top */
@@ -885,7 +895,7 @@ EV.d=[
 [1946,"1946",5,"The National Health Service Act","Labour’s Health Minister Aneurin Bevan passed the Act to create the NHS. Many doctors opposed it, but Bevan won them round by letting them keep private patients.","The law that created a free health service for everyone."],
 [1948,"5 Jul 1948",5,"The NHS begins","Medical care, hospital treatment, dentists and opticians became free to all at the point of use. About 90% of doctors had joined the NHS.","The biggest change in health care in British history: no one had to worry about the cost of being ill."]
 ];
-const APP_VERSION="1.29";
+const APP_VERSION="1.30";
 // Android app: a newer version of this page has been downloaded. Switch to it when it won't interrupt anything.
 let updatePending=false;
 window.nadyaUpdateReady=()=>{if(!L&&!tlOpen)location.reload();else updatePending=true};
@@ -1259,10 +1269,17 @@ function comboScreen(n){
 function header(){const half=Math.ceil(L.total/2);return `<div class="lhead"><button class="iconbtn" id="quit" aria-label="Quit challenge">${CLOSE}</button><div class="lbar${L.combo>=3?" hot":""}" role="progressbar" aria-valuemin="0" aria-valuemax="${L.total}" aria-valuenow="${L.done}"><i style="width:${Math.max(4,L.done/L.total*100)}%"></i><b class="mile${L.done>=half?" on":""}" style="left:${half/L.total*100}%"></b></div>${L.combo>=3?`<div class="combo" aria-label="${L.combo} in a row">${FLAME.replace("<svg",'<svg aria-hidden="true"')}<span>${L.combo}</span></div>`:""}<div class="lxp" aria-label="${L.xp} XP this challenge">${STAR.replace("<svg",'<svg aria-hidden="true"')}<span>${L.xp}</span></div></div>`}
 // Redraw the header in place (after XP or the combo changes)
 function redrawHeader(){const h=app.querySelector(".lhead");if(!h)return;h.outerHTML=header();$("#quit").onclick=()=>{clearFx();L=null;home()}}
+// If the feedback panel would need scrolling, tighten it; if still too tall, show fewer neighbouring events
+function fitSheet(sh){
+  const over=()=>sh.scrollHeight>sh.clientHeight+1;
+  if(over()){sh.classList.add("tight");if(over())sh.classList.add("tighter")}
+  const pad=sh.offsetHeight;app.style.paddingBottom=pad+"px";
+}
 // Remove any floating celebration bits
 function clearFx(){document.querySelectorAll(".cheerpop,.halfpeek,.sheet").forEach(x=>x.remove());app.style.paddingBottom=""}
 const CHEERS=["Molodets! Well done!","Otlichno! Excellent!","Bravo!","Klassno! Great!","Yes! That’s it!"];
-const KIND=["So close! I’ll bring this one back in a moment.","Nearly! You’ll get another go at the end.","Don’t worry, everyone mixes these up.","Tricky one! Let’s try it again shortly."];
+// Each kind message also says the event comes back at the end of the challenge
+const KIND=["So close! It comes back at the end.","Nearly! You’ll get another go at the end.","Don’t worry, we’ll try this one again at the end.","Tricky one! It’s coming back at the end."];
 const COMBO_TIERS={3:"Hat-trick",5:"On fire",8:"Flawless"};
 const LOOP_ICON=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 0 1 13.7-5.6L20 9M20 4v5h-5M20 12a8 8 0 0 1-13.7 5.6L4 15M4 20v-5h5"/></svg>`;
 const SPARK=(x,y,d)=>`<svg class="sparkle" viewBox="0 0 20 20" aria-hidden="true" style="left:${x}px;top:${y}px;animation-delay:${d}s"><path d="M10 0l2.6 7.4L20 10l-7.4 2.6L10 20l-2.6-7.4L0 10l7.4-2.6z"/></svg>`;
@@ -1342,14 +1359,14 @@ function grade(){
   const praise=L.combo>=3?`${L.combo} in a row!`:rnd(["Correct!","Nice one!","Spot on!","Brilliant!","Exactly right!"]);
   const sheet=document.createElement("div");
   sheet.className="sheet "+(ok?"ok":"no");sheet.setAttribute("role","status");
-  sheet.innerHTML=`<div class="in">${ok?"":`<div class="kind">${mascot("wrong","",{label:"Nadya, wincing kindly"})}<div class="say">${rnd(KIND)}</div></div>`}<div class="hd"><span>${ok?praise:"Not quite"}</span></div>${fact?`<div class="fact">${fact}</div>`:""}${viz}${ok?"":`<div class="again">${LOOP_ICON}<span>This event comes back at the end of the challenge</span></div>`}<div class="btns${ok?"":" stack"}"><button class="btn tl ${ok?"g":"o"}" id="tl">${TL_ICON}${ok?"Timeline":"See it on the timeline"}</button><button class="btn ${ok?"green":"orange"}" id="cont">Continue</button></div></div>`;
+  sheet.innerHTML=`<div class="in">${ok?`<div class="hd"><span>${praise}</span></div>`:`<div class="kind">${mascot("wrong","",{label:"Nadya, wincing kindly"})}<div class="kt"><div class="hd"><span>Not quite</span></div><div class="say">${rnd(KIND)}</div></div></div>`}${fact?`<div class="fact">${fact}</div>`:""}${viz}<div class="btns${ok?"":" stack"}"><button class="btn tl ${ok?"g":"o"}" id="tl">${TL_ICON}${ok?"Timeline":"See it on the timeline"}</button><button class="btn ${ok?"green":"orange"}" id="cont">Continue</button></div></div>`;
   app.querySelector(".foot").style.visibility="hidden";
   document.body.appendChild(sheet);
-  const pad=sheet.offsetHeight;app.style.paddingBottom=pad+"px";
+  fitSheet(sheet);const pad=sheet.offsetHeight;
   if(ok){const pop=document.createElement("div");pop.className="cheerpop";pop.style.bottom=(pad-36)+"px";
     pop.innerHTML=`<div class="ring"></div>${SPARK(8,26,0)}${SPARK(122,8,.5)}${SPARK(128,70,1)}${mascot("celebrate","",{label:"Nadya cheering"})}<div class="say">${rnd(CHEERS)}</div>`;
     document.body.appendChild(pop)}
-  $("#cont").focus();
+  sheet.scrollTop=0;$("#cont").focus({preventScroll:true});
   $("#cont").onclick=()=>{sheet.remove();clearFx();app.style.paddingBottom="";
     $(".lbar i")&&($(".lbar i").style.width=Math.max(4,L.done/L.total*100)+"%");
     if(L.tier){const t=L.tier;L.tier=0;return comboScreen(t)}
@@ -1483,7 +1500,8 @@ function strip(e,guess){
     const m={k:guess*100,h:`<div class="srow guess"><span class="sd">${guess}</span><span class="sdot"></span><span class="st">You said ${guess}: ${n} year${n>1?"s":""} too ${diff<0?"early":"late"}</span></div>`};
     const at=rows.findIndex(r=>r.k>=m.k);if(at<0)rows.push(m);else rows.splice(at,0,m);
   }
-  return `<div class="strip slist"><div class="shead"><span>Where it fits · ${yrsLabel(lo,hi)}</span></div>${rows.map(r=>r.h).join("")}</div>`;
+  const ci=rows.findIndex(r=>r.h.includes("srow cur"));
+  return `<div class="strip slist"><div class="shead"><span>Where it fits · ${yrsLabel(lo,hi)}</span></div>${rows.map((r,j)=>Math.abs(j-ci)>=2&&!r.h.includes("srow guess")?r.h.replace('class="srow','class="srow far'):r.h).join("")}</div>`;
 }
 // The three events of an order question on a year ruler, with the gaps between them
 function ruler(items,ok){
