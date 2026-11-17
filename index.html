@@ -21,7 +21,7 @@
   --blue:#2D5BD7; --blue-d:#1E42A3; --blue-soft:#E7EDFF;
   --green:#36A256; --green-d:#267A40; --green-soft:#E2F5E7;
   --orange:#E35D38; --orange-d:#B04426; --orange-soft:#FDE8E1;
-  --flame:#FF8A1E; --gold:#F4B740; --gold-soft:#FFF4D6; --gold-ink:#6B4A00; --line2:#B9C1D3;
+  --flame:#FF8A1E; --gold:#F4B740; --gold-soft:#FFF4D6; --gold-ink:#6B4A00; --clue-line:#F0DCA4; --line2:#B9C1D3;
   --blue-ink:#1E42A3; --green-ink:#267A40; --green-line:#A9D9B6; --orange-ink:#B04426; --orange-line:#F0B7A4;
   --doll:#D9383A; --doll-d:#A9252B; --cream:#FFF4E0; --hair:#5A3A26; --cheek:#F48C8C; --tear:#5DB7F0;
   --font:"Nunito",ui-rounded,"SF Pro Rounded","Segoe UI",system-ui,sans-serif;
@@ -30,12 +30,12 @@
   --bg:#121521; --surface:#1C2030; --ink:#ECEEF4; --muted:#9BA2B6; --line:#2F3549;
   --blue:#5B83F0; --blue-d:#3758BC; --blue-soft:#1F2A4A;
   --green:#4CC173; --green-d:#2E8A4F; --green-soft:#17301F;
-  --orange:#F27D58; --orange-d:#B5532F; --orange-soft:#3A2119; --flame:#FF9A3C; --gold-soft:#3A2F14; --gold-ink:#F4C766; --line2:#4A526A; --blue-ink:#A9C0FF; --green-ink:#7FD69C; --green-line:#2E6B42; --orange-ink:#F49A7C; --orange-line:#7A3A26; color-scheme:dark}}
+  --orange:#F27D58; --orange-d:#B5532F; --orange-soft:#3A2119; --flame:#FF9A3C; --gold-soft:#3A2F14; --gold-ink:#F4C766; --clue-line:#5C4B22; --line2:#4A526A; --blue-ink:#A9C0FF; --green-ink:#7FD69C; --green-line:#2E6B42; --orange-ink:#F49A7C; --orange-line:#7A3A26; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#121521; --surface:#1C2030; --ink:#ECEEF4; --muted:#9BA2B6; --line:#2F3549;
   --blue:#5B83F0; --blue-d:#3758BC; --blue-soft:#1F2A4A;
   --green:#4CC173; --green-d:#2E8A4F; --green-soft:#17301F;
-  --orange:#F27D58; --orange-d:#B5532F; --orange-soft:#3A2119; --flame:#FF9A3C; --gold-soft:#3A2F14; --gold-ink:#F4C766; --line2:#4A526A; --blue-ink:#A9C0FF; --green-ink:#7FD69C; --green-line:#2E6B42; --orange-ink:#F49A7C; --orange-line:#7A3A26; color-scheme:dark}
+  --orange:#F27D58; --orange-d:#B5532F; --orange-soft:#3A2119; --flame:#FF9A3C; --gold-soft:#3A2F14; --gold-ink:#F4C766; --clue-line:#5C4B22; --line2:#4A526A; --blue-ink:#A9C0FF; --green-ink:#7FD69C; --green-line:#2E6B42; --orange-ink:#F49A7C; --orange-line:#7A3A26; color-scheme:dark}
 
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{min-height:100%}
@@ -137,9 +137,10 @@ button:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
 .lbar i{display:block;height:100%;background:var(--green);border-radius:99px;transition:width .35s;box-shadow:inset 0 4px 0 rgba(255,255,255,.25)}
 .qtype{font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:var(--blue);font-weight:900;margin-top:14px}
 .qtitle{font-size:23px;font-weight:900;line-height:1.2;margin:6px 0 12px;text-wrap:balance}
-.clue{background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:14px 16px;font-size:17px;line-height:1.5;font-weight:600}
+/* The question's clue looks like a source card (warm tint, gold edge, flat), not like the answer buttons */
+.clue{background:var(--gold-soft);border:2px solid var(--clue-line);border-left:6px solid var(--gold);border-radius:16px;padding:14px 16px;font-size:17px;line-height:1.5;font-weight:600}
 .clue .when{display:block;width:fit-content;background:var(--gold);color:#3A2A08;font-weight:900;font-size:14px;border-radius:99px;padding:2px 10px;margin-bottom:8px;font-variant-numeric:tabular-nums}
-.clue .tag{display:block;font-size:12.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:900;margin-bottom:4px}
+.clue .tag{display:block;font-size:12.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--gold-ink);font-weight:900;margin-bottom:4px}
 .opts{display:grid;gap:10px;margin-top:16px}
 .opts.years{grid-template-columns:1fr 1fr}
 .opt{appearance:none;text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:13px 15px;font-weight:800;font-size:16.5px;cursor:pointer;box-shadow:0 3px 0 var(--line);line-height:1.3}
@@ -663,7 +664,7 @@ EV.d=[
 [1946,"1946",5,"The National Health Service Act","Labour’s Health Minister Aneurin Bevan passed the Act to create the NHS. Many doctors opposed it, but Bevan won them round by letting them keep private patients.","The law that created a free health service for everyone."],
 [1948,"5 Jul 1948",5,"The NHS begins","Medical care, hospital treatment, dentists and opticians became free to all at the point of use. About 90% of doctors had joined the NHS.","The biggest change in health care in British history: no one had to worry about the cost of being ill."]
 ];
-const APP_VERSION="1.26";
+const APP_VERSION="1.27";
 // Android app: a newer version of this page has been downloaded. Switch to it when it won't interrupt anything.
 let updatePending=false;
 window.nadyaUpdateReady=()=>{if(!L&&!tlOpen)location.reload();else updatePending=true};
