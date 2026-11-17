@@ -108,8 +108,8 @@ button:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
 .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:16px}
 .seg button{appearance:none;border:2px solid var(--line);background:var(--surface);border-radius:14px;padding:10px 6px;font-weight:800;font-size:14.5px;cursor:pointer;box-shadow:0 3px 0 var(--line);line-height:1.2}
 .seg button small{display:block;font-weight:700;font-size:12px;color:var(--muted)}
-.seg.home{grid-template-columns:repeat(12,1fr)}
-.seg.home button{grid-column:span 3;padding:9px 3px;font-size:14px}
+.seg.home{grid-template-columns:repeat(4,1fr)}
+.seg.home button{padding:9px 3px;font-size:14px}
 .seg.home button small{font-size:11px}
 .seg.home button.grp{grid-column:span 4}
 .seg button[aria-pressed="true"]{border-color:var(--blue);background:var(--blue-soft);box-shadow:0 3px 0 var(--blue)}
@@ -641,7 +641,7 @@ EV.d=[
 [1946,"1946",5,"The National Health Service Act","Labour’s Health Minister Aneurin Bevan passed the Act to create the NHS. Many doctors opposed it, but Bevan won them round by letting them keep private patients.","The law that created a free health service for everyone."],
 [1948,"5 Jul 1948",5,"The NHS begins","Medical care, hospital treatment, dentists and opticians became free to all at the point of use. About 90% of doctors had joined the NHS.","The biggest change in health care in British history: no one had to worry about the cost of being ill."]
 ];
-const APP_VERSION="1.18";
+const APP_VERSION="1.19";
 // Android app: a newer version of this page has been downloaded. Switch to it when it won't interrupt anything.
 let updatePending=false;
 window.nadyaUpdateReady=()=>{if(!L&&!tlOpen)location.reload();else updatePending=true};
@@ -650,12 +650,12 @@ let settingsOpen=false;
 const NATIVE=!!window.NadyaNative;
 const APK_URL="https://github.com/andy-butcher-dod/nadya/releases/latest/download/nadya.apk";
 function syncNative(){if(!NATIVE)return;try{NadyaNative.reportProgress(JSON.stringify({last:S.last,streak:S.streak,best:S.best}))}catch(e){}}
-const UNITS=["a","b","c","d"];
+// In order of start date
+const UNITS=["d","c","a","b"];
 const UNIT_NAME={a:"Russia 1905–24",b:"USSR 1924–53",c:"Germany 1918–45",d:"Medicine c1848–1948"};
 const UNIT_BTN={a:["Russia","1905–24"],b:["USSR","1924–53"],c:["Germany","1918–45"],d:["Medicine","c1848–1948"]};
 const UNIT_YEARS={a:[1900,1924],b:[1917,1955],c:[1914,1946],d:[1840,1950]};
-// Mixes: all units, or the two units of each exam paper
-const GROUPS={all:{name:"All",sub:"4 units",u:UNITS},p1:{name:"Paper 1",sub:"USSR + Germany",u:["b","c"]},p2:{name:"Paper 2",sub:"Russia + Medicine",u:["a","d"]}};
+const GROUPS={all:{name:"All four units",sub:"mixed together",u:UNITS}};
 const unitsOf=k=>GROUPS[k]?GROUPS[k].u:UNITS.includes(k)?[k]:UNITS;
 const LEN=8, INTERVALS=[0,1,2,4,7,14], MAX_NEW=5;
 const MONTH={Jan:1,Feb:2,Mar:3,Apr:4,May:5,Jun:6,June:6,Jul:7,Aug:8,Sep:9,Oct:10,Nov:11,Dec:12,Winter:12};
@@ -1098,10 +1098,10 @@ window.addEventListener("popstate",()=>{if(chOpen)closeChallenge();else if(tlOpe
 let tourOn=false,tourI=0;
 function tourSteps(){
   const t=[
-    {mood:"hello",title:"Privet! I’m Nadya",text:"I’ll help you learn the big events in Russia, the USSR, Germany and the history of medicine, a few minutes at a time. (Psst: tap me whenever you like. I’m very ticklish.)"},
+    {mood:"hello",title:"Privet! I’m Nadya",text:"I’ll help you learn the big events in the history of medicine, Germany, Russia and the USSR, a few minutes at a time. (Psst: tap me whenever you like. I’m very ticklish.)"},
     {sel:"#go",title:"One short lesson a day",text:"Each lesson is 8 quick questions and takes about 3 minutes. After every answer you’ll see where that event fits in history."},
     {sel:".week",title:"Keep your streak going",text:"Each day you practise lights a flame. Miss a day and I get sad… so please don’t!"},
-    {sel:".seg",title:"Choose what to practise",text:"Practise one unit, both units of an exam paper, or all four mixed together."},
+    {sel:".seg",title:"Choose what to practise",text:"Practise one unit, or all four mixed together."},
     {sel:"#browse",title:"The timeline",text:"Tap here to see every event in order, with what happened and why it mattered. There’s a Timeline challenge in there too."},
     {sel:".progress",title:"Watch your progress",text:"Events you’ve met show as started. Get one right three times, on different days, and it’s learned."}
   ];
