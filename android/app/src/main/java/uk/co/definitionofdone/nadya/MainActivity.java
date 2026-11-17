@@ -9,6 +9,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.view.HapticFeedbackConstants;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.os.VibratorManager;
@@ -295,17 +297,13 @@ public class MainActivity extends Activity {
 
         /**
          * Vibrate the motor with an on/off pattern in milliseconds, e.g. "30,60,40".
-         * Driving the vibrator directly (like Dauble's Capacitor Haptics) means it works
-         * even when the phone's touch-feedback ("Touch interactions") setting is off.
+         * Like Dauble's Capacitor Haptics, each "on" part is its own one-shot pulse
+         * (at least 25ms), so it works even with the phone's "Touch interactions" off.
+         * Returns "ok", or a plain reason why it couldn't vibrate (shown by Test vibration).
          */
         @JavascriptInterface
-        public void vibrate(String pattern) {
+        public String vibrate(String pattern) {
             try {
-                String[] parts = pattern == null ? new String[0] : pattern.split(",");
-                if (parts.length == 0) return;
-                long[] timings = new long[parts.length + 1];
-                timings[0] = 0;
-                for (int i = 0; i < parts.length; i++) timings[i + 1] = Math.max(0, Long.parseLong(parts[i].trim()));
                 Vibrator v;
                 if (Build.VERSION.SDK_INT >= 31) {
                     VibratorManager vm = (VibratorManager) getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
@@ -313,10 +311,30 @@ public class MainActivity extends Activity {
                 } else {
                     v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                 }
-                if (v == null || !v.hasVibrator()) return;
-                v.vibrate(VibrationEffect.createWaveform(timings, -1));
-            } catch (Exception ignored) {
-                // A bad pattern or no vibrator: just stay quiet.
+                if (v == null) return "no-service";
+                if (!v.hasVibrator()) return "no-motor";
+                final Vibrator vib = v;
+                String[] parts = pattern == null ? new String[0] : pattern.split(",");
+                Handler h = new Handler(Looper.getMainLooper());
+                long at = 0;
+                for (int i = 0; i < parts.length; i++) {
+                    long ms = Math.max(0, Long.parseLong(parts[i].trim()));
+                    if (i % 2 == 0) {
+                        final long on = Math.max(25, ms);
+                        h.postDelayed(() -> {
+                            try {
+                                vib.vibrate(VibrationEffect.createOneShot(on, VibrationEffect.DEFAULT_AMPLITUDE));
+                            } catch (Exception ignored) {
+                            }
+                        }, at);
+                    }
+                    at += ms;
+                }
+                return "ok";
+            } catch (SecurityException e) {
+                return "no-permission";
+            } catch (Exception e) {
+                return "error: " + e.getMessage();
             }
         }
 

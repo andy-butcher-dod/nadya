@@ -895,7 +895,7 @@ EV.d=[
 [1946,"1946",5,"The National Health Service Act","Labour’s Health Minister Aneurin Bevan passed the Act to create the NHS. Many doctors opposed it, but Bevan won them round by letting them keep private patients.","The law that created a free health service for everyone."],
 [1948,"5 Jul 1948",5,"The NHS begins","Medical care, hospital treatment, dentists and opticians became free to all at the point of use. About 90% of doctors had joined the NHS.","The biggest change in health care in British history: no one had to worry about the cost of being ill."]
 ];
-const APP_VERSION="1.32";
+const APP_VERSION="1.33";
 // Android app: a newer version of this page has been downloaded. Switch to it when it won't interrupt anything.
 let updatePending=false;
 window.nadyaUpdateReady=()=>{if(!L&&!tlOpen)location.reload();else updatePending=true};
@@ -1150,6 +1150,16 @@ function home(){
   if(ro){const send=()=>{const [h,m]=(rt.value||"18:00").split(":").map(Number);try{NadyaNative.setReminder(ro.checked,h||0,m||0)}catch(e){}home()};ro.onchange=send;rt.onchange=send}
   const tr=$("#testRem");if(tr)tr.onclick=()=>{let res="";try{res=NadyaNative.testReminder()}catch(e){}
     $("#testMsg").textContent=res==="sent"?"Sent! Check your notifications. If nothing appears, notifications are being blocked on this phone.":"Couldn’t send it: notifications are switched off for Nadya. Turn them on in your phone’s Settings › Apps › Nadya › Notifications."};
+  // Test vibration: vibrate once and say plainly what happened
+  const tv=$("#testVib");if(tv)tv.onclick=()=>{
+    const ver=shellVer()||"an older version";let msg;
+    if(!NATIVE_VIB)msg=`This Android app (${ver}) can’t vibrate yet. Install the latest Nadya app from the download link, then try again.`;
+    else{let res="";try{res=String(NadyaNative.vibrate("400"))}catch(e){res="error: "+e.message}
+      msg={ok:`It should be vibrating now (Android app ${ver}).${fxMode()==="mute"?" Note: the speaker button is set to muted, so challenges won’t vibrate. Tap it to switch.":""} If you felt nothing, the phone is blocking app vibrations: check Settings › Sounds and vibration.`,
+        "no-motor":"This phone reports that it has no vibration motor.","no-service":"This phone wouldn’t let Nadya use its vibration motor.",
+        "no-permission":"Nadya isn’t allowed to vibrate. Reinstall the latest Nadya app.",
+        "undefined":`This Android app (${ver}) can’t report back. Install the latest Nadya app from the download link, then try again.`}[res]||`Couldn’t vibrate (${res}).`}
+    $("#vibMsg").textContent=msg};
   const as=$("#appSettings");if(as)as.onclick=()=>{try{NadyaNative.openAppSettings()}catch(e){}};
   const xmsg=t=>{$("#xferMsg").textContent=t};
   $("#copyProg").onclick=async()=>{const c="NADYA1:"+btoa(unescape(encodeURIComponent(JSON.stringify(S))));
@@ -1206,6 +1216,10 @@ function reminderBlock(){
     <button class="btn ghost small" id="testRem">Send a test reminder</button>
     <div class="legend" id="testMsg" role="status"></div>
     <div class="legend">Add Nadya to your home screen: touch and hold an empty space on the home screen, tap Widgets, then find Nadya.</div>
+  </div>
+  <div class="unitrow rem"><div class="lbl"><span>Vibration</span></div>
+    <button class="btn ghost small" id="testVib">Test vibration</button>
+    <div class="legend" id="vibMsg" role="status"></div>
   </div>`;
 }
 function confirmReset(){
