@@ -54,6 +54,7 @@ button:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
 
 /* Mascot */
 .stage{display:grid;justify-items:center;gap:6px;margin-top:6px}
+.stage .mascot{width:var(--mw,min(200px,52vw))}
 .bubble{position:relative;background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:12px 16px;font-weight:800;font-size:17px;text-align:center;max-width:320px;text-wrap:balance}
 .bubble::after{content:"";position:absolute;left:50%;bottom:-9px;width:16px;height:16px;background:var(--surface);border-right:2px solid var(--line);border-bottom:2px solid var(--line);transform:translateX(-50%) rotate(45deg)}
 .mascot{width:min(200px,52vw);height:auto;overflow:visible}
@@ -664,7 +665,7 @@ EV.d=[
 [1946,"1946",5,"The National Health Service Act","Labour’s Health Minister Aneurin Bevan passed the Act to create the NHS. Many doctors opposed it, but Bevan won them round by letting them keep private patients.","The law that created a free health service for everyone."],
 [1948,"5 Jul 1948",5,"The NHS begins","Medical care, hospital treatment, dentists and opticians became free to all at the point of use. About 90% of doctors had joined the NHS.","The biggest change in health care in British history: no one had to worry about the cost of being ill."]
 ];
-const APP_VERSION="1.27";
+const APP_VERSION="1.28";
 // Android app: a newer version of this page has been downloaded. Switch to it when it won't interrupt anything.
 let updatePending=false;
 window.nadyaUpdateReady=()=>{if(!L&&!tlOpen)location.reload();else updatePending=true};
@@ -872,7 +873,24 @@ function home(){
     S=Object.assign(load(),d);if(!GROUPS[S.unit]&&!UNITS.includes(S.unit))S.unit="all";save();home();const bub=$(".bubble");if(bub)bub.textContent="Progress loaded. Welcome back!"};
   const ib=$("#install");if(ib)ib.onclick=()=>{installEvt.prompt();installEvt.userChoice.finally(()=>{installEvt=null;home()})};
   window.scrollTo(0,0);
+  fitHome();
 }
+// On shorter screens (or with larger system text) shrink Nadya so the start button and its caption fit without scrolling
+function fitHome(){
+  const st=app.querySelector(".stage"),go=$("#go");if(!st||!go)return;
+  st.style.removeProperty("--mw");
+  const m=st.querySelector(".mascot");if(!m)return;
+  const cap=go.nextElementSibling&&go.nextElementSibling.classList.contains("sub")?go.nextElementSibling:go;
+  for(let i=0;i<3;i++){
+    const over=cap.getBoundingClientRect().bottom+scrollY-(innerHeight-12);
+    if(over<=0)return;
+    const r=m.getBoundingClientRect(),w=Math.max(110,r.width-over*r.width/r.height);
+    st.style.setProperty("--mw",w+"px");
+    if(w<=110)return;
+  }
+}
+let fitHomeT;
+window.addEventListener("resize",()=>{clearTimeout(fitHomeT);fitHomeT=setTimeout(()=>{if(app.querySelector(".week")&&!L)fitHome()},150)});
 function whenText(ms){
   const d=new Date(ms),t=d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}),g=gap(dayStr(d),dayStr());
   return (g===0?"today":g===-1?"tomorrow":g===1?"yesterday":d.toLocaleDateString([],{weekday:"long"}))+" at "+t;
