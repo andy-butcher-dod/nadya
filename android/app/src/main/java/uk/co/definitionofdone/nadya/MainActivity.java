@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.view.HapticFeedbackConstants;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -54,6 +55,8 @@ public class MainActivity extends Activity {
         s.setJavaScriptEnabled(true);
         s.setDomStorageEnabled(true);
         s.setAllowFileAccess(false);
+        // The app's sounds are made with Web Audio after taps; don't hold them back.
+        s.setMediaPlaybackRequiresUserGesture(false);
 
         web.setWebViewClient(new WebViewClient() {
             @Override
@@ -282,6 +285,30 @@ public class MainActivity extends Activity {
                     startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
                             Uri.parse("package:" + getPackageName())));
                 } catch (Exception ignored) {
+                }
+            });
+        }
+
+        /** A short haptic: "tap", "right", "wrong" or "done". Uses the phone's own haptics, so it follows its vibration settings. */
+        @JavascriptInterface
+        public void haptic(String kind) {
+            runOnUiThread(() -> {
+                if (web == null) return;
+                boolean r30 = Build.VERSION.SDK_INT >= 30;
+                switch (kind == null ? "" : kind) {
+                    case "right":
+                        web.performHapticFeedback(r30 ? HapticFeedbackConstants.CONFIRM : HapticFeedbackConstants.VIRTUAL_KEY);
+                        break;
+                    case "wrong":
+                        web.performHapticFeedback(r30 ? HapticFeedbackConstants.REJECT : HapticFeedbackConstants.LONG_PRESS);
+                        break;
+                    case "done":
+                        web.performHapticFeedback(r30 ? HapticFeedbackConstants.CONFIRM : HapticFeedbackConstants.VIRTUAL_KEY);
+                        web.postDelayed(() -> web.performHapticFeedback(r30 ? HapticFeedbackConstants.CONFIRM : HapticFeedbackConstants.VIRTUAL_KEY), 140);
+                        web.postDelayed(() -> web.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS), 300);
+                        break;
+                    default:
+                        web.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK);
                 }
             });
         }

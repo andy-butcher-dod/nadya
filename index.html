@@ -895,7 +895,7 @@ EV.d=[
 [1946,"1946",5,"The National Health Service Act","Labour’s Health Minister Aneurin Bevan passed the Act to create the NHS. Many doctors opposed it, but Bevan won them round by letting them keep private patients.","The law that created a free health service for everyone."],
 [1948,"5 Jul 1948",5,"The NHS begins","Medical care, hospital treatment, dentists and opticians became free to all at the point of use. About 90% of doctors had joined the NHS.","The biggest change in health care in British history: no one had to worry about the cost of being ill."]
 ];
-const APP_VERSION="1.30";
+const APP_VERSION="1.31";
 // Android app: a newer version of this page has been downloaded. Switch to it when it won't interrupt anything.
 let updatePending=false;
 window.nadyaUpdateReady=()=>{if(!L&&!tlOpen)location.reload();else updatePending=true};
@@ -952,15 +952,25 @@ const pool=()=>{const us=unitsOf(S.unit);return ALL.filter(e=>us.includes(e.u))}
 
 /* ---------- sound ---------- */
 let AC;
-function tone(seq){if(S.muted)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();let t=AC.currentTime+.01;
+// Android can pause the app's audio (for example after switching apps); wake it up again before playing
+function audio(){AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state!=="running"){try{AC.resume()}catch(e){}}return AC}
+["pointerdown","touchend","keydown"].forEach(ev=>document.addEventListener(ev,()=>{if(AC&&AC.state!=="running"){try{AC.resume()}catch(e){}}},{passive:true,capture:true}));
+document.addEventListener("visibilitychange",()=>{if(AC&&document.visibilityState==="visible"&&AC.state!=="running"){try{AC.resume()}catch(e){}}});
+function tone(seq){if(S.muted)return;try{audio();let t=AC.currentTime+.01;
   seq.forEach(([f,d,type])=>{const o=AC.createOscillator(),g=AC.createGain();o.type=type||"sine";o.frequency.value=f;
   g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.18,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+d);
   o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.03);t+=d*.75})}catch(e){}}
-function noise(dur,f0,f1,vol){if(S.muted)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const t=AC.currentTime+.01,n=Math.floor(AC.sampleRate*dur),buf=AC.createBuffer(1,n,AC.sampleRate),d=buf.getChannelData(0);
+function noise(dur,f0,f1,vol){if(S.muted)return;try{audio();const t=AC.currentTime+.01,n=Math.floor(AC.sampleRate*dur),buf=AC.createBuffer(1,n,AC.sampleRate),d=buf.getChannelData(0);
   for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*(1-i/n);
   const src=AC.createBufferSource(),fl=AC.createBiquadFilter(),g=AC.createGain();src.buffer=buf;fl.type="bandpass";fl.frequency.setValueAtTime(f0,t);fl.frequency.exponentialRampToValueAtTime(f1,t+dur);
   g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.0001,t+dur);src.connect(fl);fl.connect(g);g.connect(AC.destination);src.start(t);src.stop(t+dur)}catch(e){}}
-const SND={whoosh:()=>noise(.35,500,2200,.05),pop:()=>noise(.4,900,120,.35),right:()=>tone([[660,.12],[990,.22]]),wrong:()=>tone([[220,.18,"triangle"],[180,.25,"triangle"]]),done:()=>tone([[523,.14],[659,.14],[784,.14],[1047,.35]]),tap:()=>tone([[520,.05]]),laugh:()=>tone([[760,.07,"triangle"],[600,.07,"triangle"],[780,.07,"triangle"],[620,.07,"triangle"],[800,.08,"triangle"],[640,.12,"triangle"]])};
+// Haptics: the Android app uses the phone's own haptics; a browser falls back to a short vibration
+const HAS_HAPTICS=(NATIVE&&typeof NadyaNative.haptic==="function")||(!NATIVE&&"vibrate" in navigator);
+const VIB={tap:8,right:[18],wrong:[40,60,40],done:[20,60,20,60,60]};
+function buzz(kind){if(S.noBuzz||!HAS_HAPTICS)return;try{if(NATIVE)NadyaNative.haptic(kind);else navigator.vibrate(VIB[kind]||10)}catch(e){}}
+const SND0={whoosh:()=>noise(.35,500,2200,.05),pop:()=>noise(.4,900,120,.35),right:()=>tone([[660,.12],[990,.22]]),wrong:()=>tone([[220,.18,"triangle"],[180,.25,"triangle"]]),done:()=>tone([[523,.14],[659,.14],[784,.14],[1047,.35]]),tap:()=>tone([[520,.05]]),laugh:()=>tone([[760,.07,"triangle"],[600,.07,"triangle"],[780,.07,"triangle"],[620,.07,"triangle"],[800,.08,"triangle"],[640,.12,"triangle"]])};
+// Every key moment plays a sound and a matching haptic
+const SND={...SND0,tap:()=>{SND0.tap();buzz("tap")},right:()=>{SND0.right();buzz("right")},wrong:()=>{SND0.wrong();buzz("wrong")},done:()=>{SND0.done();buzz("done")},laugh:()=>{SND0.laugh();buzz("tap")}};
 
 /* ---------- mascot ---------- */
 // o: {style (CSS variables to recolour her), w (width px), pattern:false (plain apron), gold, item (keepsake),
@@ -1101,6 +1111,7 @@ function home(){
   <details class="settings" id="settings"${settingsOpen?" open":""}>
     <summary class="sethead"><span>Settings</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
     ${NATIVE?reminderBlock():""}
+    ${HAS_HAPTICS?`<button class="btn ghost small" id="buzzToggle" aria-pressed="${!S.noBuzz}">Vibration: ${S.noBuzz?"off":"on"}</button>`:""}
     <button class="btn ghost small" id="tourAgain">Show the tour again</button>
     <details class="unitrow xfer"><summary>Move progress to another app or phone</summary>
       <div class="legend">Copy your progress code here, then paste it into Nadya on the other app or phone. Your streak and learned events come with it.</div>
@@ -1119,6 +1130,7 @@ function home(){
   app.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{S.unit=b.dataset.u;save();home()});
   $("#reset").onclick=confirmReset;
   $("#tourAgain").onclick=()=>startTour();
+  const bz=$("#buzzToggle");if(bz)bz.onclick=()=>{S.noBuzz=!S.noBuzz;save();bz.textContent=`Vibration: ${S.noBuzz?"off":"on"}`;bz.setAttribute("aria-pressed",!S.noBuzz);buzz("right")};
   if(!S.tourDone&&!tourOn&&!L)setTimeout(()=>{if(!S.tourDone&&!tourOn&&!L&&!tlOpen)startTour()},400);
   const tk=$("#tickle");let tkTimer;
   tk.onclick=()=>{const m=tk.querySelector(".mascot"),bub=$(".bubble");m.dataset.mood="laugh";
