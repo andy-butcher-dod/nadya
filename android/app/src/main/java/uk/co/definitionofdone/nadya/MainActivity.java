@@ -9,6 +9,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.view.HapticFeedbackConstants;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.os.VibratorManager;
+import android.content.Context;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -287,6 +291,33 @@ public class MainActivity extends Activity {
                 } catch (Exception ignored) {
                 }
             });
+        }
+
+        /**
+         * Vibrate the motor with an on/off pattern in milliseconds, e.g. "30,60,40".
+         * Driving the vibrator directly (like Dauble's Capacitor Haptics) means it works
+         * even when the phone's touch-feedback ("Touch interactions") setting is off.
+         */
+        @JavascriptInterface
+        public void vibrate(String pattern) {
+            try {
+                String[] parts = pattern == null ? new String[0] : pattern.split(",");
+                if (parts.length == 0) return;
+                long[] timings = new long[parts.length + 1];
+                timings[0] = 0;
+                for (int i = 0; i < parts.length; i++) timings[i + 1] = Math.max(0, Long.parseLong(parts[i].trim()));
+                Vibrator v;
+                if (Build.VERSION.SDK_INT >= 31) {
+                    VibratorManager vm = (VibratorManager) getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
+                    v = vm == null ? null : vm.getDefaultVibrator();
+                } else {
+                    v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                }
+                if (v == null || !v.hasVibrator()) return;
+                v.vibrate(VibrationEffect.createWaveform(timings, -1));
+            } catch (Exception ignored) {
+                // A bad pattern or no vibrator: just stay quiet.
+            }
         }
 
         /** A short haptic: "tap", "right", "wrong" or "done". Uses the phone's own haptics, so it follows its vibration settings. */
