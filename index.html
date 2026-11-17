@@ -649,7 +649,7 @@ EV.d=[
 [1946,"1946",5,"The National Health Service Act","Labour’s Health Minister Aneurin Bevan passed the Act to create the NHS. Many doctors opposed it, but Bevan won them round by letting them keep private patients.","The law that created a free health service for everyone."],
 [1948,"5 Jul 1948",5,"The NHS begins","Medical care, hospital treatment, dentists and opticians became free to all at the point of use. About 90% of doctors had joined the NHS.","The biggest change in health care in British history: no one had to worry about the cost of being ill."]
 ];
-const APP_VERSION="1.22";
+const APP_VERSION="1.23";
 // Android app: a newer version of this page has been downloaded. Switch to it when it won't interrupt anything.
 let updatePending=false;
 window.nadyaUpdateReady=()=>{if(!L&&!tlOpen)location.reload();else updatePending=true};
@@ -765,8 +765,8 @@ function homeMood(){
   if(!S.last)return["hello","Privet! I’m Nadya. A few minutes of history every day and you’ll be an expert. Shall we start?"];
   const g=gap(S.last,dayStr()),st=liveStreak();
   if(g===0)return["happy",rnd([`Done for today! Your streak is ${st} day${st>1?"s":""}.`,"Great work today. See you tomorrow!",`${st}-day streak! Lenin would be impressed. Stalin would be suspicious.`])];
-  if(g===1){if(new Date().getHours()>=18)return["worried",`Your ${st}-day streak ends at midnight! Quick lesson?`];return["waiting",`Ready for today’s lesson? Keep your ${st}-day streak going!`]}
-  if(g===2)return["sad","I missed you yesterday… Just one quick lesson to start a new streak?"];
+  if(g===1){if(new Date().getHours()>=18)return["worried",`Your ${st}-day streak ends at midnight! Quick challenge?`];return["waiting",`Ready for today’s challenge? Keep your ${st}-day streak going!`]}
+  if(g===2)return["sad","I missed you yesterday… Just one quick challenge to start a new streak?"];
   return["miserable",`It’s been ${g} days… I’ve been all alone with the Tsar. Please come back!`];
 }
 
@@ -802,14 +802,14 @@ function home(){
     ${UNITS.map(u=>`<button data-u="${u}" aria-pressed="${S.unit===u}">${UNIT_BTN[u][0]}<small>${UNIT_BTN[u][1]}</small></button>`).join("")}
   </div>
   <div class="cta">
-    <button class="btn${doneToday?" ghost":""}" id="go">${doneToday?"Practise again":"Start today’s lesson"}</button>
+    <button class="btn${doneToday?" ghost":""}" id="go">${doneToday?"Practise again":"Start today’s challenge"}</button>
     <div class="sub">${LEN} questions · about 3 minutes${S.best>1?` · Best streak ${S.best} days`:""}</div>
     ${!isStandalone()&&installEvt?`<button class="btn ghost" id="install">Install Nadya on this phone</button>`:""}
   </div>
   <div class="progress">
     <h2>Your progress</h2>
     ${UNITS.map(u=>[u,pr(u)]).map(([u,p])=>`<div class="unitrow"><div class="lbl"><span>${UNIT_NAME[u]}</span><span>${p.m} learned · ${p.s} of ${p.n} started</span></div><div class="bar" role="img" aria-label="${p.m} learned and ${p.s} started out of ${p.n} events"><i class="st" style="width:${Math.round(p.s/p.n*100)}%"></i><i style="width:${Math.round(p.m/p.n*100)}%"></i></div></div>`).join("")}
-    <div class="legend">Started: you’ve met the event in a lesson. Learned: you’ve got it right three times, on different days.</div>
+    <div class="legend">Started: you’ve met the event in a challenge. Learned: you’ve got it right three times, on different days.</div>
   </div>
   <details class="settings" id="settings"${settingsOpen?" open":""}>
     <summary class="sethead"><span>Settings</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
@@ -867,10 +867,10 @@ function reminderBlock(){
   const done=S.last===dayStr();
   let status="";
   if(r.on&&r.allowed){
-    if(done)status="No reminder needed today: you’ve already done a lesson.";
+    if(done)status="No reminder needed today: you’ve already done a challenge.";
     else if(r.next)status=`Next reminder: ${whenText(r.next)}.`;
   }
-  const lastTxt={sent:"sent",done:"skipped, because a lesson was already done",off:"not sent, because reminders were off",blocked:"not sent, because notifications were off"}[r.lastResult];
+  const lastTxt={sent:"sent",done:"skipped, because a challenge was already done",off:"not sent, because reminders were off",blocked:"not sent, because notifications were off"}[r.lastResult];
   return `<div class="unitrow rem">
     <div class="lbl"><label for="remOn">Daily reminder</label><input type="checkbox" id="remOn"${r.on?" checked":""}></div>
     <div class="remrow"><label for="remTime">Remind me at</label><input type="time" id="remTime" value="${z(r.hour)}:${z(r.min)}"${r.on?"":" disabled"}></div>
@@ -938,7 +938,7 @@ function nextQ(){
   if(!L.queue.length)return finish();
   L.q=L.queue[0];L.sel=null;L.order=[];renderQ();
 }
-function header(){return `<div class="lhead"><button class="iconbtn" id="quit" aria-label="Quit lesson">${CLOSE}</button><div class="lbar" role="progressbar" aria-valuemin="0" aria-valuemax="${L.total}" aria-valuenow="${L.done}"><i style="width:${Math.max(4,L.done/L.total*100)}%"></i></div></div>`}
+function header(){return `<div class="lhead"><button class="iconbtn" id="quit" aria-label="Quit challenge">${CLOSE}</button><div class="lbar" role="progressbar" aria-valuemin="0" aria-valuemax="${L.total}" aria-valuenow="${L.done}"><i style="width:${Math.max(4,L.done/L.total*100)}%"></i></div></div>`}
 function renderQ(){
   const q=L.q,e=q.e;let body="";
   if(q.t==="what")body=`<div class="qtype">Which event?</div><div class="qtitle">Which event does this describe?</div><div class="clue"><span class="tag">${UNIT_NAME[e.u]}</span><span class="when">${esc(e.d)}</span>${esc(e.w)}</div>`;
@@ -1019,7 +1019,7 @@ function finish(){
   S.last=today;S.best=Math.max(S.best,S.streak);
   const bonus=10;S.xp+=L.xp+bonus;S.lessons++;save();syncNative();
   const acc=Math.round(L.correctFirst/L.total*100),secs=Math.round((Date.now()-L.start)/1000);
-  const msg=acc===100?"Perfect lesson!":acc>=75?"Lesson complete!":"Lesson done. Practice makes perfect!";
+  const msg=acc===100?"Perfect score!":acc>=75?"Challenge complete!":"Challenge done. Practice makes perfect!";
   app.innerHTML=`<div class="done-wrap">${mascot("celebrate")}<h1>${msg}</h1>
    ${streakUp?`<div class="stat" style="font-size:22px">${FLAME}${S.streak} day streak!</div>`:`<div class="sub">You’ve already kept your streak today. Extra practice still counts!</div>`}
    <div class="tiles">
@@ -1084,11 +1084,11 @@ function openTimeline(u,focusId,from){
   const list=ALL.filter(x=>x.u===u).sort((a,b)=>a.y-b.y||(/[A-Z]/.test(a.d)&&/[A-Z]/.test(b.d)?a.key-b.key:0)),groups=[];
   list.forEach(x=>{const g=groups[groups.length-1];if(g&&g.y===x.y)g.items.push(x);else groups.push({y:x.y,items:[x]})});
   const card=x=>{const cur=x===f,b=(S.cards[x.id]||{}).box;
-    return `<details class="tev${cur?" cur":""}"${cur?" open":""}><summary><span class="drow"><span class="d">${esc(x.d)}</span>${cur&&fromLesson?`<span class="chip">${peek?"From the challenge":"You just answered this"}</span>`:""}</span><span class="h">${esc(x.h)}${b>=3?'<span class="mini">Learned</span>':""}</span></summary><p>${esc(x.w)}</p><p class="w"><strong>Why it matters:</strong> ${esc(x.s)}</p></details>`};
+    return `<details class="tev${cur?" cur":""}"${cur?" open":""}><summary><span class="drow"><span class="d">${esc(x.d)}</span>${cur&&fromLesson?`<span class="chip">${peek?"From the mini test":"You just answered this"}</span>`:""}</span><span class="h">${esc(x.h)}${b>=3?'<span class="mini">Learned</span>':""}</span></summary><p>${esc(x.w)}</p><p class="w"><strong>Why it matters:</strong> ${esc(x.s)}</p></details>`};
   const o=document.createElement("div");o.className="tlo"+(peek?" peek":"");o.setAttribute("role","dialog");o.setAttribute("aria-label","Timeline");
   o.innerHTML=`<div class="wrapper"><div class="tlhead">
-    <div class="r1"><button class="backbtn" id="tlback">${BACK}${peek?"Back to the challenge":fromLesson?"Back to lesson":"Back"}</button><span class="meta">${UNIT_NAME[u]}</span></div>
-    <div class="r2"><h1>Timeline</h1>${f?`<span class="meta">${esc(TOPICS[u][f.k-1])}</span>`:""}${fromLesson?"":`<button class="chalbtn" id="tlchal">${TL_ICON}Timeline challenge</button>`}</div>
+    <div class="r1"><button class="backbtn" id="tlback">${BACK}${peek?"Back to the mini test":fromLesson?"Back to the challenge":"Back"}</button><span class="meta">${UNIT_NAME[u]}</span></div>
+    <div class="r2"><h1>Timeline</h1>${f?`<span class="meta">${esc(TOPICS[u][f.k-1])}</span>`:""}${fromLesson?"":`<button class="chalbtn" id="tlchal">${TL_ICON}Timeline Mini Test</button>`}</div>
     ${fromLesson?"":`<div class="seg" role="group" aria-label="Choose unit">${UNITS.map(x=>`<button data-u="${x}" aria-pressed="${u===x}">${UNIT_BTN[x][0]}<small>${UNIT_BTN[x][1]}</small></button>`).join("")}</div>`}
   </div>${groups.map(g=>`<div class="tlyr"><div class="y">${g.y}</div><div class="tlevs">${g.items.map(card).join("")}</div></div>`).join("")}</div>`;
   document.body.appendChild(o);document.body.style.overflow="hidden";
@@ -1117,14 +1117,14 @@ let tourOn=false,tourI=0,tourMove=0;
 function tourSteps(){
   const t=[
     {mood:"hello",title:"Privet! I’m Nadya",text:"I’ll help you learn the big events in the history of medicine, Germany, Russia and the USSR, a few minutes at a time. (Psst: tap me whenever you like. I’m very ticklish.)"},
-    {sel:"#go",title:"One short lesson a day",text:"Each lesson is 8 quick questions and takes about 3 minutes. After every answer you’ll see where that event fits in history."},
+    {sel:"#go",title:"One short challenge a day",text:"Each challenge is 8 quick questions and takes about 3 minutes. After every answer you’ll see where that event fits in history."},
     {sel:".week",title:"Keep your streak going",text:"Each day you practise lights a flame. Miss a day and I get sad… so please don’t!"},
     {sel:".seg",title:"Choose what to practise",text:"Practise one unit, or all four mixed together."},
-    {sel:"#browse",title:"The timeline",text:"Tap here to see every event in order, with what happened and why it mattered. There’s a Timeline challenge in there too."},
+    {sel:"#browse",title:"The timeline",text:"Tap here to see every event in order, with what happened and why it mattered. There’s a Timeline Mini Test in there too."},
     {sel:".progress",bottom:true,title:"Watch your progress",text:"Events you’ve met show as started. Get one right three times, on different days, and it’s learned."}
   ];
   if(NATIVE)t.push({sel:"#settings",bottom:true,title:"Daily reminders",text:"I’ll send you a reminder each day, so you don’t forget. Change the time in Settings."});
-  t.push({mood:"celebrate",title:S.last?"That’s the tour!":"Ready, comrade?",text:S.last?"Back to history. Your streak is waiting.":"Let’s do your first lesson together.",final:true});
+  t.push({mood:"celebrate",title:S.last?"That’s the tour!":"Ready, comrade?",text:S.last?"Back to history. Your streak is waiting.":"Let’s do your first challenge together.",final:true});
   return t;
 }
 function startTour(){if(tourOn)return;tourOn=true;tourI=0;document.body.style.paddingBottom="45vh";window.scrollTo(0,0);showTour()}
@@ -1136,7 +1136,7 @@ function showTour(){
   const dots=steps.map((x,i)=>`<i class="${i===tourI?"on":""}"></i>`).join("");
   o.innerHTML=`${st.sel?'<div class="hole"></div>':'<div class="shade"></div>'}<div class="tcard" aria-live="polite">
     ${st.mood?mascot(st.mood):""}<h2>${esc(st.title)}</h2><p>${esc(st.text)}</p>
-    ${st.final?`<div class="finalbtns"><button class="btn" id="tourGo">${S.last?"Got it":"Start my first lesson"}</button>${S.last?"":'<button class="btn ghost" id="tourLater">Not now</button>'}</div>`
+    ${st.final?`<div class="finalbtns"><button class="btn" id="tourGo">${S.last?"Got it":"Start my first challenge"}</button>${S.last?"":'<button class="btn ghost" id="tourLater">Not now</button>'}</div>`
       :`<div class="trow"><span class="dots" aria-label="Step ${tourI+1} of ${steps.length}">${dots}</span><span class="tbtns"><button class="skip" id="tourSkip">Skip</button><button class="btn" id="tourNext">Next</button></span></div>`}
   </div>`;
   if(st.final){$("#tourGo").onclick=()=>{endTour();if(!S.last||S.last!==dayStr()){SND.tap();if(!S.last)startLesson()}};const l=$("#tourLater");if(l)l.onclick=endTour;$("#tourGo").focus()}
@@ -1221,7 +1221,7 @@ function chRecord(e,ok){
 function openChallenge(u){
   CH={u,puzzles:chPuzzles(u),i:0,sel:null,xp:0,right:0,total:0,done:false};
   let o=$(".cho");
-  if(!o){o=document.createElement("div");o.className="cho";o.setAttribute("role","dialog");o.setAttribute("aria-label","Timeline challenge");document.body.appendChild(o)}
+  if(!o){o=document.createElement("div");o.className="cho";o.setAttribute("role","dialog");o.setAttribute("aria-label","Timeline Mini Test");document.body.appendChild(o)}
   if(!chOpen){try{history.pushState({nadyaCh:1},"")}catch(err){}}
   chOpen=true;renderCh();o.scrollTop=0;
 }
@@ -1255,14 +1255,14 @@ function chCheck(){
 }
 function renderCh(){
   const o=$(".cho");if(!o||!CH)return;
-  const head=(frac,txt)=>`<div class="chhead"><button class="iconbtn" id="chclose" aria-label="Close the challenge">${CLOSE}</button><div class="lbar"><i style="width:${Math.max(4,frac*100)}%"></i></div><span class="meta">${txt}</span></div>`;
+  const head=(frac,txt)=>`<div class="chhead"><button class="iconbtn" id="chclose" aria-label="Close the mini test">${CLOSE}</button><div class="lbar"><i style="width:${Math.max(4,frac*100)}%"></i></div><span class="meta">${txt}</span></div>`;
   if(!CH.puzzles.length){
     o.innerHTML=`<div class="wrapper">${head(0,"")}<div class="done-wrap">${mascot("waiting")}<h1 style="color:var(--ink)">Not enough events here yet</h1></div></div>`;
     $("#chclose").onclick=chQuit;return;
   }
   if(CH.done){
     const perfect=CH.right===CH.total;
-    o.innerHTML=`<div class="wrapper">${head(1,"")}<div class="done-wrap">${mascot(perfect?"celebrate":"happy")}<h1>${perfect?"Perfect timeline!":"Challenge complete!"}</h1>
+    o.innerHTML=`<div class="wrapper">${head(1,"")}<div class="done-wrap">${mascot(perfect?"celebrate":"happy")}<h1>${perfect?"Perfect timeline!":"Mini test complete!"}</h1>
       <div class="sub">${CH.right} of ${CH.total} events in the right place</div>
       <div class="tiles" style="grid-template-columns:repeat(2,1fr)"><div class="tile" style="--c:var(--gold)"><div class="t">XP</div><div class="v">+${CH.xp}</div></div><div class="tile" style="--c:var(--green)"><div class="t">Correct</div><div class="v">${CH.right}/${CH.total}</div></div></div></div>
       <div class="foot" style="display:grid;gap:12px"><button class="btn" id="chagain">Play again</button><button class="btn ghost" id="chback">Back to the timeline</button></div></div>`;
@@ -1293,7 +1293,7 @@ function renderCh(){
     tail=`<div class="chtray" data-gap="tray"><span class="lbl">${tray.length?"Place these events":"All placed. Tap Check, or move any of them"}</span>${tray.map(card).join("")}</div>`;
   }
   const title=P.checked?`<div class="chres ${P.n===P.cards.length?"ok":"no"}">${P.n===P.cards.length?rnd(["Spot on!","Perfect!","Nailed it!"]):`${P.n} of ${P.cards.length} right`}</div>`
-    :`<div class="qtype">Timeline challenge</div><div class="qtitle">Where do these events fit?</div><div class="legend">Drag each event into the right gap, or tap it and then tap a gap.</div>`;
+    :`<div class="qtype">Timeline Mini Test</div><div class="qtitle">Where do these events fit?</div><div class="legend">Drag each event into the right gap, or tap it and then tap a gap.</div>`;
   o.innerHTML=`<div class="wrapper">${head((CH.i+(P.checked?1:0))/N,`${CH.i+1} of ${N}`)}${title}${P.checked?"":tail}<div class="chstrip">${strip}</div>${P.checked?tail:""}<div class="spacer"></div>
     <div class="foot"${P.checked?' style="display:grid;gap:10px"':""}>${P.checked?`<button class="btn tl ${P.n===P.cards.length?"g":"o"}" id="chtl">${TL_ICON}See ${P.cards.length>1?"them":"it"} on the timeline</button><button class="btn ${P.n===P.cards.length?"green":"orange"}" id="chnext">${CH.i+1<N?"Next puzzle":"See results"}</button>`:`<button class="btn green" id="chcheck"${tray.length?" disabled":""}>Check</button>`}</div></div>`;
   $("#chclose").onclick=chQuit;

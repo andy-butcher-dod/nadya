@@ -23,30 +23,30 @@ final class Reminders {
 
     // Nadya's (comically) bossy reminders: {title, text}. {n} is the current streak.
     private static final String[][] FIRST = {
-            {"Comrade! Report for history!", "Nadya has prepared your first lesson. Attendance is compulsory."},
-            {"Nadya is waiting. Impatiently.", "Your first lesson takes 3 minutes. She has cleared her whole schedule."},
+            {"Comrade! Report for history!", "Nadya has prepared your first challenge. Attendance is compulsory."},
+            {"Nadya is waiting. Impatiently.", "Your first challenge takes 3 minutes. She has cleared her whole schedule."},
     };
     private static final String[][] STREAK = {
-            {"Comrade! Your {n}-day streak needs you", "Nadya has issued a decree: one lesson, today. No excuses."},
+            {"Comrade! Your {n}-day streak needs you", "Nadya has issued a decree: one challenge, today. No excuses."},
             {"Nadya is tapping her tiny wooden foot", "Your {n}-day streak won\u2019t keep itself. Three minutes. Go!"},
             {"This is your daily reminder. Nadya\u2019s orders.", "Keep the {n}-day streak alive, or Nadya will sulk all week."},
-            {"The Five-Year Plan says: practise today", "Target: one lesson. Deadline: midnight. Nadya is watching."},
-            {"Don\u2019t make Nadya come over there", "Your {n}-day streak is on the line. One quick lesson, please!"},
+            {"The Five-Year Plan says: practise today", "Target: one challenge. Deadline: midnight. Nadya is watching."},
+            {"Don\u2019t make Nadya come over there", "Your {n}-day streak is on the line. One quick challenge, please!"},
     };
     private static final String[][] WORRIED = {
             {"Midnight is coming, comrade!", "Your {n}-day streak ends tonight. Nadya refuses to let that happen."},
             {"Nadya is pacing up and down", "{n} days of history, and you\u2019re going to stop NOW? Three minutes!"},
-            {"Comrade! Your {n}-day streak needs you", "Nadya has issued a decree: one lesson, today. No excuses."},
-            {"Don\u2019t make Nadya come over there", "Your {n}-day streak is on the line. One quick lesson, please!"},
+            {"Comrade! Your {n}-day streak needs you", "Nadya has issued a decree: one challenge, today. No excuses."},
+            {"Don\u2019t make Nadya come over there", "Your {n}-day streak is on the line. One quick challenge, please!"},
     };
     private static final String[][] SAD = {
-            {"Nadya noticed you were missing", "She\u2019s not angry. Just disappointed. One lesson to make up?"},
+            {"Nadya noticed you were missing", "She\u2019s not angry. Just disappointed. One challenge to make up?"},
             {"Where were you yesterday, comrade?", "Nadya kept your seat warm. Back to history, please!"},
     };
     private static final String[][] MISERABLE = {
-            {"Nadya has called an emergency meeting", "Item 1 on the agenda: you. Item 2: a quick history lesson."},
+            {"Nadya has called an emergency meeting", "Item 1 on the agenda: you. Item 2: a quick history challenge."},
             {"Nadya is all alone with the Tsar", "And frankly he\u2019s terrible company. Please come back!"},
-            {"Official notice from Nadya", "Your history lessons miss you. So does she. Three minutes, today."},
+            {"Official notice from Nadya", "Your history challenges miss you. So does she. Three minutes, today."},
     };
 
     private static String[] pick(String[][] options) {

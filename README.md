@@ -4,12 +4,12 @@ A daily history practice app with Nadya, an animated matryoshka doll. It covers 
 
 ## Features
 
-- **Daily lesson:** 8 questions in about 3 minutes, in four kinds: which event, why it mattered, which year, and putting events in order.
+- **Daily challenge:** 8 questions in about 3 minutes, in four kinds: which event, why it mattered, which year, and putting events in order.
 - **Spaced repetition:** due reviews come first. An event counts as learned after three correct answers on different days.
 - **Nadya:** her mood follows the streak (happy, waiting, worried, sad, very sad). She laughs when tapped and sets off fireworks for right answers.
-- **Timeline:** every event in order, opened at the event just answered. Includes the **Timeline challenge**, where you place events among their neighbours.
+- **Timeline:** every event in order, opened at the event just answered. Includes the **Timeline Mini Test**, where you place events among their neighbours.
 - **First-time tour** of the home screen.
-- **Android app:** daily reminders at a chosen time, a home-screen widget showing Nadya's mood, and automatic updates of lessons and screens.
+- **Android app:** daily reminders at a chosen time, a home-screen widget showing Nadya's mood, and automatic updates of content and screens.
 - **Progress transfer:** a copy-and-paste code moves progress between the web and Android versions. Progress is stored only on the device; there are no accounts and no data is collected.
 
 ## Install
