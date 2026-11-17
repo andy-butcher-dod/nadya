@@ -8,6 +8,8 @@ A daily history practice app with Nadya, an animated matryoshka doll. It covers 
 - **Spaced repetition:** due reviews come first. An event counts as learned after three correct answers on different days.
 - **Nadya:** her mood follows the streak (happy, waiting, worried, sad, very sad). She laughs when tapped and sets off fireworks for right answers.
 - **Timeline:** every event in order, opened at the event just answered. Includes the **Timeline Mini Test**, where you place events among their neighbours.
+- **Celebrations:** Nadya cheers right answers, is kind about mistakes, peeks in at halfway, and celebrates combos (3, 5 and 8 in a row, with bonus XP), the end of each challenge and the streak.
+- **Doll collection:** each unit has its own matryoshka, who grows as you learn its events: carved, painted, decorated (with a keepsake: Nightingale's lamp, a white rose, bread and wheat, a little tractor), then golden. When all four are golden, they nest together inside Nadya.
 - **First-time tour** of the home screen.
 - **Android app:** daily reminders at a chosen time, a home-screen widget showing Nadya's mood, and automatic updates of content and screens.
 - **Progress transfer:** a copy-and-paste code moves progress between the web and Android versions. Progress is stored only on the device; there are no accounts and no data is collected.
