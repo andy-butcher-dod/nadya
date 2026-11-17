@@ -645,7 +645,7 @@ EV.d=[
 [1946,"1946",5,"The National Health Service Act","Labour’s Health Minister Aneurin Bevan passed the Act to create the NHS. Many doctors opposed it, but Bevan won them round by letting them keep private patients.","The law that created a free health service for everyone."],
 [1948,"5 Jul 1948",5,"The NHS begins","Medical care, hospital treatment, dentists and opticians became free to all at the point of use. About 90% of doctors had joined the NHS.","The biggest change in health care in British history: no one had to worry about the cost of being ill."]
 ];
-const APP_VERSION="1.20";
+const APP_VERSION="1.21";
 // Android app: a newer version of this page has been downloaded. Switch to it when it won't interrupt anything.
 let updatePending=false;
 window.nadyaUpdateReady=()=>{if(!L&&!tlOpen)location.reload();else updatePending=true};
@@ -1107,14 +1107,14 @@ function tourSteps(){
     {sel:".week",title:"Keep your streak going",text:"Each day you practise lights a flame. Miss a day and I get sad… so please don’t!"},
     {sel:".seg",title:"Choose what to practise",text:"Practise one unit, or all four mixed together."},
     {sel:"#browse",title:"The timeline",text:"Tap here to see every event in order, with what happened and why it mattered. There’s a Timeline challenge in there too."},
-    {sel:".progress",title:"Watch your progress",text:"Events you’ve met show as started. Get one right three times, on different days, and it’s learned."}
+    {sel:".progress",bottom:true,title:"Watch your progress",text:"Events you’ve met show as started. Get one right three times, on different days, and it’s learned."}
   ];
-  if(NATIVE)t.push({sel:"#settings",title:"Daily reminders",text:"I’ll send you a reminder each day, so you don’t forget. Change the time in Settings."});
+  if(NATIVE)t.push({sel:"#settings",bottom:true,title:"Daily reminders",text:"I’ll send you a reminder each day, so you don’t forget. Change the time in Settings."});
   t.push({mood:"celebrate",title:S.last?"That’s the tour!":"Ready, comrade?",text:S.last?"Back to history. Your streak is waiting.":"Let’s do your first lesson together.",final:true});
   return t;
 }
-function startTour(){if(tourOn)return;tourOn=true;tourI=0;window.scrollTo(0,0);showTour()}
-function endTour(){tourMove++;const o=$(".tour");if(o)o.remove();tourOn=false;S.tourDone=true;save();window.removeEventListener("resize",placeTour)}
+function startTour(){if(tourOn)return;tourOn=true;tourI=0;document.body.style.paddingBottom="45vh";window.scrollTo(0,0);showTour()}
+function endTour(){tourMove++;document.body.style.paddingBottom="";const o=$(".tour");if(o)o.remove();tourOn=false;S.tourDone=true;save();window.removeEventListener("resize",placeTour)}
 function showTour(){
   const steps=tourSteps(),st=steps[tourI];
   let o=$(".tour");
@@ -1134,8 +1134,10 @@ function showTour(){
   // Scroll smoothly so the player sees where on the page each thing lives
   // (a fixed, gentle speed rather than the browser's own smooth scroll, which is quick and varies by device)
   o.classList.add("moving");placeTour();
-  const r=el.getBoundingClientRect(),max=document.documentElement.scrollHeight-innerHeight;
-  const from=scrollY,to=Math.max(0,Math.min(max,from+r.top+r.height/2-innerHeight/2)),dist=Math.abs(to-from);
+  const r=el.getBoundingClientRect(),max=document.documentElement.scrollHeight-innerHeight,from=scrollY;
+  let top=innerHeight/2-r.height/2;
+  if(st.bottom){const room=innerHeight-o.querySelector(".tcard").offsetHeight-tourBottomGap()-22;top=Math.max(20,room-r.height)}
+  const to=Math.max(0,Math.min(max,from+r.top-top)),dist=Math.abs(to-from);
   const dur=dist<4?0:Math.min(1200,500+dist*0.8),t0=performance.now();
   const ease=x=>x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2;
   const follow=()=>{
@@ -1145,14 +1147,18 @@ function showTour(){
     if(k<1)requestAnimationFrame(follow);else{o.classList.remove("moving");placeTour()}};
   requestAnimationFrame(follow);
 }
+// Gap between a bottom card and the bottom of the screen (allowing for the phone's gesture bar)
+function tourBottomGap(){const t=document.createElement("div");t.style.cssText="position:fixed;height:env(safe-area-inset-bottom,0px)";document.body.appendChild(t);const h=t.offsetHeight;t.remove();return 16+h}
 // Put the highlight round the step's element and the card in whichever half of the screen is free
 function placeTour(){
   const o=$(".tour");if(!o)return;
   const st=tourSteps()[tourI],card=o.querySelector(".tcard"),hole=o.querySelector(".hole"),el=st.sel&&document.querySelector(st.sel);
+  card.style.bottom="";
   if(!el||!hole){card.style.top="50%";card.style.transform="translateY(-50%)";return}
   const r=el.getBoundingClientRect(),pad=8;
   Object.assign(hole.style,{left:(r.left-pad)+"px",top:(r.top-pad)+"px",width:(r.width+pad*2)+"px",height:(r.height+pad*2)+"px"});
   card.style.transform="";
+  if(st.bottom){card.style.top="auto";card.style.bottom=tourBottomGap()+"px";return}
   const ch=card.offsetHeight,below=innerHeight-r.bottom;
   if(below>ch+28){card.style.top=(r.bottom+pad+14)+"px"}else{card.style.top=Math.max(12,r.top-pad-14-ch)+"px"}
 }
