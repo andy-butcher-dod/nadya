@@ -298,7 +298,11 @@ h1.page{font-size:24px;font-weight:900;margin:8px 0 0}
 .tour .btn{width:auto;padding:11px 18px;font-size:15px}
 .tour .finalbtns{display:grid;gap:10px;margin-top:6px}
 .tour .finalbtns .btn{width:100%}
-@media (prefers-reduced-motion:reduce){.tour .hole{transition:none}}
+.tour .tcard{transition:opacity .2s ease}
+/* While the page scrolls to the next step, the highlight follows the item and the card waits */
+.tour.moving .hole{transition:none}
+.tour.moving .tcard{opacity:0;pointer-events:none}
+@media (prefers-reduced-motion:reduce){.tour .hole,.tour .tcard{transition:none}}
 /* Timeline challenge */
 .chalbtn{appearance:none;border:2px solid var(--line);background:var(--surface);color:var(--blue-ink);border-radius:99px;padding:8px 12px;font:inherit;font-weight:900;font-size:13.5px;box-shadow:0 3px 0 var(--line);cursor:pointer;display:inline-flex;gap:6px;align-items:center;white-space:nowrap}
 .chalbtn svg{width:16px;height:16px}
@@ -641,7 +645,7 @@ EV.d=[
 [1946,"1946",5,"The National Health Service Act","Labour’s Health Minister Aneurin Bevan passed the Act to create the NHS. Many doctors opposed it, but Bevan won them round by letting them keep private patients.","The law that created a free health service for everyone."],
 [1948,"5 Jul 1948",5,"The NHS begins","Medical care, hospital treatment, dentists and opticians became free to all at the point of use. About 90% of doctors had joined the NHS.","The biggest change in health care in British history: no one had to worry about the cost of being ill."]
 ];
-const APP_VERSION="1.19";
+const APP_VERSION="1.20";
 // Android app: a newer version of this page has been downloaded. Switch to it when it won't interrupt anything.
 let updatePending=false;
 window.nadyaUpdateReady=()=>{if(!L&&!tlOpen)location.reload();else updatePending=true};
@@ -1095,7 +1099,7 @@ function closeTimeline(){const o=$(".tlo");if(o)o.remove();document.body.style.o
 window.addEventListener("popstate",()=>{if(chOpen)closeChallenge();else if(tlOpen)closeTimeline()});
 
 /* ---------- first-time tour ---------- */
-let tourOn=false,tourI=0;
+let tourOn=false,tourI=0,tourMove=0;
 function tourSteps(){
   const t=[
     {mood:"hello",title:"Privet! I’m Nadya",text:"I’ll help you learn the big events in the history of medicine, Germany, Russia and the USSR, a few minutes at a time. (Psst: tap me whenever you like. I’m very ticklish.)"},
@@ -1110,7 +1114,7 @@ function tourSteps(){
   return t;
 }
 function startTour(){if(tourOn)return;tourOn=true;tourI=0;window.scrollTo(0,0);showTour()}
-function endTour(){const o=$(".tour");if(o)o.remove();tourOn=false;S.tourDone=true;save();window.removeEventListener("resize",placeTour)}
+function endTour(){tourMove++;const o=$(".tour");if(o)o.remove();tourOn=false;S.tourDone=true;save();window.removeEventListener("resize",placeTour)}
 function showTour(){
   const steps=tourSteps(),st=steps[tourI];
   let o=$(".tour");
@@ -1124,7 +1128,22 @@ function showTour(){
   if(st.final){$("#tourGo").onclick=()=>{endTour();if(!S.last||S.last!==dayStr()){SND.tap();if(!S.last)startLesson()}};const l=$("#tourLater");if(l)l.onclick=endTour;$("#tourGo").focus()}
   else{$("#tourNext").onclick=()=>{tourI++;showTour()};$("#tourSkip").onclick=endTour;$("#tourNext").focus()}
   const el=st.sel&&document.querySelector(st.sel);
-  if(el){el.scrollIntoView({block:"center",behavior:"auto"});requestAnimationFrame(placeTour)}else placeTour();
+  if(!el){placeTour();return}
+  const id=++tourMove;
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches){el.scrollIntoView({block:"center",behavior:"auto"});requestAnimationFrame(placeTour);return}
+  // Scroll smoothly so the player sees where on the page each thing lives
+  // (a fixed, gentle speed rather than the browser's own smooth scroll, which is quick and varies by device)
+  o.classList.add("moving");placeTour();
+  const r=el.getBoundingClientRect(),max=document.documentElement.scrollHeight-innerHeight;
+  const from=scrollY,to=Math.max(0,Math.min(max,from+r.top+r.height/2-innerHeight/2)),dist=Math.abs(to-from);
+  const dur=dist<4?0:Math.min(1200,500+dist*0.8),t0=performance.now();
+  const ease=x=>x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2;
+  const follow=()=>{
+    if(id!==tourMove||!tourOn)return;
+    const k=dur?Math.min(1,(performance.now()-t0)/dur):1;
+    window.scrollTo(0,from+(to-from)*ease(k));placeTour();
+    if(k<1)requestAnimationFrame(follow);else{o.classList.remove("moving");placeTour()}};
+  requestAnimationFrame(follow);
 }
 // Put the highlight round the step's element and the card in whichever half of the screen is free
 function placeTour(){
