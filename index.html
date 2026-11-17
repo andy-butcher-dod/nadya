@@ -649,7 +649,7 @@ EV.d=[
 [1946,"1946",5,"The National Health Service Act","Labour’s Health Minister Aneurin Bevan passed the Act to create the NHS. Many doctors opposed it, but Bevan won them round by letting them keep private patients.","The law that created a free health service for everyone."],
 [1948,"5 Jul 1948",5,"The NHS begins","Medical care, hospital treatment, dentists and opticians became free to all at the point of use. About 90% of doctors had joined the NHS.","The biggest change in health care in British history: no one had to worry about the cost of being ill."]
 ];
-const APP_VERSION="1.23";
+const APP_VERSION="1.24";
 // Android app: a newer version of this page has been downloaded. Switch to it when it won't interrupt anything.
 let updatePending=false;
 window.nadyaUpdateReady=()=>{if(!L&&!tlOpen)location.reload();else updatePending=true};
@@ -1128,7 +1128,19 @@ function tourSteps(){
   return t;
 }
 function startTour(){if(tourOn)return;tourOn=true;tourI=0;document.body.style.paddingBottom="45vh";window.scrollTo(0,0);showTour()}
-function endTour(){tourMove++;document.body.style.paddingBottom="";const o=$(".tour");if(o)o.remove();tourOn=false;S.tourDone=true;save();window.removeEventListener("resize",placeTour)}
+function endTour(){tourMove++;const o=$(".tour");if(o)o.remove();tourOn=false;S.tourDone=true;save();window.removeEventListener("resize",placeTour);tourToTop()}
+// After the tour, glide back to the top of the home screen, ready to play; then remove the tour's extra space
+function tourToTop(){
+  const id=tourMove,from=scrollY,unpad=()=>{document.body.style.paddingBottom=""};
+  if(!from||matchMedia("(prefers-reduced-motion: reduce)").matches){window.scrollTo(0,0);unpad();return}
+  const dur=Math.min(1200,500+from*0.8),t0=performance.now(),ease=x=>x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2;
+  const step=()=>{
+    if(id!==tourMove||tourOn||L||tlOpen){unpad();return}
+    const k=Math.min(1,(performance.now()-t0)/dur);
+    window.scrollTo(0,from*(1-ease(k)));
+    if(k<1)requestAnimationFrame(step);else unpad()};
+  requestAnimationFrame(step);
+}
 function showTour(){
   const steps=tourSteps(),st=steps[tourI];
   let o=$(".tour");
